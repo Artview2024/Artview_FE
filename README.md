@@ -1,4 +1,3 @@
-<br></br>
 Commit Convention
 
 ---
@@ -20,6 +19,8 @@ Branch Convention
 | develop        | main 서브 브랜치     |
 | feat/#이슈번호-기능명 | 기능 추가용 feat 브랜치 |
 | fix/#이슈번호-브랜치명 | 기능 수정용 fix 브랜치  |
+
+<br></br>
 
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
