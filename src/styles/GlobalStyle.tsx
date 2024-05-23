@@ -21,7 +21,7 @@ const GlobalStyle = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingVertical: 16,
     textAlign: 'left',
     color: '#000',
   },

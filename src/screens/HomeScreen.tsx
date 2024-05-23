@@ -4,6 +4,7 @@ import {
   Text,
   Image,
   ScrollView,
+  FlatList,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
@@ -40,6 +41,30 @@ const carouselData = [
   },
 ];
 
+const recommendedExhibitions = [
+  {
+    key: '1',
+    title: 'SERIOUS',
+    date: '2024.05.14~05.30',
+    gallery: '성남 갤러리홀',
+    image: require('../assets/images/recommend1.png'),
+  },
+  {
+    key: '2',
+    title: '웨딩전',
+    date: '2024.05.04~07.30',
+    gallery: '갤러리',
+    image: require('../assets/images/recommend2.png'),
+  },
+  {
+    key: '3',
+    title: '웨딩전',
+    date: '2024.05.04~07.30',
+    gallery: '갤러리',
+    image: require('../assets/images/carousel1.png'),
+  },
+];
+
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [backgroundIndex, setBackgroundIndex] = useState(0);
@@ -50,22 +75,22 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={carouselData[backgroundIndex % carouselData.length].image}
-        style={[
-          styles.backgroundImage,
-          {width: PAGE_WIDTH, height: PAGE_HEIGHT * 0.63},
-        ]}
-        blurRadius={15}
-      />
       <ScrollView style={{flex: 1}}>
+        <Image
+          source={carouselData[backgroundIndex % carouselData.length].image}
+          style={[
+            styles.backgroundImage,
+            {width: PAGE_WIDTH, height: PAGE_HEIGHT * 0.63},
+          ]}
+          blurRadius={15}
+        />
         <View style={GlobalStyle.header}>
           <Image
             source={require('../assets/icons/ArtviewLogo.png')}
             style={GlobalStyle.logo}
           />
         </View>
-        <View style={styles.titleContainer}>
+        <View style={styles.titleContainerTemp}>
           <Text style={styles.sectionTitle}>내 전시기록</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Records')}>
             <Text style={styles.viewAllText}>전체보기 &gt;</Text>
@@ -75,6 +100,30 @@ export default function HomeScreen() {
           data={carouselData}
           onIndexChange={handleIndexChange}
         />
+        <View style={GlobalStyle.container}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.sectionTitle}>추천전시</Text>
+            <TouchableOpacity
+            //추천전시 전체보기 페이지..
+            >
+              <Text style={styles.viewAllText}>전체보기 &gt;</Text>
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            style={styles.sectionFlatList}
+            horizontal
+            data={recommendedExhibitions}
+            renderItem={({item}) => (
+              <View style={styles.recommendedItem}>
+                <Image source={item.image} style={styles.recommendedImage} />
+                <Text style={styles.recommendedText}>{item.title}</Text>
+                <Text style={styles.recommendedSubText}>{item.date}</Text>
+                <Text style={styles.recommendedSubText}>{item.gallery}</Text>
+              </View>
+            )}
+            keyExtractor={item => item.key}
+          />
+        </View>
       </ScrollView>
       <TouchableOpacity
         style={GlobalStyle.floatingButton}
@@ -97,12 +146,18 @@ const styles = StyleSheet.create({
     right: 0,
     resizeMode: 'cover',
   },
+  titleContainerTemp: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    paddingHorizontal: 20,
+    paddingTop: 2,
+  },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    paddingHorizontal: 16,
-    paddingTop: 2,
+    paddingVertical: 18,
   },
+
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -114,25 +169,26 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   sectionFlatList: {
-    backgroundColor: 'lime',
+    margin: 0,
   },
   recommendedItem: {
     width: 180,
-    marginHorizontal: 8,
+    marginRight: 8,
   },
   recommendedImage: {
     width: 180,
     height: 240,
     resizeMode: 'cover',
-    borderRadius: 8,
+    borderRadius: 5,
   },
   recommendedText: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     marginTop: 8,
+    color: '#000',
   },
   recommendedSubText: {
-    fontSize: 12,
-    color: '#888',
+    fontSize: 14,
+    color: '#000',
   },
 });
