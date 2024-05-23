@@ -13,13 +13,14 @@ interface CarouselItem {
 
 interface CarouselProps {
   data: CarouselItem[];
+  onIndexChange: (index: number) => void; // 이벤트 핸들러 추가
 }
 
 const PAGE_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = PAGE_WIDTH * 0.99;
 const ITEM_SPACING = (PAGE_WIDTH - ITEM_WIDTH) / 2;
 
-const CarouselParallax: React.FC<CarouselProps> = ({data}) => {
+const CarouselParallax: React.FC<CarouselProps> = ({data, onIndexChange}) => {
   const progress = useSharedValue<number>(0); // 애니메이션 진행 상태 저장
 
   const handleProgressChange = (
@@ -27,6 +28,8 @@ const CarouselParallax: React.FC<CarouselProps> = ({data}) => {
     absoluteProgress: number,
   ) => {
     progress.value = absoluteProgress;
+    const currentIndex = Math.round(absoluteProgress); // 현재 페이지 인덱스 계산
+    onIndexChange(currentIndex); // 인덱스 변경 이벤트 핸들러 호출
   };
 
   return (
@@ -41,9 +44,8 @@ const CarouselParallax: React.FC<CarouselProps> = ({data}) => {
             <Image source={item.image} style={styles.carouselImage} />
             <View style={styles.carouselTextContainer}>
               <Text style={styles.carouselText}>{item.title}</Text>
-              <Text style={styles.carouselSubText}>
-                {item.date} | {item.gallery}
-              </Text>
+              <Text style={styles.carouselSubText}>{item.date}</Text>
+              <Text style={styles.carouselSubText}>{item.gallery}</Text>
             </View>
           </View>
         )}
@@ -70,7 +72,7 @@ const CarouselParallax: React.FC<CarouselProps> = ({data}) => {
 const styles = StyleSheet.create({
   carouselContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     paddingVertical: 0,
     height: ITEM_WIDTH * (4 / 3),
   },
@@ -93,20 +95,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 10,
     bottom: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 8,
-    borderRadius: 8,
   },
 
   carouselText: {
-    fontSize: 16,
+    fontSize: 30,
     fontWeight: 'bold',
     color: '#fff',
   },
 
   carouselSubText: {
-    fontSize: 14,
-    color: '#ccc',
+    fontSize: 20,
+    color: '#fff',
   },
 });
 
