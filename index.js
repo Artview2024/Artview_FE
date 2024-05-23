@@ -3,7 +3,8 @@ import {AppRegistry} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {name as appName} from './app.json';
 import React from 'react';
-import AppNavigator from './src/components/AppNavigator';
+import AppNavigator from './src/navigator/AppNavigator';
+import 'react-native-reanimated';
 
 const RootApp = () => {
   return (
@@ -12,5 +13,4 @@ const RootApp = () => {
     </NavigationContainer>
   );
 };
-
 AppRegistry.registerComponent(appName, () => RootApp);
