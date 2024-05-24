@@ -84,13 +84,13 @@ export default function HomeScreen() {
           ]}
           blurRadius={15}
         />
-        <View style={GlobalStyle.header}>
+        <View style={[GlobalStyle.header, {paddingLeft: 20}]}>
           <Image
             source={require('../assets/icons/ArtviewLogo.png')}
             style={GlobalStyle.logo}
           />
         </View>
-        <View style={styles.titleContainerTemp}>
+        <View style={[styles.titleContainerTemp, {paddingTop: 16}]}>
           <Text style={styles.sectionTitle}>내 전시기록</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Records')}>
             <Text style={styles.viewAllText}>전체보기 &gt;</Text>
@@ -127,7 +127,7 @@ export default function HomeScreen() {
       </ScrollView>
       <TouchableOpacity
         style={GlobalStyle.floatingButton}
-        onPress={() => navigation.navigate('Recording')}>
+        onPress={() => navigation.navigate('RecordingStart')}>
         <Text style={GlobalStyle.floatingButtonText}>+ 기록하기</Text>
       </TouchableOpacity>
     </View>

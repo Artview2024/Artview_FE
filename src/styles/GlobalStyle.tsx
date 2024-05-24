@@ -6,7 +6,8 @@ const GlobalStyle = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
+    paddingTop: 18,
+    fontSize: 24,
   },
   body: {
     fontFamily: 'Pretendard',
@@ -20,17 +21,44 @@ const GlobalStyle = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    paddingHorizontal: 16,
     paddingVertical: 16,
     textAlign: 'left',
     color: '#000',
   },
   container: {
+    flex: 1,
     backgroundColor: '#fff',
-    marginHorizontal: 20,
+    paddingHorizontal: 20,
+  },
+  inputBox: {
+    height: 44,
+    borderColor: '#000',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 12,
+    fontSize: 14,
   },
   pointColor: {
     color: '#EA1B83',
+  },
+  button: {
+    paddingHorizontal: 47,
+    paddingVertical: 14,
+    borderRadius: 15,
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+  },
+  activeButton: {
+    backgroundColor: 'black',
+  },
+  inactiveButton: {
+    backgroundColor: '#828282',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 'medium',
+    color: '#fff',
   },
   floatingButton: {
     position: 'absolute',
