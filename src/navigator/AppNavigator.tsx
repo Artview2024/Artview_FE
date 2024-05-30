@@ -8,8 +8,19 @@ import RecordsScreen from '../screens/RecordsScreen';
 export type StackParamList = {
   Tabs: undefined;
   Records: undefined;
-  Recording: undefined;
-  RecordingStart: undefined; // Add this line
+  Recording: {
+    exhibitionName: string;
+    exhibitionDate: string;
+    gallery: string;
+    rating: string;
+    artworks: Array<{
+      image: string;
+      title: string;
+      artist: string;
+      memo: string;
+    }>;
+  };
+  RecordingStart: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();

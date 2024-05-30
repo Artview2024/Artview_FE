@@ -49,6 +49,17 @@ const GlobalStyle = StyleSheet.create({
     right: 20,
     bottom: 20,
   },
+  fullButton: {
+    paddingHorizontal: 130,
+    paddingVertical: 14,
+    borderRadius: 15,
+  },
+  strokeButton: {
+    paddingHorizontal: 47,
+    paddingVertical: 14,
+    borderRadius: 15,
+    borderColor: 'black',
+  },
   activeButton: {
     backgroundColor: 'black',
   },

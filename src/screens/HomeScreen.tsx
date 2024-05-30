@@ -80,7 +80,7 @@ export default function HomeScreen() {
           source={carouselData[backgroundIndex % carouselData.length].image}
           style={[
             styles.backgroundImage,
-            {width: PAGE_WIDTH, height: PAGE_HEIGHT * 0.63},
+            {width: PAGE_WIDTH, height: PAGE_WIDTH * (4 / 3)},
           ]}
           blurRadius={15}
         />
