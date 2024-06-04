@@ -8,6 +8,7 @@ const GlobalStyle = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 18,
     fontSize: 24,
+    color: 'black',
   },
   body: {
     fontFamily: 'Pretendard',
