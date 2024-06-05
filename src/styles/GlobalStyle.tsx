@@ -9,6 +9,7 @@ const GlobalStyle = StyleSheet.create({
     paddingTop: 18,
     fontSize: 24,
     color: 'black',
+    fontWeight: 'bold',
   },
   body: {
     fontFamily: 'Pretendard',
@@ -85,6 +86,41 @@ const GlobalStyle = StyleSheet.create({
   },
   floatingButtonText: {
     color: 'white',
+    fontSize: 14,
+  },
+  CommunityCardUser: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
+  },
+  CommunityCardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'black',
+    paddingRight: 10,
+  },
+  CommunityCardText: {
+    fontSize: 14,
+    fontWeight: 'normal',
+    color: 'black',
+  },
+  CommunityCardRating: {
+    fontSize: 14,
+    color: '#EA1B83',
+  },
+  EmotionView: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  EmotionButton: {
+    fontSize: 12,
+    color: 'black',
+    borderColor: '#000',
+    borderWidth: 1,
+    borderRadius: 15,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    marginRight: 7,
   },
 });
 

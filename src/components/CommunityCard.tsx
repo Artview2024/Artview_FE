@@ -1,50 +1,58 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, Image, Dimensions} from 'react-native';
 import GlobalStyle from '../styles/GlobalStyle';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+const PAGE_WIDTH = Dimensions.get('window').width;
 
 const CommunityCard = ({Posts}: {Posts: any}) => {
   return (
-    <View>
-      {/* User and profile */}
+    <View style={{paddingBottom: 27}}>
       <View>
         {/* User profile image */}
         {/* <Image
           source={require('../assets/images/user-profile.png')} // Replace with actual user profile image
           style={styles.userProfileImage}
         /> */}
-        {/* User name */}
-        <Text>{Posts.user}</Text>
+        <Text style={GlobalStyle.CommunityCardUser}>{Posts.user}</Text>
       </View>
 
-      {/* Image */}
-      <Image source={Posts.image[0]} />
+      <Image
+        style={{
+          marginVertical: 13,
+          width: PAGE_WIDTH,
+          height: PAGE_WIDTH * (4 / 3),
+        }}
+        source={Posts.image[0]}
+      />
 
-      {/* Title and rating */}
-      <View>
-        <Text>{Posts.title}</Text>
-        {/* Display rating here */}
+      <View style={{flex: 1, flexDirection: 'row'}}>
+        <Text style={GlobalStyle.CommunityCardTitle}>{Posts.title}</Text>
+        <Text>
+          <Icon name="star" size={14} color="#EA1B83" />;
+        </Text>
+        <Text style={GlobalStyle.CommunityCardRating}>{Posts.rating}</Text>
       </View>
 
-      {/* Date and gallery */}
-      <View>
-        <Text>{Posts.date}</Text>
-        <Text>{Posts.gallery}</Text>
+      <View style={{paddingBottom: 7}}>
+        <Text style={GlobalStyle.CommunityCardText}>
+          {Posts.date} | {Posts.gallery}
+        </Text>
       </View>
 
-      {/* Content */}
-      <Text>{Posts.content}</Text>
+      <Text style={[GlobalStyle.CommunityCardText, {paddingBottom: 7}]}>
+        {Posts.content}
+      </Text>
 
-      {/* Emotion buttons */}
-      <View>
-        <Text>{Posts.emotion[0]}</Text>
+      <View style={GlobalStyle.EmotionView}>
+        {Posts.emotion.map((emotion: string, index: number) => (
+          <Text key={index} style={GlobalStyle.EmotionButton}>
+            {emotion}
+          </Text>
+        ))}
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  // Define your styles here
-  // ...
-});
 
 export default CommunityCard;

@@ -75,7 +75,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView showsHorizontalScrollIndicator={false} style={{flex: 1}}>
         <Image
           source={carouselData[backgroundIndex % carouselData.length].image}
           style={[
@@ -113,6 +113,7 @@ export default function HomeScreen() {
             style={styles.sectionFlatList}
             horizontal
             data={recommendedExhibitions}
+            showsHorizontalScrollIndicator={false}
             renderItem={({item}) => (
               <View style={styles.recommendedItem}>
                 <Image source={item.image} style={styles.recommendedImage} />
