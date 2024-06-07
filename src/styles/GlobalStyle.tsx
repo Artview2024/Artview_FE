@@ -68,6 +68,16 @@ const GlobalStyle = StyleSheet.create({
   inactiveButton: {
     backgroundColor: '#828282',
   },
+  mainText: {
+    fontSize: 16,
+    fontWeight: 'medium',
+    color: '#000',
+  },
+  subText: {
+    fontSize: 14,
+    fontWeight: 'medium',
+    color: '#000',
+  },
   buttonText: {
     fontSize: 16,
     fontWeight: 'medium',

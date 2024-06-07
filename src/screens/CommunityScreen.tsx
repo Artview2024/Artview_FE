@@ -77,7 +77,7 @@ export default function CommunityScreen() {
       </ScrollView>
       <TouchableOpacity
         style={GlobalStyle.floatingButton}
-        onPress={() => navigation.navigate('RecordingStart')}>
+        onPress={() => navigation.navigate('PostingStart')}>
         <Text style={GlobalStyle.floatingButtonText}>+ 글쓰기</Text>
       </TouchableOpacity>
     </View>
