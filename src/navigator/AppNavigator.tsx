@@ -28,8 +28,9 @@ export type StackParamList = {
       id: number;
       name: string;
       date: string;
+      gallery: string;
       image: any;
-      rating: number;
+      rating: string;
       imageList: any[];
     };
   };

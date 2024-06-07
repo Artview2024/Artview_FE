@@ -55,6 +55,8 @@ const GlobalStyle = StyleSheet.create({
     paddingHorizontal: 130,
     paddingVertical: 14,
     borderRadius: 15,
+    alignItems: 'center',
+    marginBottom: 30,
   },
   strokeButton: {
     paddingHorizontal: 47,
@@ -130,7 +132,7 @@ const GlobalStyle = StyleSheet.create({
     borderRadius: 15,
     paddingVertical: 5,
     paddingHorizontal: 12,
-    marginRight: 7,
+    marginRight: 8,
   },
 });
 

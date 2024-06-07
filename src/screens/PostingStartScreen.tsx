@@ -20,8 +20,9 @@ const exhibitions = [
     id: 1,
     name: '김민형 사진전',
     date: '2023.12.18',
+    gallery: '서울미술관',
     image: require('../assets/images/carousel4.jpg'),
-    rating: 4.5,
+    rating: '4.5',
     imageList: [
       require('../assets/images/carousel4.jpg'),
       require('../assets/images/carousel4.jpg'),
@@ -31,9 +32,11 @@ const exhibitions = [
     id: 2,
     name: '모던',
     date: '2023.11.11',
+    gallery: '서울미술관',
     image: require('../assets/images/carousel4.jpg'),
-    rating: 4.0,
+    rating: '4.0',
     imageList: [
+      require('../assets/images/carousel4.jpg'),
       require('../assets/images/carousel4.jpg'),
       require('../assets/images/carousel4.jpg'),
     ],
@@ -42,8 +45,9 @@ const exhibitions = [
     id: 3,
     name: '끝없는 계단',
     date: '2022.10.28',
+    gallery: '서울미술관',
     image: require('../assets/images/carousel4.jpg'),
-    rating: 3.8,
+    rating: '3.8',
     imageList: [
       require('../assets/images/carousel4.jpg'),
       require('../assets/images/carousel4.jpg'),
@@ -84,7 +88,7 @@ export default function PostingStartScreen() {
               style={{paddingRight: 3, paddingTop: 11}}
             />
           </TouchableOpacity>
-          <Text style={GlobalStyle.header}>기록 선택하기</Text>
+          <Text style={GlobalStyle.header}>기록 선택</Text>
         </View>
         <View style={styles.exhibitionList}>
           {exhibitions.map(exhibition => (
