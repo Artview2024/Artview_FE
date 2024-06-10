@@ -16,7 +16,7 @@ import CheckBox from '@react-native-community/checkbox';
 import GlobalStyle from '../styles/GlobalStyle';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {StackParamList} from '../navigator/AppNavigator';
+import {StackParamList} from '../navigator/StackParamList';
 import * as ImagePicker from 'react-native-image-picker';
 
 const cameraIcon = require('../assets/icons/camera-icon.png');
@@ -35,17 +35,6 @@ export default function RecordingScreen() {
   const navigation = useNavigation<RecordingScreenProps>();
 
   const PAGE_WIDTH = Dimensions.get('window').width - 40;
-
-  // const handleNext = () => {
-  //   const newArtworks = [...(artworks || []), {image: '', title, artist, memo}];
-  //   navigation.push('Recording', {
-  //     exhibitionName,
-  //     exhibitionDate,
-  //     gallery,
-  //     artworks: newArtworks,
-  //   });
-  // };
-
   async function checkCameraPermissions() {
     const cameraGranted = await PermissionsAndroid.check(
       PermissionsAndroid.PERMISSIONS.CAMERA,
