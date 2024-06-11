@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
+import BackIcon from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../styles/GlobalStyle';
-import {StackParamList} from '../navigator/AppNavigator';
-import '../navigator/AppNavigator';
+import {StackParamList} from '../navigator/StackParamList';
 
 export default function RecordingStartScreen() {
   const [exhibition, setExhibition] = useState('');
@@ -27,18 +27,19 @@ export default function RecordingStartScreen() {
       exhibitionName: exhibition,
       exhibitionDate: formatDate(date),
       gallery: location,
-      rating: '5',
-      artworks: [],
+      artList: [],
     });
   };
 
   return (
     <View style={GlobalStyle.container}>
-      {/* <TouchableOpacity style={GlobalStyle.header}>
-        <BackArrowIcon />
-      </TouchableOpacity> */}
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={GlobalStyle.header}>&lt;</Text>
+        <BackIcon
+          name="chevron-back"
+          size={24}
+          color={'black'}
+          style={{paddingRight: 3, paddingTop: 18}}
+        />
       </TouchableOpacity>
       <Text style={GlobalStyle.sectionTitle}>전시회</Text>
       <TextInput
@@ -83,7 +84,6 @@ export default function RecordingStartScreen() {
           isFormFilled ? GlobalStyle.activeButton : GlobalStyle.inactiveButton,
         ]}
         disabled={!isFormFilled}
-        // onPress={() => navigation.navigate('Recording')}>
         onPress={handleStartViewing}>
         <Text style={[GlobalStyle.buttonText]}>관람 시작</Text>
       </TouchableOpacity>

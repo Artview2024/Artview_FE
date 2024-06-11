@@ -20,13 +20,13 @@ export type StackParamList = {
     exhibitionName: string;
     exhibitionDate: string;
     gallery: string;
-    rating: string;
-    artworks: Array<{
-      image: string;
+    artList: Array<{
+      image: string | null;
       title: string;
       artist: string;
       memo: string;
     }>;
+    artIndex?: number;
   };
   RecordingStart: undefined;
   Posting: {

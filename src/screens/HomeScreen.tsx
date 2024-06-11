@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import CarouselParallax from '../components/CarouselParallax';
-import {StackParamList} from '../navigator/AppNavigator';
+import {StackParamList} from '../navigator/StackParamList';
 import GlobalStyle from '../styles/GlobalStyle';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
