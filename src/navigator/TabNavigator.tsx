@@ -6,7 +6,6 @@ import CommunityScreen from '../screens/CommunityScreen';
 import ExhibitionsScreen from '../screens/ExhibitionsScreen';
 import MyScreen from '../screens/MyScreen';
 
-// Import images using require to get the correct type
 const HomeStrokeIcon: ImageSourcePropType = require('../assets/icons/home-stroke-icon.png');
 const HomeFillIcon: ImageSourcePropType = require('../assets/icons/home-fill-icon.png');
 const CommunityStrokeIcon: ImageSourcePropType = require('../assets/icons/community-stroke-icon.png');
@@ -28,7 +27,7 @@ export default function TabNavigator() {
           height: 56,
         },
         tabBarIcon: ({focused, color, size}) => {
-          let iconName: ImageSourcePropType = HomeStrokeIcon; // Default value to ensure initialization
+          let iconName: ImageSourcePropType = HomeStrokeIcon;
 
           if (route.name === 'Home') {
             iconName = focused ? HomeFillIcon : HomeStrokeIcon;
@@ -40,7 +39,6 @@ export default function TabNavigator() {
             iconName = MyStrokeIcon;
           }
 
-          // Render the icon
           return (
             <Image
               source={iconName}

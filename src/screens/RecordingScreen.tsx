@@ -22,6 +22,7 @@ import {
 } from '@react-navigation/native';
 import {StackParamList} from '../navigator/StackParamList';
 import * as ImagePicker from 'react-native-image-picker';
+import RatingModal from '../components/RatingModal';
 
 const cameraIcon = require('../assets/icons/camera-icon.png');
 
@@ -31,9 +32,11 @@ export default function RecordingScreen() {
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [memo, setMemo] = useState('');
-  const [imageUri, setImageUri] = useState<string | null>(null); // 상태 타입을 명시적으로 정의
+  const [imageUri, setImageUri] = useState<string | null>(null);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [artIndex, setArtIndex] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [finalData, setFinalData] = useState<any>(null);
 
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const route = useRoute<RecordingScreenRouteProp>();
@@ -96,7 +99,7 @@ export default function RecordingScreen() {
             response.assets && response.assets[0].uri
               ? response.assets[0].uri
               : null;
-          setImageUri(uri || ''); // null일 경우 빈 문자열로 설정
+          setImageUri(uri || '');
         }
       },
     );
@@ -113,7 +116,7 @@ export default function RecordingScreen() {
           response.assets && response.assets[0].uri
             ? response.assets[0].uri
             : null;
-        setImageUri(uri || ''); // null일 경우 빈 문자열로 설정
+        setImageUri(uri || '');
       }
     });
   };
@@ -143,7 +146,7 @@ export default function RecordingScreen() {
     setTitle('');
     setArtist('');
     setMemo('');
-    setImageUri(null); // null로 재설정
+    setImageUri(null);
     setArtIndex(artIndex + 1);
   };
 
@@ -173,16 +176,27 @@ export default function RecordingScreen() {
     }
 
     const finalData = {
-      id: 1,
       name: exhibitionName,
       date: exhibitionDate,
       gallery: gallery,
       mainImage: updatedArtList.length > 0 ? updatedArtList[0].image : null,
-      rating: '5', // 추후 변경
+      rating: '',
       artList: updatedArtList,
     };
-    console.log(finalData);
-    // 관람 종료 후, 별점 모달
+    setFinalData(finalData);
+    setModalVisible(true);
+  };
+
+  const handleRatingSubmit = (rating: number) => {
+    if (finalData) {
+      const updatedFinalData = {
+        ...finalData,
+        rating: rating.toString(),
+        id: Math.random().toString(),
+      };
+      setModalVisible(false);
+      navigation.navigate('Records', {newRecord: updatedFinalData});
+    }
   };
 
   return (
@@ -264,9 +278,14 @@ export default function RecordingScreen() {
         <TouchableOpacity
           style={[GlobalStyle.activeButton, styles.endTourButton]}
           onPress={handleEndTour}>
-          <Text style={GlobalStyle.buttonText}>관람 종료</Text>
+          <Text style={GlobalStyle.buttonText}>기록 종료</Text>
         </TouchableOpacity>
       </ScrollView>
+      <RatingModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSubmit={handleRatingSubmit}
+      />
     </View>
   );
 }

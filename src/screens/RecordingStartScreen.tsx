@@ -85,7 +85,7 @@ export default function RecordingStartScreen() {
         ]}
         disabled={!isFormFilled}
         onPress={handleStartViewing}>
-        <Text style={[GlobalStyle.buttonText]}>관람 시작</Text>
+        <Text style={[GlobalStyle.buttonText]}>기록 시작</Text>
       </TouchableOpacity>
     </View>
   );

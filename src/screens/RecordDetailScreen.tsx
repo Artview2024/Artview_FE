@@ -53,7 +53,7 @@ export default function RecordDetailScreen() {
               name="chevron-back"
               size={24}
               color={'black'}
-              style={{paddingRight: 3, paddingTop: 11}}
+              style={{paddingRight: 3, paddingTop: 18}}
             />
           </TouchableOpacity>
         </View>
@@ -62,7 +62,7 @@ export default function RecordDetailScreen() {
             flex: 1,
             flexDirection: 'row',
             alignItems: 'center',
-            paddingTop: 25,
+            paddingTop: 20,
           }}>
           <Text
             style={[
