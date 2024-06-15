@@ -4,24 +4,10 @@ import TabNavigator from './TabNavigator';
 import RecordingStartScreen from '../screens/RecordingStartScreen';
 import RecordingScreen from '../screens/RecordingScreen';
 import RecordsScreen from '../screens/RecordsScreen';
-
-export type StackParamList = {
-  Tabs: undefined;
-  Records: undefined;
-  Recording: {
-    exhibitionName: string;
-    exhibitionDate: string;
-    gallery: string;
-    rating: string;
-    artworks: Array<{
-      image: string;
-      title: string;
-      artist: string;
-      memo: string;
-    }>;
-  };
-  RecordingStart: undefined;
-};
+import RecordDetailScreen from '../screens/RecordDetailScreen';
+import PostingStartScreen from '../screens/PostingStartScreen';
+import PostingScreen from '../screens/PostingScreen';
+import {StackParamList} from './StackParamList';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -39,6 +25,11 @@ export default function AppNavigator() {
         options={{headerShown: false}}
       />
       <Stack.Screen
+        name="RecordDetail"
+        component={RecordDetailScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
         name="RecordingStart"
         component={RecordingStartScreen}
         options={{headerShown: false}}
@@ -46,6 +37,16 @@ export default function AppNavigator() {
       <Stack.Screen
         name="Recording"
         component={RecordingScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="PostingStart"
+        component={PostingStartScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Posting"
+        component={PostingScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

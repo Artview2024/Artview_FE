@@ -6,13 +6,14 @@ import CommunityScreen from '../screens/CommunityScreen';
 import ExhibitionsScreen from '../screens/ExhibitionsScreen';
 import MyScreen from '../screens/MyScreen';
 
-// Import images using require to get the correct type
 const HomeStrokeIcon: ImageSourcePropType = require('../assets/icons/home-stroke-icon.png');
 const HomeFillIcon: ImageSourcePropType = require('../assets/icons/home-fill-icon.png');
 const CommunityStrokeIcon: ImageSourcePropType = require('../assets/icons/community-stroke-icon.png');
+const CommunityFillIcon: ImageSourcePropType = require('../assets/icons/community-fill-icon.png');
 const ExhibitionsStrokeIcon: ImageSourcePropType = require('../assets/icons/exhibitions-stroke-icon.png');
+const ExhibitionsFillIcon: ImageSourcePropType = require('../assets/icons/exhibitions-fill-icon.png');
 const MyStrokeIcon: ImageSourcePropType = require('../assets/icons/my-stroke-icon.png');
-
+const MyFillIcon: ImageSourcePropType = require('../assets/icons/my-fill-icon.png');
 const Tab = createBottomTabNavigator();
 
 export default function TabNavigator() {
@@ -28,26 +29,25 @@ export default function TabNavigator() {
           height: 56,
         },
         tabBarIcon: ({focused, color, size}) => {
-          let iconName: ImageSourcePropType = HomeStrokeIcon; // Default value to ensure initialization
+          let iconName: ImageSourcePropType = HomeStrokeIcon;
 
           if (route.name === 'Home') {
             iconName = focused ? HomeFillIcon : HomeStrokeIcon;
           } else if (route.name === 'Community') {
-            iconName = CommunityStrokeIcon;
+            iconName = focused ? CommunityFillIcon : CommunityStrokeIcon;
           } else if (route.name === 'Exhibitions') {
-            iconName = ExhibitionsStrokeIcon;
+            iconName = focused ? ExhibitionsFillIcon : ExhibitionsStrokeIcon;
           } else if (route.name === 'My') {
-            iconName = MyStrokeIcon;
+            iconName = focused ? MyFillIcon : MyStrokeIcon;
           }
 
-          // Render the icon
           return (
             <Image
               source={iconName}
               style={{
                 width: size,
                 height: size,
-                tintColor: focused ? color : 'black',
+                tintColor: focused ? color : 'gray',
               }}
             />
           );
