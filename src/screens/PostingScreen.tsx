@@ -15,7 +15,7 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-import {StackParamList} from '../navigator/AppNavigator';
+import {StackParamList} from '../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import RatingIcon from 'react-native-vector-icons/FontAwesome';
 import '../navigator/AppNavigator';
@@ -29,6 +29,7 @@ export default function PostingScreen() {
   const route = useRoute<PostingScreenRouteProp>();
   const {exhibition} = route.params;
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
+  const [content, setContent] = useState<string>('');
 
   const keywords = [
     '아름다운',
@@ -47,6 +48,23 @@ export default function PostingScreen() {
     } else {
       setSelectedKeywords([...selectedKeywords, keyword]);
     }
+  };
+
+  const handlePost = () => {
+    const newPost = {
+      key: new Date().toISOString(),
+      user: '임시 사용자', // 임시 사용자 이름
+      profile: '', // 임시 사용자 프로필 이미지 경로
+      title: exhibition.name,
+      date: exhibition.date,
+      gallery: exhibition.gallery,
+      image: exhibition.imageList,
+      content,
+      emotion: selectedKeywords,
+      rating: exhibition.rating,
+    };
+
+    navigation.navigate('Community', {newPost});
   };
 
   return (
@@ -125,6 +143,8 @@ export default function PostingScreen() {
             ]}
             placeholder="..."
             multiline
+            value={content}
+            onChangeText={setContent}
           />
         </View>
 
@@ -168,7 +188,8 @@ export default function PostingScreen() {
             GlobalStyle.activeButton,
             GlobalStyle.fullButton,
             {marginTop: 30},
-          ]}>
+          ]}
+          onPress={handlePost}>
           <Text style={GlobalStyle.buttonText}>게시</Text>
         </TouchableOpacity>
       </ScrollView>

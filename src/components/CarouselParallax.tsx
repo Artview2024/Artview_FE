@@ -35,12 +35,12 @@ const CarouselParallax: React.FC<CarouselProps> = ({data, onIndexChange}) => {
   return (
     <View style={styles.carouselContainer}>
       <Carousel
-        style={{width: PAGE_WIDTH}}
+        style={[{width: PAGE_WIDTH, marginTop: -8}]}
         width={ITEM_WIDTH}
         height={ITEM_WIDTH * (4 / 3)}
         data={data}
         renderItem={({item}: {item: CarouselItem}) => (
-          <View style={styles.carouselItem}>
+          <View>
             <Image source={item.image} style={styles.carouselImage} />
             <View style={styles.carouselTextContainer}>
               <Text style={styles.carouselText}>{item.title}</Text>
@@ -71,14 +71,14 @@ const CarouselParallax: React.FC<CarouselProps> = ({data, onIndexChange}) => {
 
 const styles = StyleSheet.create({
   carouselContainer: {
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
     paddingVertical: 0,
     height: ITEM_WIDTH * (4 / 3),
   },
 
   carouselItem: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     width: ITEM_WIDTH,
     height: ITEM_WIDTH * (4 / 3),

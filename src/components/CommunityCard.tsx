@@ -8,12 +8,12 @@ const PAGE_WIDTH = Dimensions.get('window').width;
 const CommunityCard = ({Posts}: {Posts: any}) => {
   return (
     <View style={{paddingBottom: 27}}>
-      <View>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
         {/* User profile image */}
-        {/* <Image
-          source={require('../assets/images/user-profile.png')} // Replace with actual user profile image
-          style={styles.userProfileImage}
-        /> */}
+        <Image
+          source={require('../assets/images/carousel1.png')}
+          style={{width: 40, height: 40, borderRadius: 20, marginRight: 10}}
+        />
         <Text style={GlobalStyle.CommunityCardUser}>{Posts.user}</Text>
       </View>
 
@@ -26,12 +26,14 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
         source={Posts.image[0]}
       />
 
-      <View style={{flex: 1, flexDirection: 'row'}}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Text style={GlobalStyle.CommunityCardTitle}>{Posts.title}</Text>
         <Text>
-          <Icon name="star" size={14} color="#EA1B83" />;
+          <Icon name="star" size={14} color="#EA1B83" />
         </Text>
-        <Text style={GlobalStyle.CommunityCardRating}>{Posts.rating}</Text>
+        <Text style={[GlobalStyle.CommunityCardRating, {paddingLeft: 3}]}>
+          {Posts.rating}
+        </Text>
       </View>
 
       <View style={{paddingBottom: 7}}>

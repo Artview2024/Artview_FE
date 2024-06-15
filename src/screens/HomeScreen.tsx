@@ -84,13 +84,13 @@ export default function HomeScreen() {
           ]}
           blurRadius={15}
         />
-        <View style={[GlobalStyle.header, {paddingLeft: 20}]}>
+        <View style={[GlobalStyle.header]}>
           <Image
-            source={require('../assets/icons/ArtviewLogo.png')}
+            source={require('../assets/icons/ArtvewLogoReal.png')}
             style={GlobalStyle.logo}
           />
         </View>
-        <View style={[styles.titleContainerTemp, {paddingTop: 16}]}>
+        <View style={[styles.titleContainerTemp, {paddingTop: 18}]}>
           <Text style={styles.sectionTitle}>내 전시기록</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Records')}>
             <Text style={styles.viewAllText}>전체보기 &gt;</Text>
@@ -151,7 +151,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     paddingHorizontal: 20,
-    paddingTop: 2,
   },
   titleContainer: {
     flexDirection: 'row',

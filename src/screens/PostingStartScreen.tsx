@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
-import {StackParamList} from '../navigator/AppNavigator';
+import {StackParamList} from '../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/AntDesign';
 import '../navigator/AppNavigator';
@@ -146,12 +146,11 @@ const styles = StyleSheet.create({
   exhibitionList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
   },
   exhibitionWrapper: {
     width: '46%',
     marginVertical: 10,
-    marginHorizontal: '2%',
   },
 
   selectedExhibitionItem: {

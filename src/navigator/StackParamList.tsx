@@ -43,4 +43,5 @@ export type StackParamList = {
   };
   PostingStart: undefined;
   RecordDetail: {record: Record};
+  Community: {newPost?: any}; // Add this line
 };
