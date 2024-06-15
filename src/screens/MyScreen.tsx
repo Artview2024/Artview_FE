@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -8,80 +8,169 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useScrollToTop} from '@react-navigation/native';
+import GlobalStyle from '../styles/GlobalStyle';
+
+const exhibitions = [
+  {
+    id: 1,
+    name: '김민형 사진전',
+    date: '2023.12.18',
+    gallery: '서울미술관',
+    image: require('../assets/images/carousel4.jpg'),
+    rating: '4.5',
+    imageList: [
+      require('../assets/images/carousel4.jpg'),
+      require('../assets/images/carousel4.jpg'),
+    ],
+  },
+  {
+    id: 2,
+    name: '모던',
+    date: '2023.11.11',
+    gallery: '서울미술관',
+    image: require('../assets/images/carousel4.jpg'),
+    rating: '4.0',
+    imageList: [
+      require('../assets/images/carousel4.jpg'),
+      require('../assets/images/carousel4.jpg'),
+      require('../assets/images/carousel4.jpg'),
+    ],
+  },
+  {
+    id: 3,
+    name: '끝없는 계단',
+    date: '2022.10.28',
+    gallery: '서울미술관',
+    image: require('../assets/images/carousel4.jpg'),
+    rating: '3.8',
+    imageList: [
+      require('../assets/images/carousel4.jpg'),
+      require('../assets/images/carousel4.jpg'),
+    ],
+  },
+];
 
 export default function MyScreen() {
   const ref = useRef(null);
+  const following = '12';
+  const follower = '31';
+  const enjoyed = '29';
   useScrollToTop(ref);
 
+  const [activeTab, setActiveTab] = useState('게시물');
+
   return (
-    <ScrollView style={styles.container} ref={ref}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>마이</Text>
-        <Image
-          style={styles.profileImage}
-          source={require('../assets/images/carousel1.png')}
-        />
-        <Text style={styles.profileName}>김민주</Text>
-        <View style={styles.profileStats}>
-          <Text style={styles.statsText}>팔로잉 12</Text>
-          <Text style={styles.statsText}>팔로워 31</Text>
-          <Text style={styles.statsText}>관람수 29</Text>
+    <View style={[GlobalStyle.container]}>
+      <ScrollView ref={ref}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+          }}>
+          <Text style={GlobalStyle.header}>마이</Text>
         </View>
-        <TouchableOpacity style={styles.editButton}>
-          <Text style={styles.editButtonText}>프로필 수정</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.categories}>
-        <Text style={styles.categoryText}>관심 전시회</Text>
-        <View style={styles.categoryTags}>
-          <Text style={styles.categoryTag}>사진</Text>
-          <Text style={styles.categoryTag}>과학기술</Text>
-          <Text style={styles.categoryTag}>미술</Text>
-        </View>
-      </View>
-      <View style={styles.tabs}>
-        <Text style={styles.tabTextActive}>게시물</Text>
-        <Text style={styles.tabText}>관람</Text>
-        <Text style={styles.tabText}>스크랩</Text>
-      </View>
-      <View style={styles.posts}>
-        <View style={styles.post}>
+
+        <View style={styles.userInfo}>
           <Image
-            style={styles.postImage}
-            source={require('../assets/images/carousel1.png')}
+            style={styles.profileImage}
+            source={require('../assets/images/user.png')}
           />
-          <Text style={styles.postTitle}>심플함 속의 미학</Text>
-          <Text style={styles.postDate}>2023.12.18</Text>
+          <Text style={styles.profileName}>김민주</Text>
+          <View style={styles.profileStats}>
+            <View style={{flexDirection: 'row'}}>
+              <Text>팔로잉 </Text>
+              <Text style={[styles.statsText, {color: '#EA1B83'}]}>
+                {following}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.statsText}>팔로워 </Text>
+              <Text style={[styles.statsText, {color: '#EA1B83'}]}>
+                {follower}
+              </Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={styles.statsText}>관람수 </Text>
+              <Text style={[styles.statsText, {color: '#EA1B83'}]}>
+                {enjoyed}
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.editButton}>
+            <Text style={styles.editButtonText}>프로필 수정</Text>
+          </TouchableOpacity>
         </View>
-        <View style={styles.post}>
-          <Image
-            style={styles.postImage}
-            source={require('../assets/images/carousel1.png')}
-          />
-          <Text style={styles.postTitle}>고전포스터</Text>
-          <Text style={styles.postDate}>2023.11.21</Text>
+
+        <View style={styles.categories}>
+          <Text style={styles.categoryText}>관심 분야</Text>
+          <View style={styles.categoryTags}>
+            <Text style={styles.categoryTag}>사진</Text>
+            <Text style={styles.categoryTag}>과학기술</Text>
+            <Text style={styles.categoryTag}>미술</Text>
+          </View>
         </View>
-        <View style={styles.post}>
-          <Image
-            style={styles.postImage}
-            source={require('../assets/images/carousel1.png')}
-          />
-          <Text style={styles.postTitle}>타이틀</Text>
-          <Text style={styles.postDate}>2023.10.10</Text>
+
+        <View style={styles.tabs}>
+          <View style={styles.tabContainer}>
+            <TouchableOpacity onPress={() => setActiveTab('게시물')}>
+              <Text
+                style={
+                  activeTab === '게시물' ? styles.tabTextActive : styles.tabText
+                }>
+                게시물
+              </Text>
+            </TouchableOpacity>
+            {activeTab === '게시물' && <View style={styles.activeTabLine} />}
+          </View>
+          <View style={styles.tabContainer}>
+            <TouchableOpacity onPress={() => setActiveTab('관람')}>
+              <Text
+                style={
+                  activeTab === '관람' ? styles.tabTextActive : styles.tabText
+                }>
+                관람
+              </Text>
+            </TouchableOpacity>
+            {activeTab === '관람' && <View style={styles.activeTabLine} />}
+          </View>
+          <View style={styles.tabContainer}>
+            <TouchableOpacity onPress={() => setActiveTab('스크랩')}>
+              <Text
+                style={
+                  activeTab === '스크랩' ? styles.tabTextActive : styles.tabText
+                }>
+                스크랩
+              </Text>
+            </TouchableOpacity>
+            {activeTab === '스크랩' && <View style={styles.activeTabLine} />}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+
+        <View style={styles.exhibitionList}>
+          {exhibitions.map(exhibition => (
+            <View key={exhibition.id} style={styles.exhibitionWrapper}>
+              <TouchableOpacity>
+                <Image
+                  source={exhibition.image}
+                  style={[styles.exhibitionImage]}
+                />
+                <View style={{paddingTop: 7}}>
+                  <Text style={GlobalStyle.mainText}>{exhibition.name}</Text>
+                  <Text style={GlobalStyle.subText}>{exhibition.date}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  header: {
+  userInfo: {
     alignItems: 'center',
-    paddingVertical: 20,
   },
   headerText: {
     fontSize: 24,
@@ -105,7 +194,7 @@ const styles = StyleSheet.create({
   },
   statsText: {
     fontSize: 14,
-    color: '#FF1493',
+    color: '#828282',
   },
   editButton: {
     borderColor: '#000',
@@ -113,16 +202,26 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
+    marginTop: 8,
   },
   editButtonText: {
     fontSize: 14,
   },
   categories: {
-    paddingHorizontal: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 5,
+    borderTopColor: '#D9D9D9',
+    borderTopWidth: 1,
+    borderBottomColor: '#D9D9D9',
+    borderBottomWidth: 1,
+    marginTop: 20,
   },
   categoryText: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+    color: '#000',
   },
   categoryTags: {
     flexDirection: 'row',
@@ -131,49 +230,57 @@ const styles = StyleSheet.create({
   categoryTag: {
     backgroundColor: '#f1f1f1',
     paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 15,
+    paddingHorizontal: 15,
+    borderRadius: 6,
     marginHorizontal: 5,
+    fontSize: 12,
+    fontWeight: 'medium',
+    color: '#000',
   },
   tabs: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f1f1',
-    paddingVertical: 10,
+    paddingTop: 18,
+    paddingBottom: 14,
+    position: 'relative',
+  },
+  tabContainer: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  activeTabLine: {
+    height: 2,
+    backgroundColor: '#000',
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
   },
   tabTextActive: {
     fontSize: 16,
     fontWeight: 'bold',
-    borderBottomWidth: 2,
-    borderBottomColor: '#000',
+    color: '#000',
+    paddingBottom: 8,
   },
   tabText: {
     fontSize: 16,
-    color: '#888',
+    fontWeight: 'bold',
+    color: '#828282',
+    paddingBottom: 8,
   },
-  posts: {
+  exhibitionList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    paddingHorizontal: 10,
+    justifyContent: 'space-between',
   },
-  post: {
-    width: '45%',
+  exhibitionWrapper: {
+    width: '46%',
     marginVertical: 10,
   },
-  postImage: {
+  exhibitionImage: {
     width: '100%',
-    height: 150,
+    height: undefined,
+    aspectRatio: 3 / 4,
+    resizeMode: 'cover',
     borderRadius: 10,
-  },
-  postTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginVertical: 5,
-  },
-  postDate: {
-    fontSize: 12,
-    color: '#888',
   },
 });
