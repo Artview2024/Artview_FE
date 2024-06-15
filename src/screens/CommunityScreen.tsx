@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {ScrollView, FlatList, View, Text, TouchableOpacity} from 'react-native';
 import {
   useNavigation,
   NavigationProp,
   useRoute,
   RouteProp,
+  useScrollToTop,
 } from '@react-navigation/native';
 import {StackParamList} from '../navigator/StackParamList';
 
@@ -71,6 +72,8 @@ export default function CommunityScreen() {
   const [posts, setPosts] = useState(initialPosts);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const route = useRoute<CommunityScreenRouteProp>();
+  const ref = useRef(null);
+  useScrollToTop(ref);
 
   useEffect(() => {
     if (route.params?.newPost) {
@@ -80,7 +83,10 @@ export default function CommunityScreen() {
 
   return (
     <View style={GlobalStyle.container}>
-      <ScrollView style={{flex: 1}} showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        style={{flex: 1}}
+        showsHorizontalScrollIndicator={false}
+        ref={ref}>
         <Text style={GlobalStyle.header}>소통</Text>
         <FilterTabs activeTab={activeTab} onSelectTab={setActiveTab} />
         <FlatList

@@ -9,7 +9,11 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import {useNavigation, NavigationProp} from '@react-navigation/native';
+import {
+  useNavigation,
+  NavigationProp,
+  useScrollToTop,
+} from '@react-navigation/native';
 import CarouselParallax from '../components/CarouselParallax';
 import {StackParamList} from '../navigator/StackParamList';
 import GlobalStyle from '../styles/GlobalStyle';
@@ -68,6 +72,8 @@ const recommendedExhibitions = [
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [backgroundIndex, setBackgroundIndex] = useState(0);
+  const ref = useRef(null);
+  useScrollToTop(ref);
 
   const handleIndexChange = (index: number) => {
     setBackgroundIndex(index);
@@ -75,7 +81,10 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView showsHorizontalScrollIndicator={false} style={{flex: 1}}>
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        style={{flex: 1}}
+        ref={ref}>
         <Image
           source={carouselData[backgroundIndex % carouselData.length].image}
           style={[

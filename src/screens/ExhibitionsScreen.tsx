@@ -1,10 +1,16 @@
-import React from 'react';
-import {View, Text} from 'react-native';
+import React, {useRef} from 'react';
+import {View, Text, ScrollView} from 'react-native';
+import {useScrollToTop} from '@react-navigation/native';
 
 export default function ExhibitionsScreen() {
+  const ref = useRef(null);
+  useScrollToTop(ref);
+
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Exhibition Screen</Text>
+    <View>
+      <ScrollView ref={ref}>
+        <Text>Exhibition Screen</Text>
+      </ScrollView>
     </View>
   );
 }

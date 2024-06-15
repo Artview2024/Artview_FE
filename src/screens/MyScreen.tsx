@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   View,
   Text,
@@ -7,10 +7,14 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import {useScrollToTop} from '@react-navigation/native';
 
 export default function MyScreen() {
+  const ref = useRef(null);
+  useScrollToTop(ref);
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} ref={ref}>
       <View style={styles.header}>
         <Text style={styles.headerText}>마이</Text>
         <Image
