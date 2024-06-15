@@ -84,7 +84,7 @@ export default function CommunityScreen() {
         <Text style={GlobalStyle.header}>소통</Text>
         <FilterTabs activeTab={activeTab} onSelectTab={setActiveTab} />
         <FlatList
-          data={[...posts].reverse()} // 리스트를 역순으로 정렬하여 전달
+          data={[...posts].reverse()}
           keyExtractor={item => item.key}
           renderItem={({item}) => <CommunityCard Posts={item} />}
         />

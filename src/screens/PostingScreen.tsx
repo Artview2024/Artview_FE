@@ -53,8 +53,8 @@ export default function PostingScreen() {
   const handlePost = () => {
     const newPost = {
       key: new Date().toISOString(),
-      user: '임시 사용자', // 임시 사용자 이름
-      profile: '', // 임시 사용자 프로필 이미지 경로
+      user: '미술마니아',
+      profile: '',
       title: exhibition.name,
       date: exhibition.date,
       gallery: exhibition.gallery,
