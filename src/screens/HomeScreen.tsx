@@ -17,6 +17,7 @@ import {
 import CarouselParallax from '../components/CarouselParallax';
 import {StackParamList} from '../navigator/StackParamList';
 import GlobalStyle from '../styles/GlobalStyle';
+import Footer from '../components/Footer';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
 const PAGE_HEIGHT = Dimensions.get('window').height;
@@ -109,7 +110,7 @@ export default function HomeScreen() {
           data={carouselData}
           onIndexChange={handleIndexChange}
         />
-        <View style={GlobalStyle.container}>
+        <View style={{flex: 1, backgroundColor: '#fff', paddingLeft: 20}}>
           <View style={styles.titleContainer}>
             <Text style={styles.sectionTitle}>추천전시</Text>
             <TouchableOpacity
@@ -134,6 +135,7 @@ export default function HomeScreen() {
             keyExtractor={item => item.key}
           />
         </View>
+        <Footer></Footer>
       </ScrollView>
       <TouchableOpacity
         style={GlobalStyle.floatingButton}

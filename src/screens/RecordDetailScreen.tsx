@@ -26,7 +26,7 @@ export default function RecordDetailScreen() {
   const renderItem = ({
     item,
   }: {
-    item: {image: any; title: string; artist: string; contents: string};
+    item: {image: any; title: string; artist: string; memo: string};
   }) => (
     <View style={[{width: PAGE_WIDTH}]}>
       <Image source={item.image} style={styles.imagePreview} />
@@ -39,7 +39,7 @@ export default function RecordDetailScreen() {
       </Text>
       <Text
         style={[GlobalStyle.subText, {marginBottom: 7, fontWeight: 'regular'}]}>
-        {item.contents}
+        {item.memo}
       </Text>
     </View>
   );

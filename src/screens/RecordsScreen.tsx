@@ -31,19 +31,19 @@ const initialRecords = [
         image: require('../assets/images/carousel4.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '좋다. 멋있고 짱이다.',
+        memo: '좋다. 멋있고 짱이다.',
       },
       {
         image: require('../assets/images/carousel6.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '무슨 소린지 모르겠다. ',
+        memo: '무슨 소린지 모르겠다. ',
       },
       {
         image: require('../assets/images/carousel7.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '강렬한 색채',
+        memo: '강렬한 색채',
       },
     ],
   },
@@ -59,19 +59,19 @@ const initialRecords = [
         image: require('../assets/images/carousel5.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '좋다. ',
+        memo: '좋다. ',
       },
       {
         image: require('../assets/images/carousel4.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '좋다. ',
+        memo: '좋다. ',
       },
       {
         image: require('../assets/images/carousel6.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '좋다. ',
+        memo: '좋다. ',
       },
     ],
   },
@@ -87,19 +87,19 @@ const initialRecords = [
         image: require('../assets/images/carousel6.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '좋다. ',
+        memo: '좋다. ',
       },
       {
         image: require('../assets/images/carousel7.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '좋다. ',
+        memo: '좋다. ',
       },
       {
         image: require('../assets/images/carousel4.jpg'),
         title: '뉴욕거리',
         artist: '김민형',
-        contents: '좋다. ',
+        memo: '좋다. ',
       },
     ],
   },
@@ -116,7 +116,9 @@ export default function RecordsScreen() {
     if (isFocused) {
       const newRecord = route.params?.newRecord;
       if (newRecord) {
-        newRecord.id = Math.random();
+        // 새로운 기록의 ID를 추가합니다
+        newRecord.id = myRecords.length + 1;
+        // 기존 기록에 새로운 기록을 추가합니다
         setMyRecords(prevRecords => [...prevRecords, newRecord]);
       }
     }
@@ -138,7 +140,6 @@ export default function RecordsScreen() {
     <View style={[GlobalStyle.container]}>
       <ScrollView>
         <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-          {/* <TouchableOpacity onPress={() => navigation.goBack()}> */}
           <TouchableOpacity onPress={() => navigation.navigate('Home')}>
             <BackIcon
               name="chevron-back"

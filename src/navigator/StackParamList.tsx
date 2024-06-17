@@ -9,7 +9,7 @@ export type Record = {
     image: any;
     title: string;
     artist: string;
-    contents: string;
+    memo: string;
   }>;
 };
 
@@ -43,5 +43,5 @@ export type StackParamList = {
   };
   PostingStart: undefined;
   RecordDetail: {record: Record};
-  Community: {newPost?: any}; // Add this line
+  Community: {newPost?: any};
 };

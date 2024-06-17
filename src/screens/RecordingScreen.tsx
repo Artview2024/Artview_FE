@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   ScrollView,
@@ -33,6 +33,7 @@ export default function RecordingScreen() {
   const [artist, setArtist] = useState('');
   const [memo, setMemo] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [artIndex, setArtIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,6 +45,7 @@ export default function RecordingScreen() {
   const {exhibitionName, exhibitionDate, gallery, artList = []} = route.params;
 
   const PAGE_WIDTH = Dimensions.get('window').width - 40;
+  const scrollViewRef = useRef<ScrollView>(null);
 
   async function checkCameraPermissions() {
     const cameraGranted = await PermissionsAndroid.check(
@@ -88,7 +90,11 @@ export default function RecordingScreen() {
 
   const handleTakePhoto = () => {
     ImagePicker.launchCamera(
-      {mediaType: 'photo', saveToPhotos: true},
+      {
+        mediaType: 'photo',
+        saveToPhotos: true,
+        includeBase64: true, // Base64 데이터를 포함하도록 설정
+      },
       response => {
         if (response.didCancel) {
           console.log('User cancelled camera');
@@ -99,31 +105,49 @@ export default function RecordingScreen() {
             response.assets && response.assets[0].uri
               ? response.assets[0].uri
               : null;
+          const base64 =
+            response.assets && response.assets[0].base64
+              ? response.assets[0].base64
+              : null;
           setImageUri(uri || '');
+          setImageBase64(base64 || '');
         }
       },
     );
   };
 
   const handleSelectImage = () => {
-    ImagePicker.launchImageLibrary({mediaType: 'photo'}, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        console.log('ImagePicker Error: ', response.errorMessage);
-      } else {
-        const uri =
-          response.assets && response.assets[0].uri
-            ? response.assets[0].uri
-            : null;
-        setImageUri(uri || '');
-      }
-    });
+    ImagePicker.launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: true, // Base64 데이터를 포함하도록 설정
+      },
+      response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+        } else {
+          const uri =
+            response.assets && response.assets[0].uri
+              ? response.assets[0].uri
+              : null;
+          const base64 =
+            response.assets && response.assets[0].base64
+              ? response.assets[0].base64
+              : null;
+          setImageUri(uri || '');
+          setImageBase64(base64 || '');
+        }
+      },
+    );
   };
 
   const handleNext = () => {
     const newArt = {
-      image: imageUri || '',
+      image: imageBase64
+        ? `data:image/jpeg;base64,${imageBase64}`
+        : imageUri || '', // Base64 데이터 또는 URI를 사용
       title: title || '',
       artist: artist || '',
       memo: memo || '',
@@ -147,7 +171,10 @@ export default function RecordingScreen() {
     setArtist('');
     setMemo('');
     setImageUri(null);
+    setImageBase64(null);
     setArtIndex(artIndex + 1);
+
+    scrollViewRef.current?.scrollTo({y: 0, animated: false});
   };
 
   const handlePrevious = () => {
@@ -158,12 +185,16 @@ export default function RecordingScreen() {
       setMemo(prevArt.memo);
       setImageUri(prevArt.image);
       setArtIndex(artIndex - 1);
+
+      scrollViewRef.current?.scrollTo({y: 0, animated: false});
     }
   };
 
   const handleEndTour = () => {
     const newArt = {
-      image: imageUri || '',
+      image: imageBase64
+        ? `data:image/jpeg;base64,${imageBase64}`
+        : imageUri || '', // Base64 데이터 또는 URI를 사용
       title: title,
       artist: artist,
       memo: memo,
@@ -201,7 +232,7 @@ export default function RecordingScreen() {
 
   return (
     <View style={[GlobalStyle.container]}>
-      <ScrollView>
+      <ScrollView ref={scrollViewRef}>
         <View>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <BackIcon
