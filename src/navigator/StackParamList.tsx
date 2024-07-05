@@ -3,10 +3,10 @@ export type Record = {
   name: string;
   date: string;
   gallery: string;
-  mainImage: any;
+  mainImage: string;
   rating: string;
   artList: Array<{
-    image: any;
+    image: string;
     title: string;
     artist: string;
     memo: string;
