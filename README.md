@@ -1,8 +1,24 @@
+Commit Convention
+
+---
+
+| 작성                 | 설명                         |
+| -------------------- | ---------------------------- |
+| [FEAT]#이슈번호 내용 | 기능 추가                    |
+| [FIX]#이슈번호 내용  | 버그 및 오류 수정            |
+| [CHORE]내용          | 자잘한 수정 및 빌드 업데이트 |
+| [DESIGN]내용         | UI 변경                      |
+| [DOCS]#이슈번호 내용 | 문서 수정                    |
+
+---
+
+<br></br>
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+> **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
 ## Step 1: Start the Metro Server
 
