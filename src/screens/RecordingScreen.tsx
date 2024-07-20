@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -63,9 +63,9 @@ export default function RecordingScreen() {
     initialArtList.map((item, index) => ({
       id: index.toString(),
       image: item.image || '',
-      title: item.title,
-      artist: item.artist,
-      memo: item.memo,
+      title: item.title || '',
+      artist: item.artist || '',
+      memo: item.memo || '',
     })),
   );
 
@@ -186,6 +186,8 @@ export default function RecordingScreen() {
       updatedArtList.push(newArt);
     }
 
+    setArtList(updatedArtList);
+
     navigation.navigate('Recording', {
       exhibitionName,
       exhibitionDate,
@@ -207,12 +209,13 @@ export default function RecordingScreen() {
   const handlePrevious = () => {
     if (artIndex > 0) {
       const prevArt = artList[artIndex - 1];
-      setTitle(prevArt.title);
-      setArtist(prevArt.artist);
-      setMemo(prevArt.memo);
-      setImageUri(prevArt.image);
+      if (prevArt) {
+        setTitle(prevArt.title);
+        setArtist(prevArt.artist);
+        setMemo(prevArt.memo);
+        setImageUri(prevArt.image);
+      }
       setArtIndex(artIndex - 1);
-
       scrollViewRef.current?.scrollTo({y: 0, animated: false});
     }
   };

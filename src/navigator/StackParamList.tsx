@@ -23,9 +23,9 @@ export type StackParamList = {
     gallery: string;
     artList: Array<{
       image: string | null;
-      title: string;
-      artist: string;
-      memo: string;
+      title: string | null;
+      artist: string | null;
+      memo: string | null;
     }>;
     artIndex?: number;
   };

@@ -11,6 +11,7 @@ import {
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import GlobalStyle from '../styles/GlobalStyle';
 import MenuIcon from 'react-native-vector-icons/AntDesign';
 
@@ -29,7 +30,6 @@ type DrawableSheetProps = {
 
 const DrawableSheet = forwardRef(
   ({artList, setArtList}: DrawableSheetProps, ref) => {
-    const windowHeight = Dimensions.get('window').height;
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
     useImperativeHandle(ref, () => ({
@@ -60,45 +60,57 @@ const DrawableSheet = forwardRef(
 
     return (
       <Modal
-        style={GlobalStyle.container}
         visible={isBottomSheetOpen}
         animationType="slide"
         transparent={true}
         onRequestClose={() => setIsBottomSheetOpen(false)}>
-        <View style={styles.sheetContainer}>
-          <View style={styles.sheetContent}>
-            <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text style={styles.sheetTitle}>작품목록 편집</Text>
-              <TouchableOpacity onPress={() => setIsBottomSheetOpen(false)}>
-                <MenuIcon name="close" size={24} color={'black'} />
-              </TouchableOpacity>
-            </View>
+        <GestureHandlerRootView style={{width: '100%', height: '100%'}}>
+          <View style={styles.overlay}>
+            <View style={styles.sheetContainer}>
+              <View style={styles.sheetContent}>
+                <View style={styles.header}>
+                  <Text style={styles.sheetTitle}>작품목록 편집</Text>
+                  <TouchableOpacity onPress={() => setIsBottomSheetOpen(false)}>
+                    <MenuIcon name="close" size={24} color={'black'} />
+                  </TouchableOpacity>
+                </View>
 
-            <DraggableFlatList
-              data={artList}
-              renderItem={renderItem}
-              keyExtractor={item => item.id}
-              onDragEnd={({data}) => setArtList(data)}
-            />
+                <DraggableFlatList
+                  data={artList}
+                  renderItem={renderItem}
+                  keyExtractor={item => item.id}
+                  onDragEnd={({data}) => setArtList(data)}
+                />
+              </View>
+            </View>
           </View>
-        </View>
+        </GestureHandlerRootView>
       </Modal>
     );
   },
 );
 
 const styles = StyleSheet.create({
-  sheetContainer: {
+  overlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     justifyContent: 'flex-end',
   },
-  sheetContent: {
+  sheetContainer: {
     backgroundColor: '#fff',
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '80%',
+  },
+  sheetContent: {
+    backgroundColor: '#fff',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   sheetTitle: {
     fontSize: 18,
@@ -123,8 +135,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
   },
 });
 
