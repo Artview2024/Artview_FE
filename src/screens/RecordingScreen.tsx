@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   View,
   ScrollView,
@@ -8,8 +8,6 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  PermissionsAndroid,
-  Alert,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import BackIcon from 'react-native-vector-icons/Ionicons';
@@ -22,10 +20,12 @@ import {
   NavigationProp,
 } from '@react-navigation/native';
 import {StackParamList} from '../navigator/StackParamList';
-import * as ImagePicker from 'react-native-image-picker';
 import RatingModal from '../components/RatingModal';
 import DrawableSheet from '../components/DrawableSheet';
 import axios from 'axios';
+import {useImagePicker} from '../hooks/useImagePicker';
+import {useCameraPermission} from '../hooks/useCameraPermissions';
+import {useFormState} from '../hooks/useFormState';
 
 const cameraIcon = require('../assets/icons/camera-icon.png');
 
@@ -50,124 +50,39 @@ export default function RecordingScreen() {
     artList: initialArtList,
   } = route.params;
 
-  const [title, setTitle] = useState('');
-  const [artist, setArtist] = useState('');
-  const [memo, setMemo] = useState('');
-  const [imageUri, setImageUri] = useState<string>('');
-  const [imageBase64, setImageBase64] = useState<string>('');
-  const [toggleCheckBox, setToggleCheckBox] = useState(false);
-  const [artIndex, setArtIndex] = useState(0);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [finalData, setFinalData] = useState<any>(null);
-  const [artList, setArtList] = useState<ArtItem[]>(
-    initialArtList.map((item, index) => ({
-      id: index.toString(),
-      image: item.image || '',
-      title: item.title || '',
-      artist: item.artist || '',
-      memo: item.memo || '',
-    })),
-  );
+  const {
+    imageUri,
+    imageBase64,
+    handleTakePhoto,
+    handleSelectImage,
+    setImageUri,
+    setImageBase64,
+  } = useImagePicker();
+
+  const {
+    title,
+    setTitle,
+    artist,
+    setArtist,
+    memo,
+    setMemo,
+    toggleCheckBox,
+    setToggleCheckBox,
+    artIndex,
+    setArtIndex,
+    artList,
+    setArtList,
+    resetForm,
+  } = useFormState(initialArtList);
+
+  const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
 
   const PAGE_WIDTH = Dimensions.get('window').width - 40;
   const scrollViewRef = useRef<ScrollView>(null);
   const drawableSheetRef = useRef<any>(null);
 
-  async function checkCameraPermissions() {
-    const cameraGranted = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
-    const storageGranted = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-    );
-    return cameraGranted && storageGranted;
-  }
-
-  async function requestCameraPermission() {
-    const hasPermission = await checkCameraPermissions();
-    if (!hasPermission) {
-      try {
-        const granted = await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.CAMERA,
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        ]);
-        if (
-          granted['android.permission.CAMERA'] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          granted['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-            PermissionsAndroid.RESULTS.GRANTED
-        ) {
-          console.log('카메라, 저장소 권한');
-          handleTakePhoto();
-        } else {
-          console.log('Camera permission denied');
-          Alert.alert(
-            '권한이 거절되었습니다.',
-            '해당 기능을 사용하기 위해서는 카메라 권한이 허용되어야 합니다.',
-          );
-        }
-      } catch (err) {
-        console.warn(err);
-      }
-    } else {
-      handleTakePhoto();
-    }
-  }
-
-  const handleTakePhoto = () => {
-    ImagePicker.launchCamera(
-      {
-        mediaType: 'photo',
-        saveToPhotos: true,
-        includeBase64: true,
-      },
-      response => {
-        if (response.didCancel) {
-          console.log('User cancelled camera');
-        } else if (response.errorCode) {
-          console.log('Camera Error: ', response.errorMessage);
-        } else {
-          const uri =
-            response.assets && response.assets[0].uri
-              ? response.assets[0].uri
-              : '';
-          const base64 =
-            response.assets && response.assets[0].base64
-              ? response.assets[0].base64
-              : '';
-          setImageUri(uri);
-          setImageBase64(base64);
-        }
-      },
-    );
-  };
-
-  const handleSelectImage = () => {
-    ImagePicker.launchImageLibrary(
-      {
-        mediaType: 'photo',
-        includeBase64: true,
-      },
-      response => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorCode) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-        } else {
-          const uri =
-            response.assets && response.assets[0].uri
-              ? response.assets[0].uri
-              : '';
-          const base64 =
-            response.assets && response.assets[0].base64
-              ? response.assets[0].base64
-              : '';
-          setImageUri(uri);
-          setImageBase64(base64);
-        }
-      },
-    );
-  };
+  const [modalVisible, setModalVisible] = useState(false);
+  const [finalData, setFinalData] = useState<any>(null);
 
   const handleNext = () => {
     const newArt: ArtItem = {
@@ -196,12 +111,9 @@ export default function RecordingScreen() {
       artIndex: artIndex + 1,
     });
 
-    setTitle('');
-    setArtist('');
-    setMemo('');
+    resetForm();
     setImageUri('');
     setImageBase64('');
-    setArtIndex(artIndex + 1);
 
     scrollViewRef.current?.scrollTo({y: 0, animated: false});
   };
