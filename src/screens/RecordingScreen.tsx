@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import BackIcon from 'react-native-vector-icons/Ionicons';
+import MenuIcon from 'react-native-vector-icons/Feather';
 import GlobalStyle from '../styles/GlobalStyle';
 import {
   useNavigation,
@@ -23,29 +24,54 @@ import {
 import {StackParamList} from '../navigator/StackParamList';
 import * as ImagePicker from 'react-native-image-picker';
 import RatingModal from '../components/RatingModal';
+import DrawableSheet from '../components/DrawableSheet';
+import axios from 'axios';
 
 const cameraIcon = require('../assets/icons/camera-icon.png');
+
+type ArtItem = {
+  id: string;
+  image: string;
+  title: string;
+  artist: string;
+  memo: string;
+};
 
 type RecordingScreenRouteProp = RouteProp<StackParamList, 'Recording'>;
 
 export default function RecordingScreen() {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const route = useRoute<RecordingScreenRouteProp>();
+
+  const {
+    exhibitionName,
+    exhibitionDate,
+    gallery,
+    artList: initialArtList,
+  } = route.params;
+
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [memo, setMemo] = useState('');
-  const [imageUri, setImageUri] = useState<string | null>(null);
-  const [imageBase64, setImageBase64] = useState<string | null>(null);
+  const [imageUri, setImageUri] = useState<string>('');
+  const [imageBase64, setImageBase64] = useState<string>('');
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   const [artIndex, setArtIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [finalData, setFinalData] = useState<any>(null);
-
-  const navigation = useNavigation<NavigationProp<StackParamList>>();
-  const route = useRoute<RecordingScreenRouteProp>();
-
-  const {exhibitionName, exhibitionDate, gallery, artList = []} = route.params;
+  const [artList, setArtList] = useState<ArtItem[]>(
+    initialArtList.map((item, index) => ({
+      id: index.toString(),
+      image: item.image || '',
+      title: item.title || '',
+      artist: item.artist || '',
+      memo: item.memo || '',
+    })),
+  );
 
   const PAGE_WIDTH = Dimensions.get('window').width - 40;
   const scrollViewRef = useRef<ScrollView>(null);
+  const drawableSheetRef = useRef<any>(null);
 
   async function checkCameraPermissions() {
     const cameraGranted = await PermissionsAndroid.check(
@@ -84,7 +110,7 @@ export default function RecordingScreen() {
         console.warn(err);
       }
     } else {
-      handleTakePhoto(); // 권한이 이미 허용된 상태라면 바로 사진 촬영
+      handleTakePhoto();
     }
   }
 
@@ -93,7 +119,7 @@ export default function RecordingScreen() {
       {
         mediaType: 'photo',
         saveToPhotos: true,
-        includeBase64: true, // Base64 데이터를 포함하도록 설정
+        includeBase64: true,
       },
       response => {
         if (response.didCancel) {
@@ -104,13 +130,13 @@ export default function RecordingScreen() {
           const uri =
             response.assets && response.assets[0].uri
               ? response.assets[0].uri
-              : null;
+              : '';
           const base64 =
             response.assets && response.assets[0].base64
               ? response.assets[0].base64
-              : null;
-          setImageUri(uri || '');
-          setImageBase64(base64 || '');
+              : '';
+          setImageUri(uri);
+          setImageBase64(base64);
         }
       },
     );
@@ -120,7 +146,7 @@ export default function RecordingScreen() {
     ImagePicker.launchImageLibrary(
       {
         mediaType: 'photo',
-        includeBase64: true, // Base64 데이터를 포함하도록 설정
+        includeBase64: true,
       },
       response => {
         if (response.didCancel) {
@@ -131,23 +157,24 @@ export default function RecordingScreen() {
           const uri =
             response.assets && response.assets[0].uri
               ? response.assets[0].uri
-              : null;
+              : '';
           const base64 =
             response.assets && response.assets[0].base64
               ? response.assets[0].base64
-              : null;
-          setImageUri(uri || '');
-          setImageBase64(base64 || '');
+              : '';
+          setImageUri(uri);
+          setImageBase64(base64);
         }
       },
     );
   };
 
   const handleNext = () => {
-    const newArt = {
+    const newArt: ArtItem = {
+      id: Math.random().toString(),
       image: imageBase64
         ? `data:image/jpeg;base64,${imageBase64}`
-        : imageUri || '', // Base64 데이터 또는 URI를 사용
+        : imageUri || '',
       title: title || '',
       artist: artist || '',
       memo: memo || '',
@@ -158,6 +185,8 @@ export default function RecordingScreen() {
     } else {
       updatedArtList.push(newArt);
     }
+
+    setArtList(updatedArtList);
 
     navigation.navigate('Recording', {
       exhibitionName,
@@ -170,8 +199,8 @@ export default function RecordingScreen() {
     setTitle('');
     setArtist('');
     setMemo('');
-    setImageUri(null);
-    setImageBase64(null);
+    setImageUri('');
+    setImageBase64('');
     setArtIndex(artIndex + 1);
 
     scrollViewRef.current?.scrollTo({y: 0, animated: false});
@@ -180,24 +209,26 @@ export default function RecordingScreen() {
   const handlePrevious = () => {
     if (artIndex > 0) {
       const prevArt = artList[artIndex - 1];
-      setTitle(prevArt.title);
-      setArtist(prevArt.artist);
-      setMemo(prevArt.memo);
-      setImageUri(prevArt.image);
+      if (prevArt) {
+        setTitle(prevArt.title);
+        setArtist(prevArt.artist);
+        setMemo(prevArt.memo);
+        setImageUri(prevArt.image);
+      }
       setArtIndex(artIndex - 1);
-
       scrollViewRef.current?.scrollTo({y: 0, animated: false});
     }
   };
 
   const handleEndTour = () => {
-    const newArt = {
+    const newArt: ArtItem = {
+      id: Math.random().toString(),
       image: imageBase64
         ? `data:image/jpeg;base64,${imageBase64}`
-        : imageUri || '', // Base64 데이터 또는 URI를 사용
-      title: title,
-      artist: artist,
-      memo: memo,
+        : imageUri || '',
+      title,
+      artist,
+      memo,
     };
     const updatedArtList = [...artList];
     if (artIndex < updatedArtList.length) {
@@ -207,6 +238,7 @@ export default function RecordingScreen() {
     }
 
     const finalData = {
+      id: Math.random().toString(),
       name: exhibitionName,
       date: exhibitionDate,
       gallery: gallery,
@@ -218,15 +250,25 @@ export default function RecordingScreen() {
     setModalVisible(true);
   };
 
-  const handleRatingSubmit = (rating: number) => {
+  const handleRatingSubmit = async (rating: number) => {
     if (finalData) {
       const updatedFinalData = {
         ...finalData,
         rating: rating.toString(),
-        id: Math.random().toString(),
       };
-      setModalVisible(false);
-      navigation.navigate('Records', {newRecord: updatedFinalData});
+
+      try {
+        const response = await axios.post(
+          '/api/reviews/save',
+          updatedFinalData,
+        );
+        console.log('Server Response:', response.data);
+
+        setModalVisible(false);
+        navigation.navigate('Records', {newRecord: updatedFinalData});
+      } catch (error) {
+        console.error('Error while saving review:', error);
+      }
     }
   };
 
@@ -243,9 +285,25 @@ export default function RecordingScreen() {
             />
           </TouchableOpacity>
         </View>
-        <Text style={[GlobalStyle.sectionTitle, {paddingBottom: 0}]}>
-          {exhibitionName}
-        </Text>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <Text style={[GlobalStyle.sectionTitle, {paddingBottom: 0}]}>
+            {exhibitionName}
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              if (drawableSheetRef.current) {
+                drawableSheetRef.current.handleOpenBottomSheet();
+              }
+            }}>
+            <MenuIcon
+              name="menu"
+              size={24}
+              color={'black'}
+              style={{paddingRight: 3, paddingTop: 18}}
+            />
+          </TouchableOpacity>
+        </View>
+
         <Text style={{paddingTop: 7, paddingBottom: 13}}>
           {exhibitionDate} | {gallery}
         </Text>
@@ -316,6 +374,11 @@ export default function RecordingScreen() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSubmit={handleRatingSubmit}
+      />
+      <DrawableSheet
+        ref={drawableSheetRef}
+        artList={artList}
+        setArtList={setArtList}
       />
     </View>
   );

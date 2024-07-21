@@ -25,24 +25,24 @@ const PAGE_HEIGHT = Dimensions.get('window').height;
 const carouselData = [
   {
     key: '1',
-    title: '김민형 사진전',
+    title: '이경준 사진전',
     date: '2023.12.18',
-    gallery: '아트가가 갤러리',
-    image: require('../assets/images/carousel7.jpg'),
+    gallery: '서울 미술관',
+    image: require('../assets/images/artList3.jpg'),
   },
   {
     key: '2',
-    title: '김민형 사진전',
+    title: '인상주의의 출현',
     date: '2023.12.18',
-    gallery: '아트가가 갤러리',
-    image: require('../assets/images/carousel5.jpg'),
+    gallery: '서울 미술관',
+    image: require('../assets/images/carousel4.jpg'),
   },
   {
     key: '3',
-    title: '김민형 사진전',
+    title: 'SF 2021:판타지 오디세이',
     date: '2023.12.18',
-    gallery: '아트가가 갤러리',
-    image: require('../assets/images/carousel4.jpg'),
+    gallery: '서울시립북서울미술관',
+    image: require('../assets/images/carousel7.jpg'),
   },
 ];
 

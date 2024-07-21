@@ -18,19 +18,20 @@ import GlobalStyle from '../styles/GlobalStyle';
 const exhibitions = [
   {
     id: 1,
-    name: '김민형 사진전',
+    name: '이경준 사진전',
     date: '2023.12.18',
     gallery: '서울미술관',
-    image: require('../assets/images/carousel4.jpg'),
+    image: require('../assets/images/artList3.jpg'),
     rating: '4.5',
     imageList: [
-      require('../assets/images/carousel4.jpg'),
-      require('../assets/images/carousel4.jpg'),
+      require('../assets/images/artList3.jpg'),
+      require('../assets/images/artList2.jpg'),
+      require('../assets/images/artList1.jpg'),
     ],
   },
   {
     id: 2,
-    name: '모던',
+    name: '인상주의의 출현',
     date: '2023.11.11',
     gallery: '서울미술관',
     image: require('../assets/images/carousel4.jpg'),
@@ -43,10 +44,10 @@ const exhibitions = [
   },
   {
     id: 3,
-    name: '끝없는 계단',
+    name: '2021 SF:오디세이 서울',
     date: '2022.10.28',
     gallery: '서울미술관',
-    image: require('../assets/images/carousel4.jpg'),
+    image: require('../assets/images/carousel7.jpg'),
     rating: '3.8',
     imageList: [
       require('../assets/images/carousel4.jpg'),

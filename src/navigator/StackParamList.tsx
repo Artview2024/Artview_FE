@@ -3,10 +3,10 @@ export type Record = {
   name: string;
   date: string;
   gallery: string;
-  mainImage: any;
+  mainImage: string;
   rating: string;
   artList: Array<{
-    image: any;
+    image: string;
     title: string;
     artist: string;
     memo: string;
@@ -23,9 +23,9 @@ export type StackParamList = {
     gallery: string;
     artList: Array<{
       image: string | null;
-      title: string;
-      artist: string;
-      memo: string;
+      title: string | null;
+      artist: string | null;
+      memo: string | null;
     }>;
     artIndex?: number;
   };

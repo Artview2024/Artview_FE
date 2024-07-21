@@ -21,38 +21,38 @@ import GlobalStyle from '../styles/GlobalStyle';
 const initialRecords = [
   {
     id: 1,
-    name: '김민형 사진전',
+    name: '이경준 사진전',
     date: '2023.12.18',
     gallery: '서울미술관',
-    mainImage: require('../assets/images/carousel4.jpg'),
+    mainImage: require('../assets/images/artList3.jpg'),
     rating: '4.5',
     artList: [
       {
-        image: require('../assets/images/carousel4.jpg'),
-        title: '뉴욕거리',
+        image: require('../assets/images/artList3.jpg'),
+        title: '뉴욕의 밤',
         artist: '김민형',
         memo: '좋다. 멋있고 짱이다.',
       },
       {
-        image: require('../assets/images/carousel6.jpg'),
-        title: '뉴욕거리',
+        image: require('../assets/images/artList2.jpg'),
+        title: '뉴욕 건물',
         artist: '김민형',
-        memo: '무슨 소린지 모르겠다. ',
+        memo: '대칭이 좋다. ',
       },
       {
-        image: require('../assets/images/carousel7.jpg'),
-        title: '뉴욕거리',
+        image: require('../assets/images/artList1.jpg'),
+        title: '갈색 건물',
         artist: '김민형',
-        memo: '강렬한 색채',
+        memo: '예쁘다',
       },
     ],
   },
   {
     id: 2,
-    name: '모던',
+    name: '인상주의의 출현',
     date: '2023.11.11',
     gallery: '서울미술관',
-    mainImage: require('../assets/images/carousel5.jpg'),
+    mainImage: require('../assets/images/carousel4.jpg'),
     rating: '4.5',
     artList: [
       {
@@ -77,10 +77,10 @@ const initialRecords = [
   },
   {
     id: 3,
-    name: '끝없는 계단',
+    name: 'SF 2021:판타지 오디세이',
     date: '2022.10.28',
-    gallery: '서울미술관',
-    mainImage: require('../assets/images/carousel6.jpg'),
+    gallery: '서울시립북서울미술관',
+    mainImage: require('../assets/images/carousel7.jpg'),
     rating: '4.5',
     artList: [
       {
@@ -100,6 +100,22 @@ const initialRecords = [
         title: '뉴욕거리',
         artist: '김민형',
         memo: '좋다. ',
+      },
+    ],
+  },
+  {
+    id: 4,
+    name: '디미 전시회',
+    date: '2024.06.17',
+    gallery: '서울여대',
+    mainImage: require('../assets/images/android.png'),
+    rating: '4.0',
+    artList: [
+      {
+        image: require('../assets/images/android.png'),
+        title: '티비에 바둑판',
+        artist: '드로이드 안',
+        memo: '티비..',
       },
     ],
   },

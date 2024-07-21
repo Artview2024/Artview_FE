@@ -5,6 +5,7 @@ import DatePicker from 'react-native-date-picker';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../styles/GlobalStyle';
 import {StackParamList} from '../navigator/StackParamList';
+import axios from 'axios';
 
 export default function RecordingStartScreen() {
   const [exhibition, setExhibition] = useState('');
@@ -22,7 +23,28 @@ export default function RecordingStartScreen() {
       : '날짜 선택하기';
   };
 
-  const handleStartViewing = () => {
+  // const handleStartRecording = async () => {
+  //   try {
+  //     const response = await axios.post('/api/reviews/save', {
+  //       exhibitionName: exhibition,
+  //       exhibitionDate: formatDate(date),
+  //       gallery: location,
+  //       artList: [],
+  //     });
+
+  //     console.log('Server Response:', response.data);
+
+  //     navigation.navigate('Recording', {
+  //       exhibitionName: exhibition,
+  //       exhibitionDate: formatDate(date),
+  //       gallery: location,
+  //       artList: [],
+  //     });
+  //   } catch (error) {
+  //     console.error('Error while saving review:', error);
+  //   }
+  // };
+  const handleStartRecording = async () => {
     navigation.navigate('Recording', {
       exhibitionName: exhibition,
       exhibitionDate: formatDate(date),
@@ -30,7 +52,6 @@ export default function RecordingStartScreen() {
       artList: [],
     });
   };
-
   return (
     <View style={GlobalStyle.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -84,7 +105,7 @@ export default function RecordingStartScreen() {
           isFormFilled ? GlobalStyle.activeButton : GlobalStyle.inactiveButton,
         ]}
         disabled={!isFormFilled}
-        onPress={handleStartViewing}>
+        onPress={handleStartRecording}>
         <Text style={[GlobalStyle.buttonText]}>기록 시작</Text>
       </TouchableOpacity>
     </View>
