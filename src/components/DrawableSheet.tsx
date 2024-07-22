@@ -5,15 +5,15 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
   Image,
 } from 'react-native';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import GlobalStyle from '../styles/GlobalStyle';
 import MenuIcon from 'react-native-vector-icons/AntDesign';
+
+const reorderIcon = require('../assets/icons/reorder-icon.png');
 
 type ArtItem = {
   id: string;
@@ -98,6 +98,7 @@ const DrawableSheet = forwardRef(
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.artist}>{item.artist}</Text>
           </View>
+          <Image source={reorderIcon} style={styles.reorderIcon} />
         </TouchableOpacity>
       );
     };
@@ -224,6 +225,11 @@ const styles = StyleSheet.create({
     borderRightWidth: 2,
     borderColor: 'white',
     transform: [{rotate: '45deg'}, {translateX: -1}, {translateY: -1}],
+  },
+  reorderIcon: {
+    width: 16,
+    height: 14.5,
+    marginLeft: 'auto',
   },
 });
 
