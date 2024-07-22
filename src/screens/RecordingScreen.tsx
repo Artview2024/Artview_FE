@@ -171,7 +171,7 @@ export default function RecordingScreen() {
 
       try {
         const response = await axios.post(
-          '/api/reviews/save',
+          '13.125.81.126/api/reviews/save',
           updatedFinalData,
         );
         console.log('Server Response:', response.data);

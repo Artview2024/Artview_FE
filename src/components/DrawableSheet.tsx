@@ -28,9 +28,25 @@ type DrawableSheetProps = {
   setArtList: (data: ArtItem[]) => void;
 };
 
+type CustomCheckBoxProps = {
+  isChecked: boolean;
+  onPress: () => void;
+};
+
+const CustomCheckBox = ({isChecked, onPress}: CustomCheckBoxProps) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.checkboxContainer}>
+      <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]}>
+        {isChecked && <View style={styles.checkmark} />}
+      </View>
+    </TouchableOpacity>
+  );
+};
+
 const DrawableSheet = forwardRef(
   ({artList, setArtList}: DrawableSheetProps, ref) => {
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+    const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
     useImperativeHandle(ref, () => ({
       handleOpenBottomSheet() {
@@ -41,6 +57,30 @@ const DrawableSheet = forwardRef(
       },
     }));
 
+    const toggleSelectAll = () => {
+      if (selectedItems.size === artList.length) {
+        setSelectedItems(new Set());
+      } else {
+        setSelectedItems(new Set(artList.map(item => item.id)));
+      }
+    };
+
+    const toggleSelectItem = (id: string) => {
+      const newSelectedItems = new Set(selectedItems);
+      if (newSelectedItems.has(id)) {
+        newSelectedItems.delete(id);
+      } else {
+        newSelectedItems.add(id);
+      }
+      setSelectedItems(newSelectedItems);
+    };
+
+    const deleteSelectedItems = () => {
+      const newArtList = artList.filter(item => !selectedItems.has(item.id));
+      setArtList(newArtList);
+      setSelectedItems(new Set());
+    };
+
     const renderItem = ({item, drag, isActive}: RenderItemParams<ArtItem>) => {
       return (
         <TouchableOpacity
@@ -49,6 +89,10 @@ const DrawableSheet = forwardRef(
             {backgroundColor: isActive ? '#f0f0f0' : '#fff'},
           ]}
           onLongPress={drag}>
+          <CustomCheckBox
+            isChecked={selectedItems.has(item.id)}
+            onPress={() => toggleSelectItem(item.id)}
+          />
           <Image source={{uri: item.image}} style={styles.image} />
           <View style={styles.textContainer}>
             <Text style={styles.title}>{item.title}</Text>
@@ -74,7 +118,22 @@ const DrawableSheet = forwardRef(
                     <MenuIcon name="close" size={24} color={'black'} />
                   </TouchableOpacity>
                 </View>
-
+                <View style={styles.header}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                    <CustomCheckBox
+                      isChecked={selectedItems.size === artList.length}
+                      onPress={toggleSelectAll}
+                    />
+                    <Text style={styles.artist}>전체선택</Text>
+                  </View>
+                  <TouchableOpacity onPress={deleteSelectedItems}>
+                    <Text style={styles.select}>삭제</Text>
+                  </TouchableOpacity>
+                </View>
                 <DraggableFlatList
                   data={artList}
                   renderItem={renderItem}
@@ -110,11 +169,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
   },
   sheetTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'black',
+  },
+  select: {
+    fontSize: 14,
+    color: '#4E4E4E',
   },
   image: {
     width: 50,
@@ -126,15 +190,40 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
   },
   artist: {
     fontSize: 14,
-    color: '#888',
+    color: 'black',
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
+    paddingBottom: 13,
+  },
+  checkboxContainer: {
+    marginRight: 10,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: '#4E4E4E',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkedCheckbox: {
+    backgroundColor: '#4E4E4E',
+  },
+  checkmark: {
+    width: 6,
+    height: 12,
+    borderBottomWidth: 2,
+    borderRightWidth: 2,
+    borderColor: 'white',
+    transform: [{rotate: '45deg'}, {translateX: -1}, {translateY: -1}],
   },
 });
 
