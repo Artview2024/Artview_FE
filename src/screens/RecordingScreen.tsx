@@ -1,15 +1,5 @@
 import React, {useRef, useState} from 'react';
-import {
-  View,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  Dimensions,
-} from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
+import {View, ScrollView, Text, TouchableOpacity} from 'react-native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import MenuIcon from 'react-native-vector-icons/Feather';
 import GlobalStyle from '../styles/GlobalStyle';
@@ -26,8 +16,8 @@ import axios from 'axios';
 import {useImagePicker} from '../hooks/useImagePicker';
 import {useCameraPermission} from '../hooks/useCameraPermissions';
 import {useFormState} from '../hooks/useFormState';
-
-const cameraIcon = require('../assets/icons/camera-icon.png');
+import {StyleSheet} from 'react-native';
+import RecordingTemplate from '../components/RecordingTemplate';
 
 type ArtItem = {
   id: string;
@@ -77,12 +67,24 @@ export default function RecordingScreen() {
 
   const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
 
-  const PAGE_WIDTH = Dimensions.get('window').width - 40;
   const scrollViewRef = useRef<ScrollView>(null);
   const drawableSheetRef = useRef<any>(null);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [finalData, setFinalData] = useState<any>(null);
+
+  const handleCheckBoxChange = (newValue: boolean) => {
+    setToggleCheckBox(newValue);
+    if (newValue && artIndex > 0) {
+      const prevArt = artList[artIndex - 1];
+      if (prevArt) {
+        setTitle(prevArt.title);
+        setArtist(prevArt.artist);
+        setMemo(prevArt.memo);
+        setImageUri(prevArt.image);
+      }
+    }
+  };
 
   const handleNext = () => {
     const newArt: ArtItem = {
@@ -114,6 +116,7 @@ export default function RecordingScreen() {
     resetForm();
     setImageUri('');
     setImageBase64('');
+    setToggleCheckBox(false);
 
     scrollViewRef.current?.scrollTo({y: 0, animated: false});
   };
@@ -171,7 +174,7 @@ export default function RecordingScreen() {
 
       try {
         const response = await axios.post(
-          '/api/reviews/save',
+          '13.125.81.126/api/reviews/save',
           updatedFinalData,
         );
         console.log('Server Response:', response.data);
@@ -219,50 +222,17 @@ export default function RecordingScreen() {
         <Text style={{paddingTop: 7, paddingBottom: 13}}>
           {exhibitionDate} | {gallery}
         </Text>
-        <TouchableOpacity
-          style={{
-            width: PAGE_WIDTH,
-            height: PAGE_WIDTH * (4 / 3),
-            borderColor: '#000',
-            borderWidth: 1,
-            borderRadius: 5,
-            marginBottom: 16,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          onPress={requestCameraPermission}>
-          {imageUri ? (
-            <Image source={{uri: imageUri}} style={styles.imagePreview} />
-          ) : (
-            <Image source={cameraIcon} style={styles.cameraIcon} />
-          )}
-        </TouchableOpacity>
-        <View style={styles.checkboxContainer}>
-          <CheckBox
-            disabled={false}
-            value={toggleCheckBox}
-            onValueChange={newValue => setToggleCheckBox(newValue)}
-            tintColors={{true: '#000', false: '#ccc'}}
-          />
-          <Text style={styles.checkboxLabel}>이전 작품 불러오기</Text>
-        </View>
-        <TextInput
-          style={[GlobalStyle.inputBox, {marginBottom: 16}]}
-          placeholder="작품명"
-          value={title}
-          onChangeText={setTitle}
-        />
-        <TextInput
-          style={[GlobalStyle.inputBox, {marginBottom: 16}]}
-          placeholder="작가"
-          value={artist}
-          onChangeText={setArtist}
-        />
-        <TextInput
-          style={[GlobalStyle.inputBox, {marginBottom: 16, height: 130}]}
-          placeholder="메모"
-          value={memo}
-          onChangeText={setMemo}
+        <RecordingTemplate
+          imageUri={imageUri}
+          title={title}
+          artist={artist}
+          memo={memo}
+          toggleCheckBox={toggleCheckBox}
+          requestCameraPermission={requestCameraPermission}
+          handleCheckBoxChange={handleCheckBoxChange}
+          setTitle={setTitle}
+          setArtist={setArtist}
+          setMemo={setMemo}
         />
         <View style={styles.buttonContainer}>
           <TouchableOpacity
@@ -297,42 +267,10 @@ export default function RecordingScreen() {
 }
 
 const styles = StyleSheet.create({
-  photoUploadBox: {
-    height: 240, // 4:3 비율
-    width: 320,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  imagePreview: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  cameraIcon: {
-    width: 50,
-    height: 50,
-    resizeMode: 'contain',
-  },
-  uploadPrompt: {
-    color: '#888',
-    fontSize: 16,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginBottom: 16,
-    width: '100%',
-  },
-  checkboxLabel: {
-    marginLeft: 8,
-    fontSize: 16,
-  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 19,
     marginBottom: 16,
   },
   leftButton: {
