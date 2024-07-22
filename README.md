@@ -8,6 +8,7 @@ Commit Convention
 | [FIX]#이슈번호 내용 | 버그 및 오류 수정 |
 | [CHORE]내용 | 자잘한 수정 및 빌드 업데이트 |
 | [DESIGN]내용 | UI 변경 |
+| [REFACTOR]내용 | 리팩토링 |
 | [DOCS]#이슈번호 내용 | 문서 수정 |
 
 ---
