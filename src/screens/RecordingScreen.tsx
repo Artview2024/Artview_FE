@@ -84,6 +84,19 @@ export default function RecordingScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [finalData, setFinalData] = useState<any>(null);
 
+  const handleCheckBoxChange = (newValue: boolean) => {
+    setToggleCheckBox(newValue);
+    if (newValue && artIndex > 0) {
+      const prevArt = artList[artIndex - 1];
+      if (prevArt) {
+        setTitle(prevArt.title);
+        setArtist(prevArt.artist);
+        setMemo(prevArt.memo);
+        setImageUri(prevArt.image);
+      }
+    }
+  };
+
   const handleNext = () => {
     const newArt: ArtItem = {
       id: Math.random().toString(),
@@ -114,6 +127,7 @@ export default function RecordingScreen() {
     resetForm();
     setImageUri('');
     setImageBase64('');
+    setToggleCheckBox(false);
 
     scrollViewRef.current?.scrollTo({y: 0, animated: false});
   };
@@ -241,7 +255,7 @@ export default function RecordingScreen() {
           <CheckBox
             disabled={false}
             value={toggleCheckBox}
-            onValueChange={newValue => setToggleCheckBox(newValue)}
+            onValueChange={handleCheckBoxChange}
             tintColors={{true: '#000', false: '#ccc'}}
           />
           <Text style={styles.checkboxLabel}>이전 작품 불러오기</Text>
