@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   ScrollView,
@@ -10,7 +10,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useRoute, RouteProp, useNavigation} from '@react-navigation/native';
-import {StackParamList} from '../navigator/StackParamList';
+import axios from 'axios';
+import {StackParamList, Record} from '../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
 import GlobalStyle from '../styles/GlobalStyle';
@@ -20,16 +21,35 @@ type RecordDetailScreenRouteProp = RouteProp<StackParamList, 'RecordDetail'>;
 export default function RecordDetailScreen() {
   const route = useRoute<RecordDetailScreenRouteProp>();
   const navigation = useNavigation();
-  const {record} = route.params;
+  const {id} = route.params.record;
+  const [record, setRecord] = useState<Record | null>(null);
   const PAGE_WIDTH = Dimensions.get('window').width - 40;
+
+  useEffect(() => {
+    const fetchRecordDetails = async () => {
+      try {
+        const response = await axios.get(`https://api/myReviews/${id}`, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ACCESS_TOKEN`,
+          },
+        });
+        setRecord(response.data);
+      } catch (error) {
+        console.error('Error', error);
+      }
+    };
+
+    fetchRecordDetails();
+  }, [id]);
 
   const renderItem = ({
     item,
   }: {
-    item: {image: any; title: string; artist: string; memo: string};
+    item: {image: string; title: string; artist: string; memo: string};
   }) => (
     <View style={[{width: PAGE_WIDTH}]}>
-      <Image source={item.image} style={styles.imagePreview} />
+      <Image source={{uri: item.image}} style={styles.imagePreview} />
       <Text style={[GlobalStyle.mainText, {marginBottom: 10}]}>
         {item.title}
       </Text>
@@ -43,6 +63,14 @@ export default function RecordDetailScreen() {
       </Text>
     </View>
   );
+
+  if (!record) {
+    return (
+      <View style={[GlobalStyle.container]}>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[GlobalStyle.container]}>

@@ -174,7 +174,13 @@ export default function RecordingScreen() {
 
       try {
         const response = await axios.post(
-          '13.125.81.126/api/reviews/save',
+          'https://13.125.81.126/api/reviews/save',
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ACCESS_TOKEN`,
+            },
+          },
           updatedFinalData,
         );
         console.log('Server Response:', response.data);
