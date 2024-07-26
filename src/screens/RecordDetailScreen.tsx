@@ -72,6 +72,24 @@ export default function RecordDetailScreen() {
     );
   }
 
+  const handleEdit = () => {
+    if (record) {
+      (navigation as any).navigate('Recording', {
+        exhibitionName: record.name,
+        exhibitionDate: record.date,
+        gallery: record.gallery,
+        artList: record.artList.map(art => ({
+          image: art.image || null,
+          title: art.title || null,
+          artist: art.artist || null,
+          memo: art.memo || null,
+        })),
+        isEditMode: true,
+        artIndex: 0,
+      });
+    }
+  };
+
   return (
     <View style={[GlobalStyle.container]}>
       <ScrollView>
@@ -120,7 +138,8 @@ export default function RecordDetailScreen() {
       </ScrollView>
       <View>
         <TouchableOpacity
-          style={[GlobalStyle.activeButton, GlobalStyle.fullButton]}>
+          style={[GlobalStyle.activeButton, GlobalStyle.fullButton]}
+          onPress={handleEdit}>
           <Text style={GlobalStyle.buttonText}>수정하기</Text>
         </TouchableOpacity>
       </View>

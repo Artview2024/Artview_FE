@@ -28,6 +28,7 @@ export type StackParamList = {
       memo: string | null;
     }>;
     artIndex?: number;
+    isEditMode: boolean;
   };
   RecordingStart: undefined;
   Posting: {
