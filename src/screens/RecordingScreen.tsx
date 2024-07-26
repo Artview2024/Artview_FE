@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {View, ScrollView, Text, TouchableOpacity} from 'react-native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import MenuIcon from 'react-native-vector-icons/Feather';
@@ -38,6 +38,7 @@ export default function RecordingScreen() {
     exhibitionDate,
     gallery,
     artList: initialArtList,
+    isEditMode = false,
   } = route.params;
 
   const {
@@ -72,6 +73,20 @@ export default function RecordingScreen() {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [finalData, setFinalData] = useState<any>(null);
+
+  useEffect(() => {
+    if (isEditMode && artIndex < artList.length) {
+      const currentArt = artList[artIndex];
+      setTitle(currentArt.title);
+      setArtist(currentArt.artist);
+      setMemo(currentArt.memo);
+      setImageUri(currentArt.image);
+    } else {
+      resetForm();
+      setImageUri('');
+      setImageBase64('');
+    }
+  }, [artIndex, isEditMode]);
 
   const handleCheckBoxChange = (newValue: boolean) => {
     setToggleCheckBox(newValue);
@@ -111,6 +126,7 @@ export default function RecordingScreen() {
       gallery,
       artList: updatedArtList,
       artIndex: artIndex + 1,
+      isEditMode,
     });
 
     resetForm();
@@ -173,16 +189,30 @@ export default function RecordingScreen() {
       };
 
       try {
-        const response = await axios.post(
-          'https://13.125.81.126/api/reviews/save',
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ACCESS_TOKEN`,
+        let response;
+        if (isEditMode) {
+          response = await axios.patch(
+            `https://13.125.81.126/api/reviews/modify`,
+            updatedFinalData,
+            {
+              headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ACCESS_TOKEN`,
+              },
             },
-          },
-          updatedFinalData,
-        );
+          );
+        } else {
+          response = await axios.post(
+            'https://13.125.81.126/api/reviews/save',
+            updatedFinalData,
+            {
+              headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ACCESS_TOKEN`,
+              },
+            },
+          );
+        }
         console.log('Server Response:', response.data);
 
         setModalVisible(false);
