@@ -156,9 +156,7 @@ export default function RecordingScreen() {
   const handleEndTour = () => {
     const newArt: ArtItem = {
       id: Math.random().toString(),
-      image: imageBase64
-        ? `data:image/jpeg;base64,${imageBase64}`
-        : imageUri || '',
+      image: imageUri || '',
       title,
       artist,
       memo,
@@ -170,7 +168,7 @@ export default function RecordingScreen() {
       updatedArtList.push(newArt);
     }
 
-    const finalData = {
+    setFinalData({
       id: Math.random().toString(),
       name: exhibitionName,
       date: exhibitionDate,
@@ -178,8 +176,7 @@ export default function RecordingScreen() {
       mainImage: updatedArtList.length > 0 ? updatedArtList[0].image : null,
       rating: '',
       artList: updatedArtList,
-    };
-    setFinalData(finalData);
+    });
     setModalVisible(true);
   };
 
@@ -192,15 +189,40 @@ export default function RecordingScreen() {
 
       console.log('Final Data : ', updatedFinalData);
 
+      const formData = new FormData();
+      formData.append('file', {
+        uri: updatedFinalData.mainImage,
+        type: 'image/jpeg',
+        name: 'mainImage.jpg',
+      });
+      formData.append('name', updatedFinalData.name);
+      formData.append('date', updatedFinalData.date);
+      formData.append('gallery', updatedFinalData.gallery);
+      formData.append('rating', updatedFinalData.rating);
+
+      updatedFinalData.artList.forEach(
+        (art: {image: any; title: any; artist: any; memo: any}, index: any) => {
+          formData.append(`artList[${index}][image]`, {
+            uri: art.image,
+            type: 'image/jpeg',
+            name: `art_${index}.jpg`,
+          });
+          formData.append(`artList[${index}][title]`, art.title);
+          formData.append(`artList[${index}][artist]`, art.artist);
+          formData.append(`artList[${index}][memo]`, art.memo);
+        },
+      );
+
       try {
         let response;
         if (isEditMode) {
           response = await axios.patch(
             'http://13.125.81.126/api/myReviews/modify',
-            updatedFinalData,
+            formData,
             {
               headers: {
                 Accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ACCESS_TOKEN`,
               },
             },
@@ -208,10 +230,11 @@ export default function RecordingScreen() {
         } else {
           response = await axios.post(
             'http://13.125.81.126/api/myReviews/save',
-            updatedFinalData,
+            formData,
             {
               headers: {
                 Accept: 'application/json',
+                'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ACCESS_TOKEN`,
               },
             },
@@ -225,6 +248,78 @@ export default function RecordingScreen() {
       }
     }
   };
+  // const handleEndTour = () => {
+  //   const newArt: ArtItem = {
+  //     id: Math.random().toString(),
+  //     image: imageBase64
+  //       ? `data:image/jpeg;base64,${imageBase64}`
+  //       : imageUri || '',
+  //     title,
+  //     artist,
+  //     memo,
+  //   };
+  //   const updatedArtList = [...artList];
+  //   if (artIndex < updatedArtList.length) {
+  //     updatedArtList[artIndex] = newArt;
+  //   } else {
+  //     updatedArtList.push(newArt);
+  //   }
+
+  //   const finalData = {
+  //     id: Math.random().toString(),
+  //     name: exhibitionName,
+  //     date: exhibitionDate,
+  //     gallery: gallery,
+  //     mainImage: updatedArtList.length > 0 ? updatedArtList[0].image : null,
+  //     rating: '',
+  //     artList: updatedArtList,
+  //   };
+  //   setFinalData(finalData);
+  //   setModalVisible(true);
+  // };
+
+  // const handleRatingSubmit = async (rating: number) => {
+  //   if (finalData) {
+  //     const updatedFinalData = {
+  //       ...finalData,
+  //       rating: rating.toString(),
+  //     };
+
+  //     console.log('Final Data : ', updatedFinalData);
+
+  //     try {
+  //       let response;
+  //       if (isEditMode) {
+  //         response = await axios.patch(
+  //           'http://13.125.81.126/api/myReviews/modify',
+  //           updatedFinalData,
+  //           {
+  //             headers: {
+  //               Accept: 'application/json',
+  //               Authorization: `Bearer ACCESS_TOKEN`,
+  //             },
+  //           },
+  //         );
+  //       } else {
+  //         response = await axios.post(
+  //           'http://13.125.81.126/api/myReviews/save',
+  //           updatedFinalData,
+  //           {
+  //             headers: {
+  //               Accept: 'application/json',
+  //               Authorization: `Bearer ACCESS_TOKEN`,
+  //             },
+  //           },
+  //         );
+  //       }
+  //       setModalVisible(false);
+  //       navigation.navigate('Records');
+  //     } catch (error) {
+  //       console.error('Error:', error as any);
+  //       console.error('Error response:', (error as any).response?.data);
+  //     }
+  //   }
+  // };
 
   return (
     <View style={[GlobalStyle.container]}>
