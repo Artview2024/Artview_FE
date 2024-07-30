@@ -75,18 +75,20 @@ export default function RecordingScreen() {
   const [finalData, setFinalData] = useState<any>(null);
 
   useEffect(() => {
-    if (isEditMode && artIndex < artList.length) {
+    if (artIndex < artList.length) {
       const currentArt = artList[artIndex];
-      setTitle(currentArt.title);
-      setArtist(currentArt.artist);
-      setMemo(currentArt.memo);
-      setImageUri(currentArt.image);
-    } else {
-      resetForm();
-      setImageUri('');
-      setImageBase64('');
+      if (currentArt) {
+        setTitle(currentArt.title || '');
+        setArtist(currentArt.artist || '');
+        setMemo(currentArt.memo || '');
+        setImageUri(currentArt.image || '');
+      } else {
+        resetForm();
+        setImageUri('');
+        setImageBase64('');
+      }
     }
-  }, [artIndex, isEditMode]);
+  }, [artIndex, artList, resetForm]);
 
   const handleCheckBoxChange = (newValue: boolean) => {
     setToggleCheckBox(newValue);
@@ -188,11 +190,13 @@ export default function RecordingScreen() {
         rating: rating.toString(),
       };
 
+      console.log('Final Data : ', updatedFinalData);
+
       try {
         let response;
         if (isEditMode) {
           response = await axios.patch(
-            `https://13.125.81.126/api/reviews/modify`,
+            'http://13.125.81.126/api/myReviews/modify',
             updatedFinalData,
             {
               headers: {
@@ -203,7 +207,7 @@ export default function RecordingScreen() {
           );
         } else {
           response = await axios.post(
-            'https://13.125.81.126/api/reviews/save',
+            'http://13.125.81.126/api/myReviews/save',
             updatedFinalData,
             {
               headers: {
@@ -213,12 +217,11 @@ export default function RecordingScreen() {
             },
           );
         }
-        console.log('Server Response:', response.data);
-
         setModalVisible(false);
-        navigation.navigate('Records', {newRecord: updatedFinalData});
+        navigation.navigate('Records');
       } catch (error) {
-        console.error('Error while saving review:', error);
+        console.error('Error:', error as any);
+        console.error('Error response:', (error as any).response?.data);
       }
     }
   };

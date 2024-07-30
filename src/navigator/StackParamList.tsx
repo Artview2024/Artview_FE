@@ -16,7 +16,7 @@ export type Record = {
 export type StackParamList = {
   Home: undefined;
   Tabs: undefined;
-  Records: {newRecord?: Record};
+  Records: undefined;
   Recording: {
     exhibitionName: string;
     exhibitionDate: string;
