@@ -28,12 +28,15 @@ export default function RecordDetailScreen() {
   useEffect(() => {
     const fetchRecordDetails = async () => {
       try {
-        const response = await axios.get(`https://api/myReviews/${id}`, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ACCESS_TOKEN`,
+        const response = await axios.get(
+          `http://13.125.81.126/api/myReviews/1`,
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ACCESS_TOKEN`,
+            },
           },
-        });
+        );
         setRecord(response.data);
       } catch (error) {
         console.error('Error', error);
