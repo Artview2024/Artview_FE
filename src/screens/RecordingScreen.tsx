@@ -74,6 +74,8 @@ export default function RecordingScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [finalData, setFinalData] = useState<any>(null);
 
+  const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
+
   useEffect(() => {
     if (artIndex < artList.length) {
       const currentArt = artList[artIndex];
@@ -101,6 +103,10 @@ export default function RecordingScreen() {
         setImageUri(prevArt.image);
       }
     }
+  };
+
+  const handleSetMainImage = (index: number) => {
+    setMainImageIndex(prevIndex => (prevIndex === index ? null : index));
   };
 
   const handleNext = () => {
@@ -173,7 +179,12 @@ export default function RecordingScreen() {
       name: exhibitionName,
       date: exhibitionDate,
       gallery: gallery,
-      mainImage: updatedArtList.length > 0 ? updatedArtList[0].image : null,
+      mainImage:
+        mainImageIndex !== null && mainImageIndex < updatedArtList.length
+          ? updatedArtList[mainImageIndex].image
+          : updatedArtList.length > 0
+          ? updatedArtList[0].image
+          : null,
       rating: '',
       artList: updatedArtList,
     });
@@ -248,6 +259,7 @@ export default function RecordingScreen() {
       }
     }
   };
+
   // const handleEndTour = () => {
   //   const newArt: ArtItem = {
   //     id: Math.random().toString(),
@@ -367,6 +379,8 @@ export default function RecordingScreen() {
           setTitle={setTitle}
           setArtist={setArtist}
           setMemo={setMemo}
+          isMainImage={mainImageIndex === artIndex}
+          onSetMainImage={() => handleSetMainImage(artIndex)}
         />
         <View style={styles.buttonContainer}>
           <TouchableOpacity
