@@ -1,5 +1,6 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import LoginScreen from '../screens/LoginScreen';
 import TabNavigator from './TabNavigator';
 import RecordingStartScreen from '../screens/RecordingStartScreen';
 import RecordingScreen from '../screens/RecordingScreen';
@@ -14,6 +15,11 @@ const Stack = createNativeStackNavigator<StackParamList>();
 export default function AppNavigator() {
   return (
     <Stack.Navigator>
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="Tabs"
         component={TabNavigator}

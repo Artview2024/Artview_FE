@@ -15,6 +15,7 @@ export type Record = {
 
 export type StackParamList = {
   Home: undefined;
+  Login: undefined;
   Tabs: undefined;
   Records: undefined;
   Recording: {
