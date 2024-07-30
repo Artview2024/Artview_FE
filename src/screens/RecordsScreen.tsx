@@ -41,13 +41,11 @@ export default function RecordsScreen() {
   const [selectedRecord, setSelectedRecord] = useState<number | null>(null);
   const isFocused = useIsFocused();
 
-  const userId = 'USER_ID';
-
   useEffect(() => {
     const fetchRecords = async () => {
       try {
         const response = await axios.get(
-          `https://13.125.81.126/api/myReviews/all/${userId}`,
+          `http://13.125.81.126/api/myReviews/all/1`,
           {
             headers: {
               Accept: 'application/json',
@@ -55,7 +53,16 @@ export default function RecordsScreen() {
             },
           },
         );
-        setMyRecords(response.data);
+        console.log('Server Response:', response.data);
+
+        const transformedRecords = response.data.map((item: any) => ({
+          id: item.myReviewsId,
+          name: item.exhibitionName,
+          date: item.visitedDate,
+          mainImage: item.imageUrl,
+        }));
+
+        setMyRecords(transformedRecords);
       } catch (error) {
         console.error('Error:', error);
       }
@@ -65,13 +72,8 @@ export default function RecordsScreen() {
   }, [isFocused]);
 
   useEffect(() => {
-    if (isFocused) {
-      const newRecord = route.params?.newRecord;
-      if (newRecord) {
-        setMyRecords(prevRecords => [...prevRecords, newRecord]);
-      }
-    }
-  }, [isFocused, route.params]);
+    console.log('Current Records:', myRecords);
+  }, [myRecords]);
 
   const handleRecordSelect = (id: number) => {
     setSelectedRecord(id);
