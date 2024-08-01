@@ -1,3 +1,4 @@
+// RecordingTemplate.tsx
 import React from 'react';
 import {
   View,
@@ -24,6 +25,8 @@ type RecordingTemplateProps = {
   setTitle: (text: string) => void;
   setArtist: (text: string) => void;
   setMemo: (text: string) => void;
+  isMainImage: boolean;
+  onSetMainImage: () => void;
 };
 
 const RecordingTemplate: React.FC<RecordingTemplateProps> = ({
@@ -37,6 +40,8 @@ const RecordingTemplate: React.FC<RecordingTemplateProps> = ({
   setTitle,
   setArtist,
   setMemo,
+  isMainImage,
+  onSetMainImage,
 }) => {
   const PAGE_WIDTH = Dimensions.get('window').width - 40;
 
@@ -58,6 +63,22 @@ const RecordingTemplate: React.FC<RecordingTemplateProps> = ({
           <Image source={{uri: imageUri}} style={styles.imagePreview} />
         ) : (
           <Image source={cameraIcon} style={styles.cameraIcon} />
+        )}
+        {imageUri && (
+          <TouchableOpacity
+            style={[
+              styles.mainImageButton,
+              isMainImage && styles.mainImageButtonSelected,
+            ]}
+            onPress={onSetMainImage}>
+            <Text
+              style={[
+                styles.mainImageButtonText,
+                isMainImage && styles.mainImageButtonTextSelected,
+              ]}>
+              대표사진
+            </Text>
+          </TouchableOpacity>
         )}
       </TouchableOpacity>
       <View style={styles.checkboxContainer}>
@@ -101,6 +122,24 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     resizeMode: 'contain',
+  },
+  mainImageButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 13,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 15,
+  },
+  mainImageButtonText: {
+    color: '#fff',
+  },
+  mainImageButtonSelected: {
+    backgroundColor: '#EA1B83',
+  },
+  mainImageButtonTextSelected: {
+    color: '#fff',
   },
   checkboxContainer: {
     flexDirection: 'row',
