@@ -5,7 +5,6 @@ import DatePicker from 'react-native-date-picker';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../styles/GlobalStyle';
 import {StackParamList} from '../navigator/StackParamList';
-import axios from 'axios';
 
 export default function RecordingStartScreen() {
   const [exhibition, setExhibition] = useState('');
@@ -23,35 +22,16 @@ export default function RecordingStartScreen() {
       : '날짜 선택하기';
   };
 
-  // const handleStartRecording = async () => {
-  //   try {
-  //     const response = await axios.post('/api/reviews/save', {
-  //       exhibitionName: exhibition,
-  //       exhibitionDate: formatDate(date),
-  //       gallery: location,
-  //       artList: [],
-  //     });
-
-  //     console.log('Server Response:', response.data);
-
-  //     navigation.navigate('Recording', {
-  //       exhibitionName: exhibition,
-  //       exhibitionDate: formatDate(date),
-  //       gallery: location,
-  //       artList: [],
-  //     });
-  //   } catch (error) {
-  //     console.error('Error while saving review:', error);
-  //   }
-  // };
   const handleStartRecording = async () => {
     navigation.navigate('Recording', {
       exhibitionName: exhibition,
       exhibitionDate: formatDate(date),
       gallery: location,
       artList: [],
+      isEditMode: false,
     });
   };
+
   return (
     <View style={GlobalStyle.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
