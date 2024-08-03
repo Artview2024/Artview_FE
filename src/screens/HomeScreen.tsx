@@ -4,7 +4,6 @@ import {
   Text,
   Image,
   ScrollView,
-  FlatList,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
@@ -14,15 +13,26 @@ import {
   NavigationProp,
   useScrollToTop,
 } from '@react-navigation/native';
-import CarouselParallax from '../components/CarouselParallax';
+import CarouselParallax from '../components/Home/CarouselParallax';
 import {StackParamList} from '../navigator/StackParamList';
 import GlobalStyle from '../styles/GlobalStyle';
 import Footer from '../components/Footer';
+import RecommendedExhibition from '../components/Home/RecommendedExhibitions';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
-const PAGE_HEIGHT = Dimensions.get('window').height;
+const ITEM_WIDTH = PAGE_WIDTH * 0.9;
 
-const carouselData = [
+const defaultImage = require('../assets/images/main.png'); //디자인.. 문의 후 수정 필요
+
+type CarouselItem = {
+  key: string;
+  title: string;
+  date: string;
+  gallery: string;
+  image: any;
+};
+
+const carouselData: CarouselItem[] = [
   {
     key: '1',
     title: '이경준 사진전',
@@ -87,7 +97,11 @@ export default function HomeScreen() {
         style={{flex: 1}}
         ref={ref}>
         <Image
-          source={carouselData[backgroundIndex % carouselData.length].image}
+          source={
+            carouselData.length > 0
+              ? carouselData[backgroundIndex % carouselData.length].image
+              : defaultImage
+          }
           style={[
             styles.backgroundImage,
             {width: PAGE_WIDTH, height: PAGE_WIDTH * (4 / 3)},
@@ -106,35 +120,31 @@ export default function HomeScreen() {
             <Text style={styles.viewAllText}>전체보기 &gt;</Text>
           </TouchableOpacity>
         </View>
-        <CarouselParallax
-          data={carouselData}
-          onIndexChange={handleIndexChange}
-        />
-        <View style={{flex: 1, backgroundColor: '#fff', paddingLeft: 20}}>
+        {carouselData.length > 0 ? (
+          <CarouselParallax
+            data={carouselData}
+            onIndexChange={handleIndexChange}
+          />
+        ) : (
+          <View style={styles.carouselPlaceholder}>
+            <Image source={defaultImage} style={styles.defaultImage} />
+          </View>
+        )}
+        {/* <View style={{flex: 1, backgroundColor: '#fff', paddingLeft: 20}}>
           <View style={styles.titleContainer}>
             <Text style={styles.sectionTitle}>추천전시</Text>
-            <TouchableOpacity
-            //추천전시 전체보기 페이지..
-            >
+            <TouchableOpacity>
               <Text style={styles.viewAllText}>전체보기 &gt;</Text>
             </TouchableOpacity>
           </View>
-          <FlatList
-            style={styles.sectionFlatList}
-            horizontal
-            data={recommendedExhibitions}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({item}) => (
-              <View style={styles.recommendedItem}>
-                <Image source={item.image} style={styles.recommendedImage} />
-                <Text style={styles.recommendedText}>{item.title}</Text>
-                <Text style={styles.recommendedSubText}>{item.date}</Text>
-                <Text style={styles.recommendedSubText}>{item.gallery}</Text>
-              </View>
-            )}
-            keyExtractor={item => item.key}
-          />
-        </View>
+          {recommendedExhibitions.map(exhibition => (
+            <RecommendedExhibition
+              key={exhibition.key}
+              exhibition={exhibition}
+            />
+          ))}
+        </View> */}
+        <RecommendedExhibition data={recommendedExhibitions} />
         <Footer></Footer>
       </ScrollView>
       <TouchableOpacity
@@ -168,7 +178,6 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     paddingVertical: 18,
   },
-
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -179,27 +188,16 @@ const styles = StyleSheet.create({
     color: '#4E4E4E',
     paddingLeft: 10,
   },
-  sectionFlatList: {
-    margin: 0,
+  carouselPlaceholder: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: PAGE_WIDTH,
+    height: PAGE_WIDTH * (4 / 3),
   },
-  recommendedItem: {
-    width: 180,
-    marginRight: 8,
-  },
-  recommendedImage: {
-    width: 180,
-    height: 240,
+  defaultImage: {
+    width: ITEM_WIDTH,
+    height: ITEM_WIDTH * (4 / 3),
     resizeMode: 'cover',
-    borderRadius: 5,
-  },
-  recommendedText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 8,
-    color: '#000',
-  },
-  recommendedSubText: {
-    fontSize: 14,
-    color: '#000',
+    borderRadius: 30,
   },
 });

@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet, Dimensions} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import {useSharedValue} from 'react-native-reanimated';
 
@@ -13,7 +20,7 @@ interface CarouselItem {
 
 interface CarouselProps {
   data: CarouselItem[];
-  onIndexChange: (index: number) => void; // 이벤트 핸들러 추가
+  onIndexChange: (index: number) => void;
 }
 
 const PAGE_WIDTH = Dimensions.get('window').width;
@@ -21,15 +28,15 @@ const ITEM_WIDTH = PAGE_WIDTH * 0.99;
 const ITEM_SPACING = (PAGE_WIDTH - ITEM_WIDTH) / 2;
 
 const CarouselParallax: React.FC<CarouselProps> = ({data, onIndexChange}) => {
-  const progress = useSharedValue<number>(0); // 애니메이션 진행 상태 저장
+  const progress = useSharedValue<number>(0);
 
   const handleProgressChange = (
     offsetProgress: number,
     absoluteProgress: number,
   ) => {
     progress.value = absoluteProgress;
-    const currentIndex = Math.round(absoluteProgress); // 현재 페이지 인덱스 계산
-    onIndexChange(currentIndex); // 인덱스 변경 이벤트 핸들러 호출
+    const currentIndex = Math.round(absoluteProgress);
+    onIndexChange(currentIndex);
   };
 
   return (
@@ -40,14 +47,16 @@ const CarouselParallax: React.FC<CarouselProps> = ({data, onIndexChange}) => {
         height={ITEM_WIDTH * (4 / 3)}
         data={data}
         renderItem={({item}: {item: CarouselItem}) => (
-          <View>
-            <Image source={item.image} style={styles.carouselImage} />
-            <View style={styles.carouselTextContainer}>
-              <Text style={styles.carouselText}>{item.title}</Text>
-              <Text style={styles.carouselSubText}>{item.date}</Text>
-              <Text style={styles.carouselSubText}>{item.gallery}</Text>
+          <TouchableOpacity>
+            <View>
+              <Image source={item.image} style={styles.carouselImage} />
+              <View style={styles.carouselTextContainer}>
+                <Text style={styles.carouselText}>{item.title}</Text>
+                <Text style={styles.carouselSubText}>{item.date}</Text>
+                <Text style={styles.carouselSubText}>{item.gallery}</Text>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
         )}
         loop
         autoPlay
