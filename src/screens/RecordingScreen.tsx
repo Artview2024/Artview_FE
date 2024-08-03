@@ -41,14 +41,8 @@ export default function RecordingScreen() {
     isEditMode = false,
   } = route.params;
 
-  const {
-    imageUri,
-    imageBase64,
-    handleTakePhoto,
-    handleSelectImage,
-    setImageUri,
-    setImageBase64,
-  } = useImagePicker();
+  const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
+    useImagePicker();
 
   const {
     title,
@@ -87,7 +81,6 @@ export default function RecordingScreen() {
       } else {
         resetForm();
         setImageUri('');
-        setImageBase64('');
       }
     }
   }, [artIndex, artList, resetForm]);
@@ -112,13 +105,12 @@ export default function RecordingScreen() {
   const handleNext = () => {
     const newArt: ArtItem = {
       id: Math.random().toString(),
-      image: imageBase64
-        ? `data:image/jpeg;base64,${imageBase64}`
-        : imageUri || '',
+      image: imageUri || '',
       title: title || '',
       artist: artist || '',
       memo: memo || '',
     };
+
     const updatedArtList = [...artList];
     if (artIndex < updatedArtList.length) {
       updatedArtList[artIndex] = newArt;
@@ -127,21 +119,10 @@ export default function RecordingScreen() {
     }
 
     setArtList(updatedArtList);
-
-    navigation.navigate('Recording', {
-      exhibitionName,
-      exhibitionDate,
-      gallery,
-      artList: updatedArtList,
-      artIndex: artIndex + 1,
-      isEditMode,
-    });
-
+    setArtIndex(artIndex + 1);
     resetForm();
     setImageUri('');
-    setImageBase64('');
     setToggleCheckBox(false);
-
     scrollViewRef.current?.scrollTo({y: 0, animated: false});
   };
 
@@ -198,8 +179,6 @@ export default function RecordingScreen() {
         rating: rating.toString(),
       };
 
-      console.log('Final Data : ', updatedFinalData);
-
       const formData = new FormData();
       formData.append('file', {
         uri: updatedFinalData.mainImage,
@@ -224,114 +203,28 @@ export default function RecordingScreen() {
         },
       );
 
+      console.log('Final Data : ', updatedFinalData);
+
       try {
-        let response;
-        if (isEditMode) {
-          response = await axios.patch(
-            'http://13.125.81.126/api/myReviews/modify',
-            formData,
-            {
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'multipart/form-data',
-                Authorization: `Bearer ACCESS_TOKEN`,
-              },
-            },
-          );
-        } else {
-          response = await axios.post(
-            'http://13.125.81.126/api/myReviews/save',
-            formData,
-            {
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'multipart/form-data',
-                Authorization: `Bearer ACCESS_TOKEN`,
-              },
-            },
-          );
-        }
+        const url = isEditMode
+          ? 'http://13.125.81.126/api/myReviews/modify'
+          : 'http://13.125.81.126/api/myReviews/save';
+
+        await axios.post(url, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ACCESS_TOKEN`,
+          },
+        });
+
         setModalVisible(false);
         navigation.navigate('Records');
       } catch (error) {
-        console.error('Error:', error as any);
+        console.error('Error:', error);
         console.error('Error response:', (error as any).response?.data);
       }
     }
   };
-
-  // const handleEndTour = () => {
-  //   const newArt: ArtItem = {
-  //     id: Math.random().toString(),
-  //     image: imageBase64
-  //       ? `data:image/jpeg;base64,${imageBase64}`
-  //       : imageUri || '',
-  //     title,
-  //     artist,
-  //     memo,
-  //   };
-  //   const updatedArtList = [...artList];
-  //   if (artIndex < updatedArtList.length) {
-  //     updatedArtList[artIndex] = newArt;
-  //   } else {
-  //     updatedArtList.push(newArt);
-  //   }
-
-  //   const finalData = {
-  //     id: Math.random().toString(),
-  //     name: exhibitionName,
-  //     date: exhibitionDate,
-  //     gallery: gallery,
-  //     mainImage: updatedArtList.length > 0 ? updatedArtList[0].image : null,
-  //     rating: '',
-  //     artList: updatedArtList,
-  //   };
-  //   setFinalData(finalData);
-  //   setModalVisible(true);
-  // };
-
-  // const handleRatingSubmit = async (rating: number) => {
-  //   if (finalData) {
-  //     const updatedFinalData = {
-  //       ...finalData,
-  //       rating: rating.toString(),
-  //     };
-
-  //     console.log('Final Data : ', updatedFinalData);
-
-  //     try {
-  //       let response;
-  //       if (isEditMode) {
-  //         response = await axios.patch(
-  //           'http://13.125.81.126/api/myReviews/modify',
-  //           updatedFinalData,
-  //           {
-  //             headers: {
-  //               Accept: 'application/json',
-  //               Authorization: `Bearer ACCESS_TOKEN`,
-  //             },
-  //           },
-  //         );
-  //       } else {
-  //         response = await axios.post(
-  //           'http://13.125.81.126/api/myReviews/save',
-  //           updatedFinalData,
-  //           {
-  //             headers: {
-  //               Accept: 'application/json',
-  //               Authorization: `Bearer ACCESS_TOKEN`,
-  //             },
-  //           },
-  //         );
-  //       }
-  //       setModalVisible(false);
-  //       navigation.navigate('Records');
-  //     } catch (error) {
-  //       console.error('Error:', error as any);
-  //       console.error('Error response:', (error as any).response?.data);
-  //     }
-  //   }
-  // };
 
   return (
     <View style={[GlobalStyle.container]}>
