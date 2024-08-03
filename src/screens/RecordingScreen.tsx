@@ -148,6 +148,7 @@ export default function RecordingScreen() {
       artist,
       memo,
     };
+
     const updatedArtList = [...artList];
     if (artIndex < updatedArtList.length) {
       updatedArtList[artIndex] = newArt;
@@ -155,17 +156,21 @@ export default function RecordingScreen() {
       updatedArtList.push(newArt);
     }
 
+    let mainImageUri = '';
+    if (updatedArtList.length > 0) {
+      if (mainImageIndex !== null && mainImageIndex < updatedArtList.length) {
+        mainImageUri = updatedArtList[mainImageIndex].image || '';
+      } else {
+        mainImageUri = updatedArtList[0].image || '';
+      }
+    }
+
     setFinalData({
       id: Math.random().toString(),
       name: exhibitionName,
       date: exhibitionDate,
       gallery: gallery,
-      mainImage:
-        mainImageIndex !== null && mainImageIndex < updatedArtList.length
-          ? updatedArtList[mainImageIndex].image
-          : updatedArtList.length > 0
-          ? updatedArtList[0].image
-          : null,
+      mainImage: mainImageUri,
       rating: '',
       artList: updatedArtList,
     });
@@ -181,16 +186,16 @@ export default function RecordingScreen() {
 
       const formData = new FormData();
       formData.append('file', {
-        uri: updatedFinalData.mainImage,
+        uri: finalData.mainImage,
         type: 'image/jpeg',
         name: 'mainImage.jpg',
       });
-      formData.append('name', updatedFinalData.name);
-      formData.append('date', updatedFinalData.date);
-      formData.append('gallery', updatedFinalData.gallery);
-      formData.append('rating', updatedFinalData.rating);
+      formData.append('name', finalData.name);
+      formData.append('date', finalData.date);
+      formData.append('gallery', finalData.gallery);
+      formData.append('rating', finalData.rating);
 
-      updatedFinalData.artList.forEach(
+      finalData.artList.forEach(
         (art: {image: any; title: any; artist: any; memo: any}, index: any) => {
           formData.append(`artList[${index}][image]`, {
             uri: art.image,
