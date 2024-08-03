@@ -186,14 +186,14 @@ export default function RecordingScreen() {
 
       const formData = new FormData();
       formData.append('file', {
-        uri: finalData.mainImage,
+        uri: updatedFinalData.mainImage,
         type: 'image/jpeg',
         name: 'mainImage.jpg',
       });
-      formData.append('name', finalData.name);
-      formData.append('date', finalData.date);
-      formData.append('gallery', finalData.gallery);
-      formData.append('rating', finalData.rating);
+      formData.append('name', updatedFinalData.name);
+      formData.append('date', updatedFinalData.date);
+      formData.append('gallery', updatedFinalData.gallery);
+      formData.append('rating', updatedFinalData.rating);
 
       finalData.artList.forEach(
         (art: {image: any; title: any; artist: any; memo: any}, index: any) => {
