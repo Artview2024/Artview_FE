@@ -130,20 +130,6 @@ export default function HomeScreen() {
             <Image source={defaultImage} style={styles.defaultImage} />
           </View>
         )}
-        {/* <View style={{flex: 1, backgroundColor: '#fff', paddingLeft: 20}}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.sectionTitle}>추천전시</Text>
-            <TouchableOpacity>
-              <Text style={styles.viewAllText}>전체보기 &gt;</Text>
-            </TouchableOpacity>
-          </View>
-          {recommendedExhibitions.map(exhibition => (
-            <RecommendedExhibition
-              key={exhibition.key}
-              exhibition={exhibition}
-            />
-          ))}
-        </View> */}
         <RecommendedExhibition data={recommendedExhibitions} />
         <Footer></Footer>
       </ScrollView>
