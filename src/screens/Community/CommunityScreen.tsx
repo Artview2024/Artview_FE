@@ -7,11 +7,11 @@ import {
   RouteProp,
   useScrollToTop,
 } from '@react-navigation/native';
-import {StackParamList} from '../navigator/StackParamList';
+import {StackParamList} from '../../navigator/StackParamList';
 
-import GlobalStyle from '../styles/GlobalStyle';
-import CommunityCard from '../components/CommunityCard';
-import FilterTabs from '../components/FilterTabs';
+import GlobalStyle from '../../styles/GlobalStyle';
+import CommunityCard from '../../components/Community/CommunityCard';
+import FilterTabs from '../../components/FilterTabs';
 
 type CommunityScreenRouteProp = RouteProp<StackParamList, 'Community'>;
 
