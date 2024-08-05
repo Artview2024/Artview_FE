@@ -8,12 +8,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
-import {StackParamList} from '../navigator/StackParamList';
+import {StackParamList} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/AntDesign';
-import '../navigator/AppNavigator';
+import '../../navigator/AppNavigator';
 
-import GlobalStyle from '../styles/GlobalStyle';
+import GlobalStyle from '../../styles/GlobalStyle';
 
 const exhibitions = [
   {

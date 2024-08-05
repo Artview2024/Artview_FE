@@ -3,8 +3,8 @@ import {View, Text, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import BackIcon from 'react-native-vector-icons/Ionicons';
-import GlobalStyle from '../styles/GlobalStyle';
-import {StackParamList} from '../navigator/StackParamList';
+import GlobalStyle from '../../styles/GlobalStyle';
+import {StackParamList} from '../../navigator/StackParamList';
 
 export default function RecordingStartScreen() {
   const [exhibition, setExhibition] = useState('');

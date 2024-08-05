@@ -15,12 +15,12 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-import {StackParamList} from '../navigator/StackParamList';
+import {StackParamList} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import RatingIcon from 'react-native-vector-icons/FontAwesome';
-import '../navigator/AppNavigator';
+import '../../navigator/AppNavigator';
 
-import GlobalStyle from '../styles/GlobalStyle';
+import GlobalStyle from '../../styles/GlobalStyle';
 
 type PostingScreenRouteProp = RouteProp<StackParamList, 'Posting'>;
 

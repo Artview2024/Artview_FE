@@ -2,22 +2,22 @@ import React, {useRef, useState, useEffect} from 'react';
 import {View, ScrollView, Text, TouchableOpacity} from 'react-native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import MenuIcon from 'react-native-vector-icons/Feather';
-import GlobalStyle from '../styles/GlobalStyle';
+import GlobalStyle from '../../styles/GlobalStyle';
 import {
   useNavigation,
   useRoute,
   RouteProp,
   NavigationProp,
 } from '@react-navigation/native';
-import {StackParamList} from '../navigator/StackParamList';
-import RatingModal from '../components/RatingModal';
-import DrawableSheet from '../components/DrawableSheet';
+import {StackParamList} from '../../navigator/StackParamList';
+import RatingModal from '../../components/RatingModal';
+import DrawableSheet from '../../components/DrawableSheet';
 import axios from 'axios';
-import {useImagePicker} from '../hooks/useImagePicker';
-import {useCameraPermission} from '../hooks/useCameraPermissions';
-import {useFormState} from '../hooks/useFormState';
+import {useImagePicker} from '../../hooks/useImagePicker';
+import {useCameraPermission} from '../../hooks/useCameraPermissions';
+import {useFormState} from '../../hooks/useFormState';
 import {StyleSheet} from 'react-native';
-import RecordingTemplate from '../components/RecordingTemplate';
+import RecordingTemplate from '../../components/RecordingTemplate';
 
 type ArtItem = {
   id: string;

@@ -15,9 +15,9 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import axios from 'axios';
-import {StackParamList} from '../navigator/StackParamList';
+import {StackParamList} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
-import GlobalStyle from '../styles/GlobalStyle';
+import GlobalStyle from '../../styles/GlobalStyle';
 
 type Record = {
   id: number;

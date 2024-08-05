@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 import {useRoute, RouteProp, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import {StackParamList, Record} from '../navigator/StackParamList';
+import {StackParamList, Record} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
-import GlobalStyle from '../styles/GlobalStyle';
+import GlobalStyle from '../../styles/GlobalStyle';
 
 type RecordDetailScreenRouteProp = RouteProp<StackParamList, 'RecordDetail'>;
 
