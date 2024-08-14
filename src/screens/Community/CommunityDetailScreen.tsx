@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TextInput,
   StyleSheet,
   Alert,
+  Keyboard,
 } from 'react-native';
 import {useScrollToTop, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
@@ -15,50 +16,151 @@ import Comment from '../../components/Community/Comment';
 import GlobalStyle from '../../styles/GlobalStyle';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 
+// 댓글과 답글의 타입 정의
+interface Reply {
+  id: number;
+  username: string;
+  content: string;
+  userImage: any;
+}
+
+interface CommentData {
+  id: number;
+  username: string;
+  content: string;
+  userImage: any;
+  replies: Reply[];
+}
+
 export default function CommunityDetailScreen() {
   const navigation = useNavigation();
-  const ref = useRef(null);
+  const ref = useRef<ScrollView>(null);
+  const inputRef = useRef<TextInput>(null);
   useScrollToTop(ref);
 
-  const [comments, setComments] = useState([
-    {
-      username: 'User1',
-      content: '짱이다',
-      userImage: require('../../assets/images/user.png'),
-    },
-    {
-      username: 'User2',
-      content: '저도 갈래요',
-      userImage: require('../../assets/images/user.png'),
-    },
-  ]);
-
+  const [comments, setComments] = useState<CommentData[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [replyTo, setReplyTo] = useState<number | null>(null); // 답글을 다는 대상 댓글의 ID
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        // Mock 데이터 사용
+        const response = {
+          data: [
+            {
+              id: 1,
+              username: 'User1',
+              content: '짱이다',
+              userImage: require('../../assets/images/user.png'),
+              replies: [],
+            },
+            {
+              id: 2,
+              username: 'User2',
+              content: '저도 갈래요',
+              userImage: require('../../assets/images/user.png'),
+              replies: [
+                {
+                  id: 1,
+                  username: 'User3',
+                  content: '저도요!',
+                  userImage: require('../../assets/images/user.png'),
+                },
+              ],
+            },
+          ],
+        };
+        setComments(response.data);
+      } catch (error) {
+        console.error('댓글을 가져오는 데 실패했습니다.', error);
+      }
+    };
+    fetchComments();
+
+    // 키보드가 닫힐 때 replyTo 상태 초기화
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setReplyTo(null);
+      },
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  // 댓글 추가
   const handleAddComment = async () => {
     if (newComment.trim()) {
-      try {
-        const response = await axios.post('http://13.125.81.126/api/comment', {
-          content: newComment,
-        });
-        if (response.status === 201) {
-          setComments([
-            ...comments,
-            {
-              username: 'CurrentUser',
-              content: newComment,
-              userImage: require('../../assets/images/user.png'),
-            },
-          ]);
-          setNewComment('');
-        } else {
-          Alert.alert('Error', '댓글 등록에 실패하였습니다.');
-        }
-      } catch (error) {
-        console.error(error);
-        Alert.alert('Error', '댓글 등록에 실패하였습니다.');
+      if (replyTo) {
+        await postReply(replyTo);
+      } else {
+        await postComment();
       }
     }
+  };
+
+  // 댓글 POST 요청
+  const postComment = async () => {
+    try {
+      const response = {
+        data: {
+          id: Math.random(),
+        },
+      };
+
+      const newCommentData: CommentData = {
+        id: response.data.id, // 백엔드에서 받은 ID
+        username: 'CurrentUser', // 실제 사용자명으로 대체
+        content: newComment,
+        userImage: require('../../assets/images/user.png'), // 실제 사용자 이미지 경로로 대체
+        replies: [],
+      };
+
+      setComments([...comments, newCommentData]);
+      setNewComment('');
+    } catch (error) {
+      console.error('댓글 등록에 실패했습니다.', error);
+      Alert.alert('Error', '댓글 등록에 실패했습니다.');
+    }
+  };
+
+  // 답글 POST 요청
+  const postReply = async (commentId: number) => {
+    try {
+      const response = {
+        data: {
+          id: Math.random(),
+        },
+      };
+
+      const newReply: Reply = {
+        id: response.data.id,
+        username: 'CurrentUser',
+        content: newComment,
+        userImage: require('../../assets/images/user.png'),
+      };
+
+      setComments(prevComments =>
+        prevComments.map(comment =>
+          comment.id === commentId
+            ? {...comment, replies: [...comment.replies, newReply]}
+            : comment,
+        ),
+      );
+      setNewComment('');
+      setReplyTo(null); // 답글 완료 후 초기화
+    } catch (error) {
+      console.error('답글 등록에 실패했습니다.', error);
+      Alert.alert('Error', '답글 등록에 실패했습니다.');
+    }
+  };
+
+  const handleReply = (commentId: number) => {
+    setReplyTo(commentId);
+    inputRef.current?.focus(); // 답글 버튼을 누르면 입력창에 포커스
   };
 
   const samplePost = {
@@ -80,7 +182,7 @@ export default function CommunityDetailScreen() {
 
   return (
     <>
-      <View style={[GlobalStyle.container]} ref={ref}>
+      <View style={[GlobalStyle.container]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <BackIcon
             name="chevron-back"
@@ -99,13 +201,26 @@ export default function CommunityDetailScreen() {
               borderColor: '#ddd',
             }}></View>
           <View>
-            {comments.map((comment, index) => (
-              <Comment
-                key={index}
-                username={comment.username}
-                content={comment.content}
-                userImage={comment.userImage}
-              />
+            {comments.map(comment => (
+              <View key={comment.id}>
+                <Comment
+                  username={comment.username}
+                  content={comment.content}
+                  userImage={comment.userImage}
+                  onReply={() => handleReply(comment.id)}
+                />
+                {/* 답글 */}
+                {comment.replies.map((reply: Reply) => (
+                  <View key={reply.id} style={{marginLeft: 40, marginTop: -10}}>
+                    <Comment
+                      username={reply.username}
+                      content={reply.content}
+                      userImage={reply.userImage}
+                      onReply={undefined}
+                    />
+                  </View>
+                ))}
+              </View>
             ))}
           </View>
         </ScrollView>
@@ -113,10 +228,11 @@ export default function CommunityDetailScreen() {
       <View style={styles.commentInputContainer}>
         <View style={styles.inputWrapper}>
           <TextInput
+            ref={inputRef}
             style={styles.commentInput}
             value={newComment}
             onChangeText={setNewComment}
-            placeholder="댓글 남기기"
+            placeholder={replyTo ? '답글 남기기' : '댓글 남기기'}
           />
           <TouchableOpacity
             style={styles.postButton}
