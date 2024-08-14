@@ -21,12 +21,12 @@ const exhibitions = [
     name: '이경준 사진전',
     date: '2023.12.18',
     gallery: '서울미술관',
-    image: require('../assets/images/artList3.jpg'),
+    image: require('../../assets/images/artList3.jpg'),
     rating: '4.5',
     imageList: [
-      require('../assets/images/artList3.jpg'),
-      require('../assets/images/artList2.jpg'),
-      require('../assets/images/artList1.jpg'),
+      require('../../assets/images/artList3.jpg'),
+      require('../../assets/images/artList2.jpg'),
+      require('../../assets/images/artList1.jpg'),
     ],
   },
   {
@@ -34,12 +34,12 @@ const exhibitions = [
     name: '인상주의의 출현',
     date: '2023.11.11',
     gallery: '서울미술관',
-    image: require('../assets/images/carousel4.jpg'),
+    image: require('../../assets/images/carousel4.jpg'),
     rating: '4.0',
     imageList: [
-      require('../assets/images/carousel4.jpg'),
-      require('../assets/images/carousel4.jpg'),
-      require('../assets/images/carousel4.jpg'),
+      require('../../assets/images/carousel4.jpg'),
+      require('../../assets/images/carousel4.jpg'),
+      require('../../assets/images/carousel4.jpg'),
     ],
   },
   {
@@ -47,11 +47,11 @@ const exhibitions = [
     name: '2021 SF:오디세이 서울',
     date: '2022.10.28',
     gallery: '서울미술관',
-    image: require('../assets/images/carousel7.jpg'),
+    image: require('../../assets/images/carousel7.jpg'),
     rating: '3.8',
     imageList: [
-      require('../assets/images/carousel4.jpg'),
-      require('../assets/images/carousel4.jpg'),
+      require('../../assets/images/carousel4.jpg'),
+      require('../../assets/images/carousel4.jpg'),
     ],
   },
 ];
