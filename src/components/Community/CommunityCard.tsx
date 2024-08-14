@@ -16,10 +16,10 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
   };
 
   return (
-    <View style={{paddingBottom: 27}}>
+    <View>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
-          source={require('../assets/images/user.png')}
+          source={require('../../assets/images/user.png')}
           style={{width: 40, height: 40, borderRadius: 20, marginRight: 10}}
         />
         <Text style={GlobalStyle.CommunityCardUser}>{Posts.user}</Text>

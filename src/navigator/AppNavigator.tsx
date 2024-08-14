@@ -8,6 +8,7 @@ import RecordDetailScreen from '../screens/Records/RecordDetailScreen';
 import PostingStartScreen from '../screens/Posting/PostingStartScreen';
 import PostingScreen from '../screens/Posting/PostingScreen';
 import {StackParamList} from './StackParamList';
+import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -15,10 +16,15 @@ export default function AppNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen
+        name="CommunityDetail"
+        component={CommunityDetailScreen}
+        options={{headerShown: false}}
+      />
+      {/* <Stack.Screen
         name="Tabs"
         component={TabNavigator}
         options={{headerShown: false}}
-      />
+      /> */}
       <Stack.Screen
         name="Records"
         component={RecordsScreen}

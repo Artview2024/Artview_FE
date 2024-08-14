@@ -24,8 +24,8 @@ const initialPosts = [
     date: '2024.05.14',
     gallery: '성남 갤러리홀',
     image: [
-      require('../assets/images/carousel6.jpg'),
-      require('../assets/images/recommend1.png'),
+      require('../../assets/images/carousel1.png'),
+      require('../../assets/images/recommend1.png'),
     ],
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
@@ -40,8 +40,8 @@ const initialPosts = [
     date: '2024.05.14',
     gallery: '성남 갤러리홀',
     image: [
-      require('../assets/images/carousel7.jpg'),
-      require('../assets/images/recommend1.png'),
+      require('../../assets/images/carousel7.jpg'),
+      require('../../assets/images/recommend1.png'),
     ],
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
@@ -56,8 +56,8 @@ const initialPosts = [
     date: '2024.05.14',
     gallery: '성남 갤러리홀',
     image: [
-      require('../assets/images/carousel5.jpg'),
-      require('../assets/images/recommend1.png'),
+      require('../../assets/images/carousel5.jpg'),
+      require('../../assets/images/recommend1.png'),
     ],
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
@@ -90,6 +90,7 @@ export default function CommunityScreen() {
         <Text style={GlobalStyle.header}>소통</Text>
         <FilterTabs activeTab={activeTab} onSelectTab={setActiveTab} />
         <FlatList
+          style={{paddingBottom: 27}}
           data={[...posts].reverse()}
           keyExtractor={item => item.key}
           renderItem={({item}) => <CommunityCard Posts={item} />}

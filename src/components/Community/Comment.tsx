@@ -1,24 +1,48 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 
-const Comment = ({username, content}: {username: any; content: any}) => {
+const Comment = ({
+  username,
+  content,
+  userImage,
+}: {
+  username: string;
+  content: string;
+  userImage: any;
+}) => {
   return (
     <View style={styles.commentContainer}>
-      <Text style={styles.username}>{username}</Text>
-      <Text style={styles.content}>{content}</Text>
+      <Image
+        source={typeof userImage === 'string' ? {uri: userImage} : userImage}
+        style={styles.userImage}
+      />
+      <View style={styles.textContainer}>
+        <Text style={styles.username}>{username}</Text>
+        <Text style={styles.content}>{content}</Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   commentContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 10,
+  },
+  userImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  textContainer: {
+    flex: 1,
   },
   username: {
     fontWeight: 'bold',
     fontSize: 16,
+    color: 'black',
   },
   content: {
     fontSize: 14,
