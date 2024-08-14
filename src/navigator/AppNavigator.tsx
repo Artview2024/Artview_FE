@@ -16,15 +16,10 @@ export default function AppNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="CommunityDetail"
-        component={CommunityDetailScreen}
-        options={{headerShown: false}}
-      />
-      {/* <Stack.Screen
         name="Tabs"
         component={TabNavigator}
         options={{headerShown: false}}
-      /> */}
+      />
       <Stack.Screen
         name="Records"
         component={RecordsScreen}
@@ -53,6 +48,11 @@ export default function AppNavigator() {
       <Stack.Screen
         name="Posting"
         component={PostingScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="CommunityDetail"
+        component={CommunityDetailScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
