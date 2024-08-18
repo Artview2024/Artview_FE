@@ -1,33 +1,21 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-} from 'react-native';
-import {useNavigation, NavigationProp} from '@react-navigation/native';
+  useNavigation,
+  NavigationProp,
+  useIsFocused,
+} from '@react-navigation/native';
+import axios from 'axios';
 import {StackParamList} from '../../navigator/StackParamList';
-import BackIcon from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/AntDesign';
-import '../../navigator/AppNavigator';
+import Records from '../../components/Records';
+import {View, Text} from 'react-native';
 
-import GlobalStyle from '../../styles/GlobalStyle';
-
-const exhibitions = [
+const mockRecords = [
   {
     id: 1,
     name: '이경준 사진전',
     date: '2023.12.18',
     gallery: '서울미술관',
     image: require('../../assets/images/artList3.jpg'),
-    rating: '4.5',
-    imageList: [
-      require('../../assets/images/artList3.jpg'),
-      require('../../assets/images/artList2.jpg'),
-      require('../../assets/images/artList1.jpg'),
-    ],
   },
   {
     id: 2,
@@ -35,12 +23,6 @@ const exhibitions = [
     date: '2023.11.11',
     gallery: '서울미술관',
     image: require('../../assets/images/carousel4.jpg'),
-    rating: '4.0',
-    imageList: [
-      require('../../assets/images/carousel4.jpg'),
-      require('../../assets/images/carousel4.jpg'),
-      require('../../assets/images/carousel4.jpg'),
-    ],
   },
   {
     id: 3,
@@ -48,134 +30,64 @@ const exhibitions = [
     date: '2022.10.28',
     gallery: '서울미술관',
     image: require('../../assets/images/carousel7.jpg'),
-    rating: '3.8',
-    imageList: [
-      require('../../assets/images/carousel4.jpg'),
-      require('../../assets/images/carousel4.jpg'),
-    ],
   },
 ];
 
 export default function PostingStartScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
-  const [selectedExhibition, setSelectedExhibition] = useState<number | null>(
-    null,
-  );
+  const [records, setRecords] = useState<any[]>(mockRecords); // 일단 초기값은 목데이터(추후변경)
+  const [selectedRecord, setSelectedRecord] = useState<number | null>(null);
+  const isFocused = useIsFocused();
 
-  const handleExhibitionSelect = (id: number) => {
-    setSelectedExhibition(id);
+  useEffect(() => {
+    const fetchRecords = async () => {
+      try {
+        const response = await axios.get(
+          'http://13.125.81.126/api/communications',
+        );
+        const myRecords = response.data.map((item: any) => ({
+          id: item.myReviewsId,
+          name: item.exhibitionName,
+          date: item.visitedDate,
+          mainImage: item.imageUrl,
+        }));
+        console.log('Server Response:', response.data);
+        setRecords(myRecords);
+      } catch (error) {
+        console.error('오류:', error);
+        setRecords(mockRecords);
+      }
+    };
+
+    fetchRecords();
+  }, [isFocused]);
+
+  const handleRecordSelect = (id: number) => {
+    setSelectedRecord(id);
   };
 
-  const handleStartViewing = () => {
-    if (selectedExhibition !== null) {
-      const exhibition = exhibitions.find(
-        exhibition => exhibition.id === selectedExhibition,
-      );
-      if (exhibition) {
-        navigation.navigate('Posting', {exhibition});
-      }
+  const handleStartPosting = () => {
+    if (selectedRecord !== null) {
+      navigation.navigate('Posting', {recordId: selectedRecord});
     }
   };
 
+  //글쓰기할 기록을 선택하라는 문구 필요할 것 같음 >> 기획 및 디자인 수정 필요
   return (
-    <View style={[GlobalStyle.container]}>
-      <ScrollView>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <BackIcon
-              name="chevron-back"
-              size={24}
-              color={'black'}
-              style={{paddingRight: 3, paddingTop: 11}}
-            />
-          </TouchableOpacity>
-          <Text style={GlobalStyle.header}>기록 선택</Text>
+    <View style={{flex: 1}}>
+      {records.length > 0 ? (
+        <Records
+          exhibitions={records}
+          selectedExhibition={selectedRecord}
+          onExhibitionSelect={handleRecordSelect}
+          onStart={handleStartPosting}
+          backAction={() => navigation.goBack()}
+        />
+      ) : (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text>내 기록을 불러오고 있습니다</Text>
         </View>
-        <View style={styles.exhibitionList}>
-          {exhibitions.map(exhibition => (
-            <View key={exhibition.id} style={styles.exhibitionWrapper}>
-              <TouchableOpacity
-                onPress={() => handleExhibitionSelect(exhibition.id)}>
-                <Image
-                  source={exhibition.image}
-                  style={[
-                    styles.exhibitionImage,
-                    selectedExhibition === exhibition.id &&
-                      styles.selectedExhibitionImage,
-                  ]}
-                />
-                <View style={{paddingTop: 7}}>
-                  <Text style={GlobalStyle.mainText}>{exhibition.name}</Text>
-                  <Text style={GlobalStyle.subText}>{exhibition.date}</Text>
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.selectButton,
-                  selectedExhibition === exhibition.id &&
-                    styles.selectedSelectButton,
-                ]}
-                onPress={() => handleExhibitionSelect(exhibition.id)}>
-                <Text>
-                  {selectedExhibition === exhibition.id ? (
-                    <Icon name="checkcircle" size={20} color="#4E4E4E" />
-                  ) : (
-                    <Icon name="checkcircleo" size={20} color="#FFFF" />
-                  )}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-      <TouchableOpacity
-        style={[
-          GlobalStyle.button,
-          selectedExhibition !== null
-            ? GlobalStyle.activeButton
-            : GlobalStyle.inactiveButton,
-        ]}
-        disabled={selectedExhibition === null}
-        onPress={handleStartViewing}>
-        <Text style={[GlobalStyle.buttonText]}>전시 선택</Text>
-      </TouchableOpacity>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  exhibitionList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  exhibitionWrapper: {
-    width: '46%',
-    marginVertical: 10,
-  },
-
-  selectedExhibitionItem: {
-    backgroundColor: 'black',
-    opacity: 0.6,
-  },
-  exhibitionImage: {
-    width: '100%',
-    height: undefined,
-    aspectRatio: 3 / 4,
-    resizeMode: 'cover',
-    borderRadius: 10,
-  },
-  selectedExhibitionImage: {
-    opacity: 0.6,
-  },
-  selectButton: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    padding: 5,
-    borderRadius: 5,
-  },
-  selectedSelectButton: {
-    backgroundColor: 'none',
-  },
-});
