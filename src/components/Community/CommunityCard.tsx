@@ -16,7 +16,7 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
   };
 
   return (
-    <View>
+    <View style={{paddingBottom: 30}}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
           source={require('../../assets/images/user.png')}
