@@ -45,7 +45,7 @@ export default function RecordsScreen() {
     const fetchRecords = async () => {
       try {
         const response = await axios.get(
-          `http://13.125.81.126/api/myReviews/all/1`,
+          `http://13.125.81.126/api/myReviews/all/10001`,
           {
             headers: {
               Accept: 'application/json',
