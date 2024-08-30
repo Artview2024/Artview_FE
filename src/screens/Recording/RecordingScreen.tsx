@@ -94,6 +94,31 @@ export default function RecordingScreen() {
     }
   }, [artIndex, artList, resetForm]);
 
+  const handleOpenDrawableSheet = () => {
+    if (drawableSheetRef.current) {
+      // 현재 작성 중인 아트 항목을 저장
+      const newArt: ArtItem = {
+        id: Math.random().toString(),
+        image: imageUri || '',
+        title: title || '',
+        artist: artist || '',
+        memo: memo || '',
+      };
+
+      const updatedArtList = [...artList];
+      if (artIndex < updatedArtList.length) {
+        updatedArtList[artIndex] = newArt; // 기존 항목 업데이트
+      } else {
+        updatedArtList.push(newArt);
+      }
+
+      setArtList(updatedArtList);
+
+      // DrawableSheet 열기
+      drawableSheetRef.current.handleOpenBottomSheet();
+    }
+  };
+
   // 체크박스 상태 변경 시 이전 아트의 데이터를 불러오는 기능
   const handleCheckBoxChange = (newValue: boolean) => {
     setToggleCheckBox(newValue);
@@ -178,7 +203,7 @@ export default function RecordingScreen() {
         const resolvedAsset = Image.resolveAssetSource(
           require('../../assets/images/android.png'),
         );
-        mainImageUri = resolvedAsset.uri; // 로컬 이미지의 URI를 가져옵니다.
+        mainImageUri = resolvedAsset.uri;
       }
     }
 
@@ -204,29 +229,6 @@ export default function RecordingScreen() {
       // FormData 객체 생성
       const formData = new FormData();
 
-      
-      /* 
-      // requestDto JSON 데이터를 문자열로 변환하여 FormData에 추가
-      const requestDtoBlob = new Blob(
-        [
-          JSON.stringify({
-            id: updatedFinalData.id || 10001,
-            name: updatedFinalData.name || '',
-            date: updatedFinalData.date || '',
-            gallery: updatedFinalData.gallery || '',
-            rating: updatedFinalData.rating || '',
-            artList: updatedFinalData.artList.map((art: any) => ({
-              title: art.title || '',
-              artist: art.artist || '',
-              content: art.memo || '',
-            })),
-          }),
-        ],
-        {type: 'application/json', lastModified: Date.now()}, // lastModified 추가
-      );
-
-      formData.append('requestDto', requestDtoBlob); */
-
       // requestDto의 각 필드를 분해하여 FormData에 추가하는 방법
       formData.append('id', updatedFinalData.id || '10001');
       formData.append('name', updatedFinalData.name || '');
@@ -234,35 +236,20 @@ export default function RecordingScreen() {
       formData.append('gallery', updatedFinalData.gallery || '');
       formData.append('rating', updatedFinalData.rating || '');
 
-      // artList의 각 항목을 개별적으로 FormData에 추가
-      // updatedFinalData.artList.forEach((art: any, index: number) => {
-      //   formData.append(`artList[${index}].title`, art.title || '');
-      //   formData.append(`artList[${index}].artist`, art.artist || '');
-      //   formData.append(`artList[${index}].content`, art.memo || '');
-      // });
+      //artList의 각 항목을 개별적으로 FormData에 추가
+      updatedFinalData.artList.forEach((art: any, index: number) => {
+        formData.append(`artList[${index}].title`, art.title || '');
+        formData.append(`artList[${index}].artist`, art.artist || '');
+        formData.append(`artList[${index}].contents`, art.memo || '');
+      });
 
-      // 메인 이미지가 있으면 FormData에 추가
+      // 메인 이미지 formData에 추가
       if (updatedFinalData.mainImage) {
-        let mainImageFile;
-
-        if (typeof updatedFinalData.mainImage === 'string') {
-          // 로컬 이미지가 아닌 경우 처리
-          mainImageFile = {
-            uri: updatedFinalData.mainImage.startsWith('file://')
-              ? updatedFinalData.mainImage
-              : 'file://' + updatedFinalData.mainImage,
-            type: 'image/jpeg',
-            name: 'mainImage.jpeg',
-          };
-        } else {
-          // 로컬 이미지인 경우
-          mainImageFile = {
-            uri: updatedFinalData.mainImage, // require로 불러온 이미지의 URI
-            type: 'image/jpg',
-            name: 'mainImage.jpg',
-          };
-        }
-
+        const mainImageFile = {
+          uri: updatedFinalData.mainImage,
+          type: 'image/jpeg',
+          name: 'mainImage.jpeg',
+        };
         formData.append('mainImage', mainImageFile);
       }
 
@@ -277,6 +264,8 @@ export default function RecordingScreen() {
             name: `art_${index}.jpeg`,
           };
           formData.append('contentImages', contentImageFile);
+        } else {
+          formData.append('contentImages', '');
         }
       });
 
@@ -285,7 +274,7 @@ export default function RecordingScreen() {
           method: isEditMode ? 'PATCH' : 'POST',
           url: isEditMode
             ? 'http://13.125.81.126/api/myReviews/modify'
-            : 'http://13.125.81.126/api/myReviews/test',
+            : 'http://13.125.81.126/api/myReviews/save',
           data: formData,
           headers: {
             Accept: 'application/json',
@@ -293,7 +282,6 @@ export default function RecordingScreen() {
             'Content-Type': 'multipart/form-data',
           },
         });
-
         console.log('Response:', response.data);
         setModalVisible(false);
         navigation.navigate('Records');
@@ -301,7 +289,6 @@ export default function RecordingScreen() {
         if (axios.isAxiosError(error)) {
           console.error('Axios error:', error.message);
           if (error.response) {
-            console.error('Error response status:', error.response.status);
             console.error('Error response data:', error.response.data);
           } else if (error.request) {
             console.error('No response received:', error.request);
@@ -332,12 +319,7 @@ export default function RecordingScreen() {
           <Text style={[GlobalStyle.sectionTitle, {paddingBottom: 0}]}>
             {exhibitionName}
           </Text>
-          <TouchableOpacity
-            onPress={() => {
-              if (drawableSheetRef.current) {
-                drawableSheetRef.current.handleOpenBottomSheet();
-              }
-            }}>
+          <TouchableOpacity onPress={handleOpenDrawableSheet}>
             <MenuIcon
               name="menu"
               size={24}
@@ -391,6 +373,8 @@ export default function RecordingScreen() {
         ref={drawableSheetRef}
         artList={artList}
         setArtList={setArtList}
+        currentArtIndex={artIndex}
+        setArtIndex={setArtIndex}
       />
     </View>
   );

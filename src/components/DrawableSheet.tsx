@@ -26,6 +26,8 @@ type ArtItem = {
 type DrawableSheetProps = {
   artList: ArtItem[];
   setArtList: (data: ArtItem[]) => void;
+  currentArtIndex: number;
+  setArtIndex: (index: number) => void;
 };
 
 type CustomCheckBoxProps = {
@@ -44,9 +46,38 @@ const CustomCheckBox = ({isChecked, onPress}: CustomCheckBoxProps) => {
 };
 
 const DrawableSheet = forwardRef(
-  ({artList, setArtList}: DrawableSheetProps, ref) => {
+  (
+    {artList, setArtList, currentArtIndex, setArtIndex}: DrawableSheetProps,
+    ref,
+  ) => {
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
     const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+
+    useImperativeHandle(ref, () => ({
+      handleOpenBottomSheet() {
+        // 현재 작성 중인 내용을 artList에 반영
+        const newArt: ArtItem = {
+          id: Math.random().toString(),
+          image: '',
+          title: '',
+          artist: '',
+          memo: '',
+        };
+
+        const updatedArtList = [...artList];
+        if (currentArtIndex < updatedArtList.length) {
+          updatedArtList[currentArtIndex] = newArt;
+        } else {
+          updatedArtList.push(newArt);
+        }
+
+        setArtList(updatedArtList);
+        setIsBottomSheetOpen(true);
+      },
+      handleCloseBottomSheet() {
+        setIsBottomSheetOpen(false);
+      },
+    }));
 
     useImperativeHandle(ref, () => ({
       handleOpenBottomSheet() {
@@ -77,6 +108,13 @@ const DrawableSheet = forwardRef(
 
     const deleteSelectedItems = () => {
       const newArtList = artList.filter(item => !selectedItems.has(item.id));
+
+      // 현재 보고 있는 인덱스의 항목이 삭제된 경우 이전 인덱스로 이동
+      if (selectedItems.has(artList[currentArtIndex]?.id)) {
+        const newIndex = Math.max(0, currentArtIndex - 1);
+        setArtIndex(newIndex);
+      }
+
       setArtList(newArtList);
       setSelectedItems(new Set());
     };
