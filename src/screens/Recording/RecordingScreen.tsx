@@ -18,6 +18,7 @@ import {useCameraPermission} from '../../hooks/useCameraPermissions';
 import {useFormState} from '../../hooks/useFormState';
 import {StyleSheet} from 'react-native';
 import RecordingTemplate from '../../components/RecordingTemplate';
+import {Image} from 'react-native';
 
 type ArtItem = {
   id: string;
@@ -33,6 +34,7 @@ export default function RecordingScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const route = useRoute<RecordingScreenRouteProp>();
 
+  // 라우트에서 필요한 파라미터 추출
   const {
     exhibitionName,
     exhibitionDate,
@@ -41,9 +43,11 @@ export default function RecordingScreen() {
     isEditMode = false,
   } = route.params;
 
+  // 이미지 선택 및 카메라 촬영을 처리하는 커스텀 훅 사용
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
     useImagePicker();
 
+  // 제목, 아티스트, 메모 등의 폼 상태를 관리하는 커스텀 훅 사용
   const {
     title,
     setTitle,
@@ -60,16 +64,21 @@ export default function RecordingScreen() {
     resetForm,
   } = useFormState(initialArtList);
 
+  // 카메라 권한을 요청하는 커스텀 훅 사용
   const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
 
+  // ScrollView 및 DrawableSheet에 대한 참조 생성
   const scrollViewRef = useRef<ScrollView>(null);
   const drawableSheetRef = useRef<any>(null);
 
+  // 모달 및 데이터 관련 상태 관리
   const [modalVisible, setModalVisible] = useState(false);
   const [finalData, setFinalData] = useState<any>(null);
 
+  // 메인 이미지 인덱스를 관리하는 상태
   const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
 
+  // artIndex가 변경될 때마다 현재 아트 정보를 설정
   useEffect(() => {
     if (artIndex < artList.length) {
       const currentArt = artList[artIndex];
@@ -85,6 +94,7 @@ export default function RecordingScreen() {
     }
   }, [artIndex, artList, resetForm]);
 
+  // 체크박스 상태 변경 시 이전 아트의 데이터를 불러오는 기능
   const handleCheckBoxChange = (newValue: boolean) => {
     setToggleCheckBox(newValue);
     if (newValue && artIndex > 0) {
@@ -98,13 +108,15 @@ export default function RecordingScreen() {
     }
   };
 
+  // 메인 이미지를 설정하는 기능
   const handleSetMainImage = (index: number) => {
     setMainImageIndex(prevIndex => (prevIndex === index ? null : index));
   };
 
+  // '다음' 버튼 클릭 시 현재 데이터를 저장하고 다음 인덱스로 이동
   const handleNext = () => {
     const newArt: ArtItem = {
-      id: Math.random().toString(),
+      id: Math.random().toString(), // 임의의 ID
       image: imageUri || '',
       title: title || '',
       artist: artist || '',
@@ -113,7 +125,7 @@ export default function RecordingScreen() {
 
     const updatedArtList = [...artList];
     if (artIndex < updatedArtList.length) {
-      updatedArtList[artIndex] = newArt;
+      updatedArtList[artIndex] = newArt; // 기존 항목 업데이트
     } else {
       updatedArtList.push(newArt);
     }
@@ -122,10 +134,11 @@ export default function RecordingScreen() {
     setArtIndex(artIndex + 1);
     resetForm();
     setImageUri('');
-    setToggleCheckBox(false);
+    setToggleCheckBox(false); // 체크박스 초기화
     scrollViewRef.current?.scrollTo({y: 0, animated: false});
   };
 
+  // '이전' 버튼 클릭 시 이전 데이터로 이동
   const handlePrevious = () => {
     if (artIndex > 0) {
       const prevArt = artList[artIndex - 1];
@@ -140,6 +153,7 @@ export default function RecordingScreen() {
     }
   };
 
+  // 기록 종료 시 최종 데이터를 설정하고 모달
   const handleEndTour = () => {
     const newArt: ArtItem = {
       id: Math.random().toString(),
@@ -161,12 +175,15 @@ export default function RecordingScreen() {
       if (mainImageIndex !== null && mainImageIndex < updatedArtList.length) {
         mainImageUri = updatedArtList[mainImageIndex].image || '';
       } else {
-        mainImageUri = updatedArtList[0].image || '';
+        const resolvedAsset = Image.resolveAssetSource(
+          require('../../assets/images/android.png'),
+        );
+        mainImageUri = resolvedAsset.uri; // 로컬 이미지의 URI를 가져옵니다.
       }
     }
 
     setFinalData({
-      id: Math.random().toString(),
+      id: 10001, // 임시 ID
       name: exhibitionName,
       date: exhibitionDate,
       gallery: gallery,
@@ -184,49 +201,116 @@ export default function RecordingScreen() {
         rating: rating.toString(),
       };
 
+      // FormData 객체 생성
       const formData = new FormData();
-      formData.append('file', {
-        uri: updatedFinalData.mainImage,
-        type: 'image/jpeg',
-        name: 'mainImage.jpg',
-      });
-      formData.append('name', updatedFinalData.name);
-      formData.append('date', updatedFinalData.date);
-      formData.append('gallery', updatedFinalData.gallery);
-      formData.append('rating', updatedFinalData.rating);
 
-      finalData.artList.forEach(
-        (art: {image: any; title: any; artist: any; memo: any}, index: any) => {
-          formData.append(`artList[${index}][image]`, {
-            uri: art.image,
-            type: 'image/jpeg',
-            name: `art_${index}.jpg`,
-          });
-          formData.append(`artList[${index}][title]`, art.title);
-          formData.append(`artList[${index}][artist]`, art.artist);
-          formData.append(`artList[${index}][memo]`, art.memo);
-        },
+      
+      /* 
+      // requestDto JSON 데이터를 문자열로 변환하여 FormData에 추가
+      const requestDtoBlob = new Blob(
+        [
+          JSON.stringify({
+            id: updatedFinalData.id || 10001,
+            name: updatedFinalData.name || '',
+            date: updatedFinalData.date || '',
+            gallery: updatedFinalData.gallery || '',
+            rating: updatedFinalData.rating || '',
+            artList: updatedFinalData.artList.map((art: any) => ({
+              title: art.title || '',
+              artist: art.artist || '',
+              content: art.memo || '',
+            })),
+          }),
+        ],
+        {type: 'application/json', lastModified: Date.now()}, // lastModified 추가
       );
 
-      console.log('Final Data : ', updatedFinalData);
+      formData.append('requestDto', requestDtoBlob); */
+
+      // requestDto의 각 필드를 분해하여 FormData에 추가하는 방법
+      formData.append('id', updatedFinalData.id || '10001');
+      formData.append('name', updatedFinalData.name || '');
+      formData.append('date', updatedFinalData.date || '');
+      formData.append('gallery', updatedFinalData.gallery || '');
+      formData.append('rating', updatedFinalData.rating || '');
+
+      // artList의 각 항목을 개별적으로 FormData에 추가
+      // updatedFinalData.artList.forEach((art: any, index: number) => {
+      //   formData.append(`artList[${index}].title`, art.title || '');
+      //   formData.append(`artList[${index}].artist`, art.artist || '');
+      //   formData.append(`artList[${index}].content`, art.memo || '');
+      // });
+
+      // 메인 이미지가 있으면 FormData에 추가
+      if (updatedFinalData.mainImage) {
+        let mainImageFile;
+
+        if (typeof updatedFinalData.mainImage === 'string') {
+          // 로컬 이미지가 아닌 경우 처리
+          mainImageFile = {
+            uri: updatedFinalData.mainImage.startsWith('file://')
+              ? updatedFinalData.mainImage
+              : 'file://' + updatedFinalData.mainImage,
+            type: 'image/jpeg',
+            name: 'mainImage.jpeg',
+          };
+        } else {
+          // 로컬 이미지인 경우
+          mainImageFile = {
+            uri: updatedFinalData.mainImage, // require로 불러온 이미지의 URI
+            type: 'image/jpg',
+            name: 'mainImage.jpg',
+          };
+        }
+
+        formData.append('mainImage', mainImageFile);
+      }
+
+      //각 작품 이미지(contentImages)를 FormData에 추가
+      updatedFinalData.artList.forEach((art: any, index: number) => {
+        if (art.image) {
+          const contentImageFile = {
+            uri: art.image.startsWith('file://')
+              ? art.image
+              : 'file://' + art.image,
+            type: 'image/jpeg',
+            name: `art_${index}.jpeg`,
+          };
+          formData.append('contentImages', contentImageFile);
+        }
+      });
 
       try {
-        const url = isEditMode
-          ? 'http://13.125.81.126/api/myReviews/modify'
-          : 'http://13.125.81.126/api/myReviews/save';
-
-        await axios.post(url, formData, {
+        const response = await axios({
+          method: isEditMode ? 'PATCH' : 'POST',
+          url: isEditMode
+            ? 'http://13.125.81.126/api/myReviews/modify'
+            : 'http://13.125.81.126/api/myReviews/test',
+          data: formData,
           headers: {
-            'Content-Type': 'multipart/form-data',
+            Accept: 'application/json',
             Authorization: `Bearer ACCESS_TOKEN`,
+            'Content-Type': 'multipart/form-data',
           },
         });
 
+        console.log('Response:', response.data);
         setModalVisible(false);
         navigation.navigate('Records');
       } catch (error) {
-        console.error('Error:', error);
-        console.error('Error response:', (error as any).response?.data);
+        if (axios.isAxiosError(error)) {
+          console.error('Axios error:', error.message);
+          if (error.response) {
+            console.error('Error response status:', error.response.status);
+            console.error('Error response data:', error.response.data);
+          } else if (error.request) {
+            console.error('No response received:', error.request);
+          } else {
+            console.error('Error during setup:', error.message);
+          }
+        } else {
+          console.error('Unknown error:', (error as Error).message);
+        }
       }
     }
   };
