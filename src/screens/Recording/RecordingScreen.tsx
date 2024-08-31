@@ -13,6 +13,7 @@ import {StackParamList} from '../../navigator/StackParamList';
 import RatingModal from '../../components/RatingModal';
 import DrawableSheet from '../../components/DrawableSheet';
 import axios from 'axios';
+import mime from 'react-native-mime-types';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
 import {useFormState} from '../../hooks/useFormState';
@@ -229,43 +230,47 @@ export default function RecordingScreen() {
       // FormData 객체 생성
       const formData = new FormData();
 
-      // requestDto의 각 필드를 분해하여 FormData에 추가하는 방법
+      // 기본 텍스트 필드 추가
       formData.append('id', updatedFinalData.id || '10001');
       formData.append('name', updatedFinalData.name || '');
       formData.append('date', updatedFinalData.date || '');
       formData.append('gallery', updatedFinalData.gallery || '');
       formData.append('rating', updatedFinalData.rating || '');
 
-      //artList의 각 항목을 개별적으로 FormData에 추가
+      // 각 artList 항목을 개별적으로 FormData에 추가
       updatedFinalData.artList.forEach((art: any, index: number) => {
         formData.append(`artList[${index}].title`, art.title || '');
         formData.append(`artList[${index}].artist`, art.artist || '');
         formData.append(`artList[${index}].contents`, art.memo || '');
       });
 
-      // 메인 이미지 formData에 추가
+      // 메인 이미지가 있는 경우 추가, 없는 경우 null 추가
       if (updatedFinalData.mainImage) {
         const mainImageFile = {
-          uri: updatedFinalData.mainImage,
-          type: 'image/jpeg',
+          uri: updatedFinalData.mainImage.startsWith('file://')
+            ? updatedFinalData.mainImage
+            : 'file://' + updatedFinalData.mainImage,
+          type: mime.lookup(updatedFinalData.mainImage) || 'image/jpeg',
           name: 'mainImage.jpeg',
         };
         formData.append('mainImage', mainImageFile);
+      } else {
+        formData.append('mainImage', null);
       }
 
-      //각 작품 이미지(contentImages)를 FormData에 추가
+      // 각 작품 이미지(contentImages)를 FormData에 개별적으로! 추가
       updatedFinalData.artList.forEach((art: any, index: number) => {
         if (art.image) {
           const contentImageFile = {
             uri: art.image.startsWith('file://')
               ? art.image
               : 'file://' + art.image,
-            type: 'image/jpeg',
+            type: mime.lookup(art.image) || 'image/jpeg',
             name: `art_${index}.jpeg`,
           };
-          formData.append('contentImages', contentImageFile);
+          formData.append(`artList[${index}].image`, contentImageFile);
         } else {
-          formData.append('contentImages', '');
+          formData.append(`artList[${index}].image`, '');
         }
       });
 
