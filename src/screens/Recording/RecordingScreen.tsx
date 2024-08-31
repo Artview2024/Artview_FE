@@ -217,6 +217,15 @@ export default function RecordingScreen() {
       rating: '',
       artList: updatedArtList,
     });
+    console.log({
+      id: 10001, // 임시 ID
+      name: exhibitionName,
+      date: exhibitionDate,
+      gallery: gallery,
+      mainImage: mainImageUri,
+      rating: '',
+      artList: updatedArtList,
+    });
     setModalVisible(true);
   };
 
@@ -244,13 +253,18 @@ export default function RecordingScreen() {
         formData.append(`artList[${index}].contents`, art.memo || '');
       });
 
-      // 메인 이미지가 있는 경우 추가, 없는 경우 null 추가
+      // 메인 이미지
       if (updatedFinalData.mainImage) {
+        let mainImageUri = updatedFinalData.mainImage;
+
+        // 만약 로컬 파일 시스템의 경로인 경우 `file://` 제거
+        if (mainImageUri.startsWith('file://')) {
+          mainImageUri = mainImageUri.replace('file://', '');
+        }
+
         const mainImageFile = {
-          uri: updatedFinalData.mainImage.startsWith('file://')
-            ? updatedFinalData.mainImage
-            : 'file://' + updatedFinalData.mainImage,
-          type: mime.lookup(updatedFinalData.mainImage) || 'image/jpeg',
+          uri: mainImageUri,
+          type: mime.lookup(mainImageUri) || 'image/jpeg',
           name: 'mainImage.jpeg',
         };
         formData.append('mainImage', mainImageFile);
@@ -270,7 +284,16 @@ export default function RecordingScreen() {
           };
           formData.append(`artList[${index}].image`, contentImageFile);
         } else {
-          formData.append(`artList[${index}].image`, '');
+          // 이미지가 없는 경우 로컬의 기본 이미지를 추가
+          const resolvedAsset = Image.resolveAssetSource(
+            require('../../assets/images/android.png'),
+          );
+          const fallbackImageFile = {
+            uri: resolvedAsset.uri,
+            type: mime.lookup(resolvedAsset.uri) || 'image/jpeg',
+            name: `art_${index}_default.jpeg`,
+          };
+          formData.append(`artList[${index}].image`, fallbackImageFile);
         }
       });
 
@@ -292,7 +315,6 @@ export default function RecordingScreen() {
         navigation.navigate('Records');
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.error('Axios error:', error.message);
           if (error.response) {
             console.error('Error response data:', error.response.data);
           } else if (error.request) {
