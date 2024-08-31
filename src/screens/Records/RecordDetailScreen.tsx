@@ -29,7 +29,7 @@ export default function RecordDetailScreen() {
     const fetchRecordDetails = async () => {
       try {
         const response = await axios.get(
-          `http://13.125.81.126/api/myReviews/1`,
+          `http://13.125.81.126/api/myReviews/${id}`,
           {
             headers: {
               Accept: 'application/json',
