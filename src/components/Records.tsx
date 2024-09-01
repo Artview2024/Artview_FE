@@ -21,7 +21,6 @@ type RecordsProps = {
   exhibitions: Exhibition[];
   selectedExhibition: number | null;
   onExhibitionSelect: (id: number) => void;
-  onStart: () => void;
   backAction: () => void;
 };
 
@@ -29,11 +28,10 @@ export default function Records({
   exhibitions,
   selectedExhibition,
   onExhibitionSelect,
-  onStart,
   backAction,
 }: RecordsProps) {
   return (
-    <View style={[GlobalStyle.container]}>
+    <View style={{flex: 1}}>
       <ScrollView>
         <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
           <TouchableOpacity onPress={backAction}>

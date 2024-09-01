@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   ScrollView,
   View,
@@ -15,11 +15,10 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
+import axios from 'axios';
 import {StackParamList} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import RatingIcon from 'react-native-vector-icons/FontAwesome';
-import '../../navigator/AppNavigator';
-
 import GlobalStyle from '../../styles/GlobalStyle';
 
 type PostingScreenRouteProp = RouteProp<StackParamList, 'Posting'>;
@@ -27,9 +26,49 @@ type PostingScreenRouteProp = RouteProp<StackParamList, 'Posting'>;
 export default function PostingScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const route = useRoute<PostingScreenRouteProp>();
-  const {exhibition} = route.params;
+  const {recordId} = route.params;
+  const [exhibition, setExhibition] = useState<any>(null);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [content, setContent] = useState<string>('');
+
+  useEffect(() => {
+    const fetchExhibitionDetails = async () => {
+      if (recordId) {
+        console.log('Fetching details for recordId:', recordId);
+        try {
+          const response = await axios.get(
+            `http://13.125.81.126/api/communications/retrieve/${recordId}`,
+            {
+              headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ACCESS_TOKEN`,
+              },
+            },
+          );
+          console.log('Fetched exhibition details:', response.data);
+          setExhibition(response.data);
+        } catch (error) {
+          console.error('Error fetching exhibition details:', error);
+        }
+      } else {
+        console.error('recordId is undefined, cannot fetch details');
+      }
+    };
+
+    fetchExhibitionDetails();
+  }, [recordId]);
+
+  if (!exhibition) {
+    return (
+      <View
+        style={[
+          GlobalStyle.container,
+          {justifyContent: 'center', alignItems: 'center'},
+        ]}>
+        <Text>전시 정보를 불러오는 중입니다...</Text>
+      </View>
+    );
+  }
 
   const keywords = [
     '아름다운',
@@ -51,26 +90,28 @@ export default function PostingScreen() {
   };
 
   const handlePost = () => {
-    const newPost = {
-      key: new Date().toISOString(),
-      user: '미술마니아',
-      profile: '',
-      title: exhibition.name,
-      date: exhibition.date,
-      gallery: exhibition.gallery,
-      image: exhibition.imageList,
-      content,
-      emotion: selectedKeywords,
-      rating: exhibition.rating,
-    };
+    if (exhibition) {
+      const newPost = {
+        key: new Date().toISOString(),
+        user: '미술마니아',
+        profile: '',
+        title: exhibition.name,
+        date: exhibition.date,
+        gallery: exhibition.gallery,
+        image: exhibition.images,
+        content,
+        emotion: selectedKeywords,
+        rating: exhibition.rate,
+      };
 
-    navigation.navigate('Community', {newPost});
+      navigation.navigate('Community', {newPost}); // 게시 후 커뮤니티 화면으로 이동
+    }
   };
 
   return (
     <View style={[GlobalStyle.container]}>
       <ScrollView>
-        {/* header */}
+        {/* 헤더 */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <BackIcon
@@ -82,7 +123,7 @@ export default function PostingScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* info */}
+        {/* 전시 정보 */}
         <View style={{paddingTop: 25}}>
           <View
             style={{
@@ -105,7 +146,7 @@ export default function PostingScreen() {
               style={{paddingRight: 5}}
             />
             <Text style={[GlobalStyle.subText, {color: '#EA1B83'}]}>
-              {exhibition.rating}
+              {exhibition.rate}
             </Text>
           </View>
           <View style={{paddingTop: 3}}>
@@ -115,19 +156,19 @@ export default function PostingScreen() {
           </View>
         </View>
 
-        {/* Image List */}
+        {/* 이미지 리스트 */}
         <View style={{marginTop: 18}}>
           <FlatList
             horizontal
-            data={exhibition.imageList}
+            data={exhibition.images}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => (
-              <Image source={item} style={styles.imageItem} />
+              <Image source={{uri: item}} style={styles.imageItem} />
             )}
           />
         </View>
 
-        {/* Writing Input */}
+        {/* 글쓰기 입력 */}
         <View style={{marginTop: 28}}>
           <Text
             style={[
@@ -148,7 +189,7 @@ export default function PostingScreen() {
           />
         </View>
 
-        {/* Keyword Buttons */}
+        {/* 키워드 버튼 */}
         <View style={{marginTop: 28}}>
           <Text
             style={[
@@ -182,7 +223,7 @@ export default function PostingScreen() {
           </View>
         </View>
 
-        {/* 포스팅 성공하면 소통 메인페이지로 */}
+        {/* 게시 버튼 */}
         <TouchableOpacity
           style={[
             GlobalStyle.activeButton,
@@ -203,12 +244,6 @@ const styles = StyleSheet.create({
     height: 200,
     marginRight: 10,
     borderRadius: 10,
-  },
-  keywordContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    paddingHorizontal: 16,
   },
   EmotionButton: {
     flexBasis: '22%',

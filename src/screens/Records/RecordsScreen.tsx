@@ -106,7 +106,6 @@ export default function RecordsScreen() {
             handleRecordSelect(id);
             handleStartViewing();
           }}
-          onStart={handleStartViewing}
           backAction={handleBackAction}
         />
       ) : (
