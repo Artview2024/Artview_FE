@@ -1,13 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {
-  ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-} from 'react-native';
-import {
   useNavigation,
   NavigationProp,
   useIsFocused,
@@ -16,8 +8,9 @@ import {
 } from '@react-navigation/native';
 import axios from 'axios';
 import {StackParamList} from '../../navigator/StackParamList';
-import BackIcon from 'react-native-vector-icons/Ionicons';
+import Records from '../../components/Records';
 import GlobalStyle from '../../styles/GlobalStyle';
+import {View, Text} from 'react-native';
 
 type Record = {
   id: number;
@@ -32,6 +25,13 @@ type Record = {
     artist: string;
     memo: string;
   }>;
+};
+
+type Exhibition = {
+  id: number;
+  name: string;
+  date: string;
+  image: {uri: string};
 };
 
 export default function RecordsScreen() {
@@ -65,85 +65,55 @@ export default function RecordsScreen() {
         setMyRecords(transformedRecords);
       } catch (error) {
         console.error('Error:', error);
+        setMyRecords([]);
       }
     };
 
     fetchRecords();
   }, [isFocused]);
 
-  useEffect(() => {
-    console.log('Current Records:', myRecords);
-  }, [myRecords]);
-
   const handleRecordSelect = (id: number) => {
     setSelectedRecord(id);
-    handleStartViewing(id);
   };
 
-  const handleStartViewing = (id: number) => {
-    const record = myRecords.find(record => record.id === id);
-    if (record) {
-      navigation.navigate('RecordDetail', {record});
+  const handleStartViewing = () => {
+    if (selectedRecord !== null) {
+      const record = myRecords.find(record => record.id === selectedRecord);
+      if (record) {
+        navigation.navigate('RecordDetail', {record});
+      }
     }
   };
 
+  const handleBackAction = () => {
+    navigation.navigate('Home');
+  };
+
+  const exhibitions: Exhibition[] = myRecords.map(record => ({
+    id: record.id,
+    name: record.name,
+    date: record.date,
+    image: {uri: record.mainImage},
+  }));
+
   return (
     <View style={[GlobalStyle.container]}>
-      <ScrollView>
-        <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-            <BackIcon
-              name="chevron-back"
-              size={24}
-              color={'black'}
-              style={{paddingRight: 3, paddingTop: 18, paddingLeft: 0}}
-            />
-          </TouchableOpacity>
+      {myRecords.length > 0 ? (
+        <Records
+          exhibitions={exhibitions}
+          selectedExhibition={selectedRecord}
+          onExhibitionSelect={id => {
+            handleRecordSelect(id);
+            handleStartViewing();
+          }}
+          onStart={handleStartViewing}
+          backAction={handleBackAction}
+        />
+      ) : (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Text>내 기록을 불러오고 있습니다</Text>
         </View>
-        <View style={styles.exhibitionList}>
-          {myRecords.map(record => (
-            <View key={record.id} style={styles.exhibitionWrapper}>
-              <TouchableOpacity onPress={() => handleRecordSelect(record.id)}>
-                <Image
-                  source={{uri: record.mainImage}}
-                  style={[
-                    styles.exhibitionImage,
-                    selectedRecord === record.id &&
-                      styles.selectedExhibitionImage,
-                  ]}
-                />
-                <View style={{paddingTop: 7}}>
-                  <Text style={GlobalStyle.mainText}>{record.name}</Text>
-                  <Text style={GlobalStyle.subText}>{record.date}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  exhibitionList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  exhibitionWrapper: {
-    width: '48%',
-    paddingTop: 10,
-    marginVertical: 10,
-  },
-  exhibitionImage: {
-    width: '100%',
-    height: undefined,
-    aspectRatio: 3 / 4,
-    resizeMode: 'cover',
-    borderRadius: 5,
-  },
-  selectedExhibitionImage: {
-    opacity: 0.6,
-  },
-});

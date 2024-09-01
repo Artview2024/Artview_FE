@@ -8,34 +8,18 @@ import axios from 'axios';
 import {StackParamList} from '../../navigator/StackParamList';
 import Records from '../../components/Records';
 import {View, Text} from 'react-native';
+import GlobalStyle from '../../styles/GlobalStyle';
 
-const mockRecords = [
-  {
-    id: 1,
-    name: '이경준 사진전',
-    date: '2023.12.18',
-    gallery: '서울미술관',
-    image: require('../../assets/images/artList3.jpg'),
-  },
-  {
-    id: 2,
-    name: '인상주의의 출현',
-    date: '2023.11.11',
-    gallery: '서울미술관',
-    image: require('../../assets/images/carousel4.jpg'),
-  },
-  {
-    id: 3,
-    name: '2021 SF:오디세이 서울',
-    date: '2022.10.28',
-    gallery: '서울미술관',
-    image: require('../../assets/images/carousel7.jpg'),
-  },
-];
+type Record = {
+  id: number;
+  name: string;
+  date: string;
+  image: {uri: string};
+};
 
 export default function PostingStartScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
-  const [records, setRecords] = useState<any[]>(mockRecords); // 일단 초기값은 목데이터(추후변경)
+  const [records, setRecords] = useState<Record[]>([]);
   const [selectedRecord, setSelectedRecord] = useState<number | null>(null);
   const isFocused = useIsFocused();
 
@@ -43,19 +27,26 @@ export default function PostingStartScreen() {
     const fetchRecords = async () => {
       try {
         const response = await axios.get(
-          'http://13.125.81.126/api/communications',
+          'http://13.125.81.126/api/myReviews/all/10001',
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ACCESS_TOKEN`,
+            },
+          },
         );
+
         const myRecords = response.data.map((item: any) => ({
           id: item.myReviewsId,
           name: item.exhibitionName,
           date: item.visitedDate,
-          mainImage: item.imageUrl,
+          image: {uri: item.imageUrl},
         }));
         console.log('Server Response:', response.data);
         setRecords(myRecords);
       } catch (error) {
         console.error('오류:', error);
-        setRecords(mockRecords);
+        setRecords([]);
       }
     };
 
@@ -72,7 +63,6 @@ export default function PostingStartScreen() {
     }
   };
 
-  //글쓰기할 기록을 선택하라는 문구 필요할 것 같음 >> 기획 및 디자인 수정 필요
   return (
     <View style={{flex: 1}}>
       {records.length > 0 ? (
@@ -84,7 +74,11 @@ export default function PostingStartScreen() {
           backAction={() => navigation.goBack()}
         />
       ) : (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View
+          style={[
+            GlobalStyle.container,
+            {justifyContent: 'center', alignItems: 'center'},
+          ]}>
           <Text>내 기록을 불러오고 있습니다</Text>
         </View>
       )}
