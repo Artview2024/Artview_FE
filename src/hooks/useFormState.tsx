@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 
 export const useFormState = (initialArtList: any[]) => {
   const [title, setTitle] = useState('');
@@ -16,11 +16,27 @@ export const useFormState = (initialArtList: any[]) => {
     })),
   );
 
+  // 입력값 변경 시 artList 자동 업데이트
+  useEffect(() => {
+    const newArt = {
+      id: artIndex.toString(),
+      image: '', // imageUri 받아오기
+      title: title || '',
+      artist: artist || '',
+      memo: memo || '',
+    };
+
+    if (newArt.image || newArt.title || newArt.artist || newArt.memo) {
+      const updatedArtList = [...artList];
+      updatedArtList[artIndex] = newArt;
+      setArtList(updatedArtList);
+    }
+  }, [title, artist, memo, artIndex]);
+
   const resetForm = () => {
     setTitle('');
     setArtist('');
     setMemo('');
-    setArtIndex(artIndex + 1);
   };
 
   return {
