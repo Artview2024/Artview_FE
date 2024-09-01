@@ -34,7 +34,6 @@ export default function PostingScreen() {
   useEffect(() => {
     const fetchExhibitionDetails = async () => {
       if (recordId) {
-        console.log('Fetching details for recordId:', recordId);
         try {
           const response = await axios.get(
             `http://13.125.81.126/api/communications/retrieve/${recordId}`,
@@ -45,13 +44,13 @@ export default function PostingScreen() {
               },
             },
           );
-          console.log('Fetched exhibition details:', response.data);
+          console.log('GET 내용:', response.data);
           setExhibition(response.data);
         } catch (error) {
-          console.error('Error fetching exhibition details:', error);
+          console.error('GET 에러:', error);
         }
       } else {
-        console.error('recordId is undefined, cannot fetch details');
+        console.error('recordId 없음');
       }
     };
 
@@ -89,22 +88,42 @@ export default function PostingScreen() {
     }
   };
 
-  const handlePost = () => {
+  const handlePost = async () => {
     if (exhibition) {
-      const newPost = {
-        key: new Date().toISOString(),
-        user: '미술마니아',
-        profile: '',
-        title: exhibition.name,
-        date: exhibition.date,
-        gallery: exhibition.gallery,
-        image: exhibition.images,
-        content,
-        emotion: selectedKeywords,
-        rating: exhibition.rate,
-      };
+      try {
+        const postData = {
+          myReviewId: recordId,
+          name: exhibition.name,
+          rate: exhibition.rate,
+          date: exhibition.date,
+          gallery: exhibition.gallery,
+          images: exhibition.images,
+          content: content,
+          keyword: selectedKeywords,
+        };
 
-      navigation.navigate('Community', {newPost}); // 게시 후 커뮤니티 화면으로 이동
+        console.log('전송 data:', postData);
+
+        const response = await axios.post(
+          'http://13.125.81.126/api/communications/save',
+          postData,
+          {
+            headers: {
+              Accept: 'application/json',
+              Authorization: `Bearer ACCESS_TOKEN`,
+            },
+          },
+        );
+
+        if (response.status === 200) {
+          console.log('POST 성공:', response.data);
+          navigation.navigate('Community', {newPost: response.data});
+        } else {
+          console.error('POST 실패:', response);
+        }
+      } catch (error) {
+        console.error('POST 실패:', error);
+      }
     }
   };
 

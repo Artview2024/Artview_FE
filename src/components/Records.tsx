@@ -31,7 +31,7 @@ export default function Records({
   backAction,
 }: RecordsProps) {
   return (
-    <View style={{flex: 1}}>
+    <View style={[GlobalStyle.container]}>
       <ScrollView>
         <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
           <TouchableOpacity onPress={backAction}>
