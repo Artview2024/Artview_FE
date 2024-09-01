@@ -52,19 +52,17 @@ export default function PostingStartScreen() {
     fetchRecords();
   }, [isFocused]);
 
-  // 사용자가 레코드를 선택했을 때 호출되는 함수
   const handleRecordSelect = (id: number) => {
-    console.log('Record selected:', id); // 선택된 레코드 ID 확인 로그
-    setSelectedRecord(id); // 선택된 레코드 ID를 상태에 저장
+    console.log('Record selected:', id);
+    setSelectedRecord(id);
   };
 
-  // 선택된 레코드 ID를 사용해 PostingScreen으로 네비게이션하는 함수
   const handleStartPosting = () => {
     if (selectedRecord !== null) {
-      console.log('Navigating to PostingScreen with recordId:', selectedRecord); // 네비게이션 시도 확인 로그
+      console.log('선택 record recordId:', selectedRecord); // 네비게이션 시도 확인 로그
       navigation.navigate('Posting', {recordId: selectedRecord}); // PostingScreen으로 이동
     } else {
-      console.error('selectedRecord is null, cannot navigate'); // 선택된 레코드가 없는 경우 오류 로그
+      console.error('선택된 레코드 없음'); // 선택된 레코드가 없는 경우 오류 로그
     }
   };
 

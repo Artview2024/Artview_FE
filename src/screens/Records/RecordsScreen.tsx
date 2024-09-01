@@ -97,7 +97,7 @@ export default function RecordsScreen() {
   }));
 
   return (
-    <View style={[GlobalStyle.container]}>
+    <View style={{flex: 1}}>
       {myRecords.length > 0 ? (
         <Records
           exhibitions={exhibitions}
