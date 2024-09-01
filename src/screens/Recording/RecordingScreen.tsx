@@ -79,21 +79,18 @@ export default function RecordingScreen() {
   // 메인 이미지 인덱스를 관리하는 상태
   const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
 
-  // artIndex가 변경될 때마다 현재 아트 정보를 설정
   useEffect(() => {
     if (artIndex < artList.length) {
       const currentArt = artList[artIndex];
-      if (currentArt) {
-        setTitle(currentArt.title || '');
-        setArtist(currentArt.artist || '');
-        setMemo(currentArt.memo || '');
-        setImageUri(currentArt.image || '');
-      } else {
-        resetForm();
-        setImageUri('');
-      }
+      setTitle(currentArt.title || '');
+      setArtist(currentArt.artist || '');
+      setMemo(currentArt.memo || '');
+      setImageUri(currentArt.image || '');
+    } else {
+      resetForm();
+      setImageUri('');
     }
-  }, [artIndex, artList, resetForm]);
+  }, [artIndex]);
 
   const handleOpenDrawableSheet = () => {
     if (drawableSheetRef.current) {
@@ -139,41 +136,17 @@ export default function RecordingScreen() {
     setMainImageIndex(prevIndex => (prevIndex === index ? null : index));
   };
 
-  // '다음' 버튼 클릭 시 현재 데이터를 저장하고 다음 인덱스로 이동
   const handleNext = () => {
-    const newArt: ArtItem = {
-      id: Math.random().toString(), // 임의의 ID
-      image: imageUri || '',
-      title: title || '',
-      artist: artist || '',
-      memo: memo || '',
-    };
-
-    const updatedArtList = [...artList];
-    if (artIndex < updatedArtList.length) {
-      updatedArtList[artIndex] = newArt; // 기존 항목 업데이트
-    } else {
-      updatedArtList.push(newArt);
+    if (title || artist || memo || imageUri) {
+      setArtIndex(artIndex + 1);
+      resetForm();
+      setToggleCheckBox(false);
+      scrollViewRef.current?.scrollTo({y: 0, animated: false});
     }
-
-    setArtList(updatedArtList);
-    setArtIndex(artIndex + 1);
-    resetForm();
-    setImageUri('');
-    setToggleCheckBox(false); // 체크박스 초기화
-    scrollViewRef.current?.scrollTo({y: 0, animated: false});
   };
 
-  // '이전' 버튼 클릭 시 이전 데이터로 이동
   const handlePrevious = () => {
     if (artIndex > 0) {
-      const prevArt = artList[artIndex - 1];
-      if (prevArt) {
-        setTitle(prevArt.title);
-        setArtist(prevArt.artist);
-        setMemo(prevArt.memo);
-        setImageUri(prevArt.image);
-      }
       setArtIndex(artIndex - 1);
       scrollViewRef.current?.scrollTo({y: 0, animated: false});
     }
@@ -181,52 +154,40 @@ export default function RecordingScreen() {
 
   // 기록 종료 시 최종 데이터를 설정하고 모달
   const handleEndTour = () => {
-    const newArt: ArtItem = {
-      id: Math.random().toString(),
-      image: imageUri || '',
-      title,
-      artist,
-      memo,
-    };
-
-    const updatedArtList = [...artList];
-    if (artIndex < updatedArtList.length) {
-      updatedArtList[artIndex] = newArt;
-    } else {
-      updatedArtList.push(newArt);
-    }
-
-    let mainImageUri = '';
-    if (updatedArtList.length > 0) {
-      if (mainImageIndex !== null && mainImageIndex < updatedArtList.length) {
-        mainImageUri = updatedArtList[mainImageIndex].image || '';
-      } else {
-        const resolvedAsset = Image.resolveAssetSource(
-          require('../../assets/images/android.png'),
-        );
-        mainImageUri = resolvedAsset.uri;
+    if (title || artist || memo || imageUri) {
+      const updatedArtList = [...artList];
+      let mainImageUri = '';
+      if (updatedArtList.length > 0) {
+        if (mainImageIndex !== null && mainImageIndex < updatedArtList.length) {
+          mainImageUri = updatedArtList[mainImageIndex].image || '';
+        } else {
+          const resolvedAsset = Image.resolveAssetSource(
+            require('../../assets/images/android.png'),
+          );
+          mainImageUri = resolvedAsset.uri;
+        }
       }
-    }
 
-    setFinalData({
-      id: 10001, // 임시 ID
-      name: exhibitionName,
-      date: exhibitionDate,
-      gallery: gallery,
-      mainImage: mainImageUri,
-      rating: '',
-      artList: updatedArtList,
-    });
-    console.log({
-      id: 10001, // 임시 ID
-      name: exhibitionName,
-      date: exhibitionDate,
-      gallery: gallery,
-      mainImage: mainImageUri,
-      rating: '',
-      artList: updatedArtList,
-    });
-    setModalVisible(true);
+      setFinalData({
+        id: 10001, // 임시 ID
+        name: exhibitionName,
+        date: exhibitionDate,
+        gallery: gallery,
+        mainImage: mainImageUri,
+        rating: '',
+        artList: updatedArtList,
+      });
+      console.log({
+        id: 10001, // 임시 ID
+        name: exhibitionName,
+        date: exhibitionDate,
+        gallery: gallery,
+        mainImage: mainImageUri,
+        rating: '',
+        artList: updatedArtList,
+      });
+      setModalVisible(true);
+    }
   };
 
   const handleRatingSubmit = async (rating: number) => {
@@ -257,7 +218,7 @@ export default function RecordingScreen() {
       if (updatedFinalData.mainImage) {
         let mainImageUri = updatedFinalData.mainImage;
 
-        // 만약 로컬 파일 시스템의 경로인 경우 `file://` 제거
+        // 만약 로컬 파일 시스템의 경로인 경우 file:// 제거
         if (mainImageUri.startsWith('file://')) {
           mainImageUri = mainImageUri.replace('file://', '');
         }
