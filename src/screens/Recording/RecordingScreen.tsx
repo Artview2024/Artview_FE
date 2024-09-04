@@ -16,6 +16,7 @@ import axios from 'axios';
 import mime from 'react-native-mime-types';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
+import {updateArtImage} from '../../hooks/updateArtImages';
 import {useFormState} from '../../hooks/useFormState';
 import {StyleSheet} from 'react-native';
 import RecordingTemplate from '../../components/RecordingTemplate';
@@ -95,21 +96,7 @@ export default function RecordingScreen() {
   const handleOpenDrawableSheet = () => {
     if (drawableSheetRef.current) {
       // 현재 작성 중인 아트 항목을 저장
-      const newArt: ArtItem = {
-        id: Math.random().toString(),
-        image: imageUri || '',
-        title: title || '',
-        artist: artist || '',
-        memo: memo || '',
-      };
-
-      const updatedArtList = [...artList];
-      if (artIndex < updatedArtList.length) {
-        updatedArtList[artIndex] = newArt; // 기존 항목 업데이트
-      } else {
-        updatedArtList.push(newArt);
-      }
-
+      const updatedArtList = updateArtImage(artIndex, imageUri, artList);
       setArtList(updatedArtList);
 
       // DrawableSheet 열기
@@ -138,6 +125,11 @@ export default function RecordingScreen() {
 
   const handleNext = () => {
     if (title || artist || memo || imageUri) {
+      // 아트 항목 업데이트
+      const updatedArtList = updateArtImage(artIndex, imageUri, artList);
+      setArtList(updatedArtList);
+
+      // 다음 아트 항목으로 이동
       setArtIndex(artIndex + 1);
       resetForm();
       setToggleCheckBox(false);
@@ -155,7 +147,10 @@ export default function RecordingScreen() {
   // 기록 종료 시 최종 데이터를 설정하고 모달
   const handleEndTour = () => {
     if (title || artist || memo || imageUri) {
-      const updatedArtList = [...artList];
+      // 현재 작성 중인 아트 항목을 최종적으로 업데이트
+      const updatedArtList = updateArtImage(artIndex, imageUri, artList);
+      setArtList(updatedArtList);
+
       let mainImageUri = '';
       if (updatedArtList.length > 0) {
         if (mainImageIndex !== null && mainImageIndex < updatedArtList.length) {
@@ -212,13 +207,33 @@ export default function RecordingScreen() {
         formData.append(`artList[${index}].title`, art.title || '');
         formData.append(`artList[${index}].artist`, art.artist || '');
         formData.append(`artList[${index}].contents`, art.memo || '');
+
+        if (art.addImage) {
+          // 새로 추가된 이미지를 file로 전송
+          let addImageUri = art.addImage;
+
+          if (addImageUri.startsWith('/data/')) {
+            addImageUri = 'file://' + addImageUri;
+          } else if (addImageUri.startsWith('file://')) {
+            addImageUri = addImageUri.replace('file://', '');
+          }
+
+          const addImageFile = {
+            uri: addImageUri,
+            type: mime.lookup(addImageUri) || 'image/jpeg',
+            name: `art_${index}_add.jpeg`,
+          };
+          formData.append(`artList[${index}].addImage`, addImageFile);
+        } else if (art.image && art.image.startsWith('http://')) {
+          // 기존 이미지 URL을 string으로 전송
+          formData.append(`artList[${index}].image`, art.image);
+        }
       });
 
-      // 메인 이미지
+      // 메인 이미지 처리 - 기존 이미지는 URL을 string으로, 새로운 이미 파일은 file로 전송하도록 수정필요
       if (updatedFinalData.mainImage) {
         let mainImageUri = updatedFinalData.mainImage;
 
-        // 만약 로컬 파일 시스템의 경로인 경우 file:// 제거
         if (mainImageUri.startsWith('file://')) {
           mainImageUri = mainImageUri.replace('file://', '');
         }
@@ -232,31 +247,6 @@ export default function RecordingScreen() {
       } else {
         formData.append('mainImage', null);
       }
-
-      // 각 작품 이미지(contentImages)를 FormData에 개별적으로! 추가
-      updatedFinalData.artList.forEach((art: any, index: number) => {
-        if (art.image) {
-          const contentImageFile = {
-            uri: art.image.startsWith('file://')
-              ? art.image
-              : 'file://' + art.image,
-            type: mime.lookup(art.image) || 'image/jpeg',
-            name: `art_${index}.jpeg`,
-          };
-          formData.append(`artList[${index}].image`, contentImageFile);
-        } else {
-          // 이미지가 없는 경우 로컬의 기본 이미지를 추가
-          const resolvedAsset = Image.resolveAssetSource(
-            require('../../assets/images/android.png'),
-          );
-          const fallbackImageFile = {
-            uri: resolvedAsset.uri,
-            type: mime.lookup(resolvedAsset.uri) || 'image/jpeg',
-            name: `art_${index}_default.jpeg`,
-          };
-          formData.append(`artList[${index}].image`, fallbackImageFile);
-        }
-      });
 
       try {
         const response = await axios({
