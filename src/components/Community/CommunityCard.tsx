@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, Image, Dimensions, StyleSheet} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
-import GlobalStyle from '../styles/GlobalStyle';
+import GlobalStyle from '../../styles/GlobalStyle';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
@@ -16,10 +16,10 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
   };
 
   return (
-    <View style={{paddingBottom: 27}}>
+    <View style={{paddingBottom: 30}}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
-          source={require('../assets/images/user.png')}
+          source={require('../../assets/images/user.png')}
           style={{width: 40, height: 40, borderRadius: 20, marginRight: 10}}
         />
         <Text style={GlobalStyle.CommunityCardUser}>{Posts.user}</Text>

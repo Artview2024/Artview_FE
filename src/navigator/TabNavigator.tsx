@@ -2,7 +2,7 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Image, ImageSourcePropType} from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
-import CommunityScreen from '../screens/CommunityScreen';
+import CommunityScreen from '../screens/Community/CommunityScreen';
 import ExhibitionsScreen from '../screens/ExhibitionsScreen';
 import MyScreen from '../screens/MyScreen';
 

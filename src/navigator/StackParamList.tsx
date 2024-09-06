@@ -33,17 +33,10 @@ export type StackParamList = {
   };
   RecordingStart: undefined;
   Posting: {
-    exhibition: {
-      id: number;
-      name: string;
-      date: string;
-      gallery: string;
-      image: any;
-      rating: string;
-      imageList: any[];
-    };
+    recordId: number;
   };
   PostingStart: undefined;
   RecordDetail: {record: Record};
   Community: {newPost?: any};
+  CommunityDetail: undefined;
 };

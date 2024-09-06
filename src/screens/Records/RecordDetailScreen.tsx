@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 import {useRoute, RouteProp, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import {StackParamList, Record} from '../navigator/StackParamList';
+import {StackParamList, Record} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
-import GlobalStyle from '../styles/GlobalStyle';
+import GlobalStyle from '../../styles/GlobalStyle';
 
 type RecordDetailScreenRouteProp = RouteProp<StackParamList, 'RecordDetail'>;
 
@@ -29,7 +29,7 @@ export default function RecordDetailScreen() {
     const fetchRecordDetails = async () => {
       try {
         const response = await axios.get(
-          `http://13.125.81.126/api/myReviews/1`,
+          `http://13.125.81.126/api/myReviews/${id}`,
           {
             headers: {
               Accept: 'application/json',

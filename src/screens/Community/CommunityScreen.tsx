@@ -7,11 +7,14 @@ import {
   RouteProp,
   useScrollToTop,
 } from '@react-navigation/native';
-import {StackParamList} from '../navigator/StackParamList';
+import {StackParamList} from '../../navigator/StackParamList';
 
-import GlobalStyle from '../styles/GlobalStyle';
-import CommunityCard from '../components/CommunityCard';
-import FilterTabs from '../components/FilterTabs';
+import GlobalStyle from '../../styles/GlobalStyle';
+import CommunityCard from '../../components/Community/CommunityCard';
+import FilterTabs from '../../components/FilterTabs';
+
+import SearchIcon from '../../assets/icons/search-icon.svg';
+import NotificationIcon from '../../assets/icons/notification-icon.svg';
 
 type CommunityScreenRouteProp = RouteProp<StackParamList, 'Community'>;
 
@@ -24,8 +27,8 @@ const initialPosts = [
     date: '2024.05.14',
     gallery: '성남 갤러리홀',
     image: [
-      require('../assets/images/carousel6.jpg'),
-      require('../assets/images/recommend1.png'),
+      require('../../assets/images/carousel1.png'),
+      require('../../assets/images/recommend1.png'),
     ],
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
@@ -40,8 +43,8 @@ const initialPosts = [
     date: '2024.05.14',
     gallery: '성남 갤러리홀',
     image: [
-      require('../assets/images/carousel7.jpg'),
-      require('../assets/images/recommend1.png'),
+      require('../../assets/images/carousel7.jpg'),
+      require('../../assets/images/recommend1.png'),
     ],
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
@@ -56,8 +59,8 @@ const initialPosts = [
     date: '2024.05.14',
     gallery: '성남 갤러리홀',
     image: [
-      require('../assets/images/carousel5.jpg'),
-      require('../assets/images/recommend1.png'),
+      require('../../assets/images/carousel5.jpg'),
+      require('../../assets/images/recommend1.png'),
     ],
     content:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
@@ -87,9 +90,26 @@ export default function CommunityScreen() {
         style={{flex: 1}}
         showsHorizontalScrollIndicator={false}
         ref={ref}>
-        <Text style={GlobalStyle.header}>소통</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <Text style={GlobalStyle.header}>소통</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingTop: 10,
+            }}>
+            <SearchIcon width={24} height={24} style={{marginRight: 10}} />
+            <NotificationIcon width={24} height={25} />
+          </View>
+        </View>
         <FilterTabs activeTab={activeTab} onSelectTab={setActiveTab} />
         <FlatList
+          style={{paddingBottom: 27}}
           data={[...posts].reverse()}
           keyExtractor={item => item.key}
           renderItem={({item}) => <CommunityCard Posts={item} />}

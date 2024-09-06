@@ -2,19 +2,25 @@ import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import TabNavigator from './TabNavigator';
-import RecordingStartScreen from '../screens/RecordingStartScreen';
-import RecordingScreen from '../screens/RecordingScreen';
-import RecordsScreen from '../screens/RecordsScreen';
-import RecordDetailScreen from '../screens/RecordDetailScreen';
-import PostingStartScreen from '../screens/PostingStartScreen';
-import PostingScreen from '../screens/PostingScreen';
+import RecordingStartScreen from '../screens/Recording/RecordingStartScreen';
+import RecordingScreen from '../screens/Recording/RecordingScreen';
+import RecordsScreen from '../screens/Records/RecordsScreen';
+import RecordDetailScreen from '../screens/Records/RecordDetailScreen';
+import PostingStartScreen from '../screens/Posting/PostingStartScreen';
+import PostingScreen from '../screens/Posting/PostingScreen';
 import {StackParamList} from './StackParamList';
+import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
 export default function AppNavigator() {
   return (
     <Stack.Navigator>
+      {/* <Stack.Screen
+        name="CommunityDetail"
+        component={CommunityDetailScreen}
+        options={{headerShown: false}}
+      /> */}
       <Stack.Screen
         name="Login"
         component={LoginScreen}
@@ -53,6 +59,11 @@ export default function AppNavigator() {
       <Stack.Screen
         name="Posting"
         component={PostingScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="CommunityDetail"
+        component={CommunityDetailScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
