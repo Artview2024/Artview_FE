@@ -13,6 +13,9 @@ import GlobalStyle from '../../styles/GlobalStyle';
 import CommunityCard from '../../components/Community/CommunityCard';
 import FilterTabs from '../../components/FilterTabs';
 
+import SearchIcon from '../../assets/icons/search-icon.svg';
+import NotificationIcon from '../../assets/icons/notification-icon.svg';
+
 type CommunityScreenRouteProp = RouteProp<StackParamList, 'Community'>;
 
 const initialPosts = [
@@ -87,7 +90,23 @@ export default function CommunityScreen() {
         style={{flex: 1}}
         showsHorizontalScrollIndicator={false}
         ref={ref}>
-        <Text style={GlobalStyle.header}>소통</Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <Text style={GlobalStyle.header}>소통</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingTop: 10,
+            }}>
+            <SearchIcon width={24} height={24} style={{marginRight: 10}} />
+            <NotificationIcon width={24} height={25} />
+          </View>
+        </View>
         <FilterTabs activeTab={activeTab} onSelectTab={setActiveTab} />
         <FlatList
           style={{paddingBottom: 27}}
