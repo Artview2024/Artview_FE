@@ -1,88 +1,56 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import {ScrollView, FlatList, View, Text, TouchableOpacity} from 'react-native';
 import {
   useNavigation,
   NavigationProp,
-  useRoute,
-  RouteProp,
   useScrollToTop,
 } from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
+import {useInfiniteQuery} from '@tanstack/react-query';
 
 import GlobalStyle from '../../styles/GlobalStyle';
 import CommunityCard from '../../components/Community/CommunityCard';
-import FilterTabs from '../../components/FilterTabs';
+import FilterTabs from '../../components/Community/FilterTabs';
 
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import NotificationIcon from '../../assets/icons/notification-icon.svg';
 
-type CommunityScreenRouteProp = RouteProp<StackParamList, 'Community'>;
+type PageType = {
+  items: any[];
+  nextCursor?: string;
+};
 
-const initialPosts = [
-  {
-    key: '1',
-    user: '포도',
-    profile: '',
-    title: 'SERIOUS',
-    date: '2024.05.14',
-    gallery: '성남 갤러리홀',
-    image: [
-      require('../../assets/images/carousel1.png'),
-      require('../../assets/images/recommend1.png'),
-    ],
-    content:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
-    emotion: ['아름다운', '어려운'],
-    rating: '4.0',
-  },
-  {
-    key: '2',
-    user: '파인애플',
-    profile: '',
-    title: 'SERIOUS',
-    date: '2024.05.14',
-    gallery: '성남 갤러리홀',
-    image: [
-      require('../../assets/images/carousel7.jpg'),
-      require('../../assets/images/recommend1.png'),
-    ],
-    content:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
-    emotion: ['아름다운', '어려운'],
-    rating: '4.5',
-  },
-  {
-    key: '3',
-    user: '수박',
-    profile: '',
-    title: 'SERIOUS',
-    date: '2024.05.14',
-    gallery: '성남 갤러리홀',
-    image: [
-      require('../../assets/images/carousel5.jpg'),
-      require('../../assets/images/recommend1.png'),
-    ],
-    content:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ',
-
-    emotion: ['아름다운', '어려운'],
-    rating: '2.0',
-  },
-];
+const fetchPosts = async ({
+  pageParam = 1,
+  category,
+}: {
+  pageParam: number;
+  category: string;
+}) => {
+  const response = await fetch(
+    `https://your-api.com/api/communications/${category}?cursor=${pageParam}`,
+  );
+  return response.json();
+};
 
 export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState('전체');
-  const [posts, setPosts] = useState(initialPosts);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
-  const route = useRoute<CommunityScreenRouteProp>();
   const ref = useRef(null);
   useScrollToTop(ref);
 
-  useEffect(() => {
-    if (route.params?.newPost) {
-      setPosts([...posts, route.params.newPost]);
-    }
-  }, [route.params?.newPost]);
+  // useInfiniteQuery 무한 스크롤
+  const {
+    data,
+    fetchNextPage, // 다음 페이지 데이터
+    hasNextPage, // 다음 페이지가 있는지 여부
+    isFetchingNextPage, // 다음 페이지를 가져오는 중 (로딩 상태)
+  } = useInfiniteQuery({
+    queryKey: ['posts', activeTab], // 쿼리 키: 탭 선택에 따라
+    queryFn: ({pageParam}) => fetchPosts({pageParam, category: activeTab}),
+    initialPageParam: 1,
+    getNextPageParam: lastPage => lastPage.nextCursor,
+  });
 
   return (
     <View style={GlobalStyle.container}>
@@ -107,14 +75,26 @@ export default function CommunityScreen() {
             <NotificationIcon width={24} height={25} />
           </View>
         </View>
+
         <FilterTabs activeTab={activeTab} onSelectTab={setActiveTab} />
+
         <FlatList
           style={{paddingBottom: 27}}
-          data={[...posts].reverse()}
-          keyExtractor={item => item.key}
+          data={data?.pages.flatMap((page: PageType) => page.items) || []}
+          keyExtractor={item => item.id}
           renderItem={({item}) => <CommunityCard Posts={item} />}
+          onEndReached={() => {
+            if (hasNextPage) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.5} // 리스트의 50% 지점에서 onEndReached
+          ListFooterComponent={() =>
+            isFetchingNextPage ? <Text>Loading...</Text> : null
+          }
         />
       </ScrollView>
+
       <TouchableOpacity
         style={GlobalStyle.floatingButton}
         onPress={() => navigation.navigate('PostingStart')}>

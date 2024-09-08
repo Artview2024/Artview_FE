@@ -20,7 +20,13 @@ export default function AppNavigator() {
         name="CommunityDetail"
         component={CommunityDetailScreen}
         options={{headerShown: false}}
-      /> */}
+      /> 
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{headerShown: false}}
+      /> 
+      */}
       <Stack.Screen
         name="Login"
         component={LoginScreen}
