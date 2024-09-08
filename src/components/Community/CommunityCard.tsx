@@ -19,11 +19,17 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
     <View style={{paddingBottom: 30}}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Image
-          source={require('../../assets/images/user.png')}
+          source={
+            Posts.writerImage
+              ? {uri: Posts.writerImage}
+              : require('../../assets/images/user.png')
+          }
           style={{width: 40, height: 40, borderRadius: 20, marginRight: 10}}
         />
-        <Text style={GlobalStyle.CommunityCardUser}>{Posts.user}</Text>
+        <Text style={GlobalStyle.CommunityCardUser}>{Posts.writerName}</Text>
       </View>
+
+      {/* 이미지 캐러셀 */}
       <Carousel
         width={PAGE_WIDTH}
         height={PAGE_WIDTH * (4 / 3)}
@@ -35,6 +41,7 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
         style={{marginVertical: 13}}
       />
 
+      {/* 제목, 평점 */}
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Text style={GlobalStyle.CommunityCardTitle}>{Posts.title}</Text>
         <Text>
@@ -45,16 +52,19 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
         </Text>
       </View>
 
+      {/* 날짜, 갤러리 */}
       <View style={{paddingBottom: 7}}>
         <Text style={GlobalStyle.CommunityCardText}>
           {Posts.date} | {Posts.gallery}
         </Text>
       </View>
 
+      {/* 내용 */}
       <Text style={[GlobalStyle.CommunityCardText, {paddingBottom: 7}]}>
         {Posts.content}
       </Text>
 
+      {/* 감정 태그 */}
       <View style={GlobalStyle.EmotionView}>
         {Posts.emotion.map((emotion: string, index: number) => (
           <Text key={index} style={GlobalStyle.EmotionButton}>
