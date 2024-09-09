@@ -16,19 +16,22 @@ import Comment from '../../components/Community/Comment';
 import GlobalStyle from '../../styles/GlobalStyle';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 
-// 댓글과 답글의 타입 정의
 interface Reply {
   id: number;
-  username: string;
+  writerId: number;
+  writername: string;
   content: string;
-  userImage: any;
+  writerImage: string;
+  createDate: string;
 }
 
 interface CommentData {
   id: number;
-  username: string;
+  writerId: number;
+  writername: string;
   content: string;
-  userImage: any;
+  writerImage: string;
+  createDate: string;
   replies: Reply[];
 }
 
@@ -40,42 +43,24 @@ export default function CommunityDetailScreen() {
 
   const [comments, setComments] = useState<CommentData[]>([]);
   const [newComment, setNewComment] = useState('');
-  const [replyTo, setReplyTo] = useState<number | null>(null); // 답글을 다는 대상 댓글의 ID
+  const [replyTo, setReplyTo] = useState<number | null>(null);
 
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(`/api/communications/comments/1`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ACCESS TOKEN`,
+        },
+      });
+      setComments(response.data);
+    } catch (error) {
+      console.error('댓글을 가져오는 데 실패했습니다.', error);
+    }
+  };
+
+  // 댓글 조회
   useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        // Mock 데이터 사용
-        const response = {
-          data: [
-            {
-              id: 1,
-              username: 'User1',
-              content: '짱이다',
-              userImage: require('../../assets/images/user.png'),
-              replies: [],
-            },
-            {
-              id: 2,
-              username: 'User2',
-              content: '저도 갈래요',
-              userImage: require('../../assets/images/user.png'),
-              replies: [
-                {
-                  id: 1,
-                  username: 'User3',
-                  content: '저도요!',
-                  userImage: require('../../assets/images/user.png'),
-                },
-              ],
-            },
-          ],
-        };
-        setComments(response.data);
-      } catch (error) {
-        console.error('댓글을 가져오는 데 실패했습니다.', error);
-      }
-    };
     fetchComments();
 
     // 키보드가 닫힐 때 replyTo 상태 초기화
@@ -94,67 +79,36 @@ export default function CommunityDetailScreen() {
   // 댓글 추가
   const handleAddComment = async () => {
     if (newComment.trim()) {
-      if (replyTo) {
-        await postReply(replyTo);
-      } else {
-        await postComment();
-      }
+      await postComment(replyTo); // replyTo 값에 따라 댓글 또는 답글 처리
     }
   };
 
-  // 댓글 POST 요청
-  const postComment = async () => {
+  // 댓글/답글 POST
+  const postComment = async (parentContentId: number | null) => {
     try {
-      const response = {
-        data: {
-          id: Math.random(),
+      await axios.post(
+        '/api/communications/comment',
+        {
+          communicationsId: 1, // 실제 게시글 ID로 수정 필요!!!!
+          content: newComment,
+          parentContentId: parentContentId, // parentContentId가 null이면 최상위 댓글
         },
-      };
+        {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ACCESS TOKEN`,
+          },
+        },
+      );
 
-      const newCommentData: CommentData = {
-        id: response.data.id, // 백엔드에서 받은 ID
-        username: 'CurrentUser', // 실제 사용자명으로 대체
-        content: newComment,
-        userImage: require('../../assets/images/user.png'), // 실제 사용자 이미지 경로로 대체
-        replies: [],
-      };
+      // 댓글 목록 재소환 - 댓글 실시간 반영
+      await fetchComments();
 
-      setComments([...comments, newCommentData]);
       setNewComment('');
+      setReplyTo(null);
     } catch (error) {
       console.error('댓글 등록에 실패했습니다.', error);
       Alert.alert('Error', '댓글 등록에 실패했습니다.');
-    }
-  };
-
-  // 답글 POST 요청
-  const postReply = async (commentId: number) => {
-    try {
-      const response = {
-        data: {
-          id: Math.random(),
-        },
-      };
-
-      const newReply: Reply = {
-        id: response.data.id,
-        username: 'CurrentUser',
-        content: newComment,
-        userImage: require('../../assets/images/user.png'),
-      };
-
-      setComments(prevComments =>
-        prevComments.map(comment =>
-          comment.id === commentId
-            ? {...comment, replies: [...comment.replies, newReply]}
-            : comment,
-        ),
-      );
-      setNewComment('');
-      setReplyTo(null); // 답글 완료 후 초기화
-    } catch (error) {
-      console.error('답글 등록에 실패했습니다.', error);
-      Alert.alert('Error', '답글 등록에 실패했습니다.');
     }
   };
 
@@ -203,20 +157,20 @@ export default function CommunityDetailScreen() {
           <View>
             {comments.map(comment => (
               <View key={comment.id}>
+                {' '}
                 <Comment
-                  username={comment.username}
+                  username={comment.writername}
                   content={comment.content}
-                  userImage={comment.userImage}
+                  userImage={comment.writerImage}
                   onReply={() => handleReply(comment.id)}
                 />
-                {/* 답글 */}
                 {comment.replies.map((reply: Reply) => (
                   <View key={reply.id} style={{marginLeft: 40, marginTop: -10}}>
+                    {' '}
                     <Comment
-                      username={reply.username}
+                      username={reply.writername}
                       content={reply.content}
-                      userImage={reply.userImage}
-                      onReply={undefined}
+                      userImage={reply.writerImage}
                     />
                   </View>
                 ))}
