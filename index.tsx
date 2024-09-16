@@ -3,9 +3,10 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AppRegistry} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {name as appName} from './app.json';
-import React from 'react';
+import React, {useEffect} from 'react';
 import AppNavigator from './src/navigator/AppNavigator';
 import 'react-native-reanimated';
+import SplashScreen from 'react-native-splash-screen'; // 추가
 import Reactotron from 'reactotron-react-native';
 
 if (__DEV__) {
@@ -13,7 +14,12 @@ if (__DEV__) {
     Reactotron.log('Reactotron Configured'),
   );
 }
+
 const RootApp = () => {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <NavigationContainer>
@@ -22,4 +28,5 @@ const RootApp = () => {
     </GestureHandlerRootView>
   );
 };
+
 AppRegistry.registerComponent(appName, () => RootApp);
