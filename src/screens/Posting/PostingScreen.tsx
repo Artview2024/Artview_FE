@@ -91,13 +91,20 @@ export default function PostingScreen() {
   const handlePost = async () => {
     if (exhibition) {
       try {
+        const imageAndTitle = Object.entries(
+          exhibition.imageAndTitle as Record<string, string>,
+        ).reduce((acc, [url, title]) => {
+          acc[url] = title;
+          return acc;
+        }, {} as Record<string, string>);
+
         const postData = {
           myReviewId: recordId,
           name: exhibition.name,
           rate: exhibition.rate,
           date: exhibition.date,
           gallery: exhibition.gallery,
-          images: exhibition.images,
+          imageAndTitle: imageAndTitle,
           content: content,
           keyword: selectedKeywords,
         };
@@ -179,10 +186,12 @@ export default function PostingScreen() {
         <View style={{marginTop: 18}}>
           <FlatList
             horizontal
-            data={exhibition.images}
+            data={Object.entries(exhibition.imageAndTitle)}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => (
-              <Image source={{uri: item}} style={styles.imageItem} />
+              <View style={styles.imageWrapper}>
+                <Image source={{uri: item[0]}} style={styles.imageItem} />
+              </View>
             )}
           />
         </View>
@@ -258,11 +267,20 @@ export default function PostingScreen() {
 }
 
 const styles = StyleSheet.create({
+  imageWrapper: {
+    marginRight: 10,
+    alignItems: 'center',
+  },
   imageItem: {
     width: 150,
     height: 200,
-    marginRight: 10,
     borderRadius: 10,
+  },
+  imageTitle: {
+    marginTop: 5,
+    fontSize: 12,
+    color: '#333',
+    textAlign: 'center',
   },
   EmotionButton: {
     flexBasis: '22%',
@@ -275,7 +293,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: '1%',
   },
-
   keywordText: {
     fontSize: 12,
     fontWeight: 'bold',
