@@ -6,14 +6,18 @@ import {name as appName} from './app.json';
 import React, {useEffect} from 'react';
 import AppNavigator from './src/navigator/AppNavigator';
 import 'react-native-reanimated';
-import SplashScreen from 'react-native-splash-screen'; // 추가
+import SplashScreen from 'react-native-splash-screen';
 import Reactotron from 'reactotron-react-native';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'; // 추가
 
 if (__DEV__) {
   import('./ReactotronConfig').then(() =>
     Reactotron.log('Reactotron Configured'),
   );
 }
+
+// QueryClient 생성
+const queryClient = new QueryClient();
 
 const RootApp = () => {
   useEffect(() => {
@@ -22,9 +26,11 @@ const RootApp = () => {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 };

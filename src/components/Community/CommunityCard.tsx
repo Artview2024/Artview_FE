@@ -7,10 +7,18 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const PAGE_WIDTH = Dimensions.get('window').width;
 
 const CommunityCard = ({Posts}: {Posts: any}) => {
-  const renderItem = ({item}: {item: any}) => {
+  const imageAndTitle = Object.entries(
+    Posts.ImageAndTitle as Record<string, string>,
+  );
+
+  const renderItem = ({item}: {item: [string, string]}) => {
+    const [imageUrl, title] = item;
     return (
       <View style={styles.imageContainer}>
-        <Image style={styles.image} source={item} />
+        <Image style={styles.image} source={{uri: imageUrl}} />
+        <View style={styles.titleContainer}>
+          <Text style={styles.imageTitle}>{title}</Text>
+        </View>
       </View>
     );
   };
@@ -33,7 +41,7 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
       <Carousel
         width={PAGE_WIDTH}
         height={PAGE_WIDTH * (4 / 3)}
-        data={Posts.image}
+        data={imageAndTitle}
         renderItem={renderItem}
         loop={false}
         autoPlay={false}
@@ -48,7 +56,7 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
           <Icon name="star" size={14} color="#EA1B83" />
         </Text>
         <Text style={[GlobalStyle.CommunityCardRating, {paddingLeft: 3}]}>
-          {Posts.rating}
+          {Posts.rate}
         </Text>
       </View>
 
@@ -66,7 +74,7 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
 
       {/* 감정 태그 */}
       <View style={GlobalStyle.EmotionView}>
-        {Posts.emotion.map((emotion: string, index: number) => (
+        {Posts.keyword.map((emotion: string, index: number) => (
           <Text key={index} style={GlobalStyle.EmotionButton}>
             {emotion}
           </Text>
@@ -87,6 +95,20 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+  },
+  titleContainer: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명한 배경
+    paddingHorizontal: 5,
+    paddingVertical: 3,
+    borderRadius: 5,
+  },
+  imageTitle: {
+    color: '#ffffff', // 흰색 글씨
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });
 
