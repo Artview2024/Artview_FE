@@ -1,6 +1,6 @@
 {
   "extends": "@react-native/typescript-config/tsconfig.json",
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "env.d.ts"],
   "compilerOptions": {
     "traceResolution": true
   }

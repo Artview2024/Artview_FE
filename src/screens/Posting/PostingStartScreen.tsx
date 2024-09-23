@@ -9,6 +9,7 @@ import {StackParamList} from '../../navigator/StackParamList';
 import Records from '../../components/Records';
 import {View, Text} from 'react-native';
 import GlobalStyle from '../../styles/GlobalStyle';
+import {API_BASE_URL} from '@env';
 
 type Record = {
   id: number;
@@ -27,7 +28,7 @@ export default function PostingStartScreen() {
     const fetchRecords = async () => {
       try {
         const response = await axios.get(
-          'http://13.125.81.126/api/myReviews/all/10001',
+          `${API_BASE_URL}/myReviews/all/10001`,
           {
             headers: {
               Accept: 'application/json',

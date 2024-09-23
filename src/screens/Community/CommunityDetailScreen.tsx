@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {useScrollToTop, useNavigation} from '@react-navigation/native';
 import axios from 'axios';
+import {API_BASE_URL} from '@env';
 import CommunityCard from '../../components/Community/CommunityCard';
 import Comment from '../../components/Community/Comment';
 import GlobalStyle from '../../styles/GlobalStyle';
@@ -47,12 +48,15 @@ export default function CommunityDetailScreen() {
 
   const fetchComments = async () => {
     try {
-      const response = await axios.get(`/api/communications/comments/1`, {
-        headers: {
-          Accept: 'application/json',
-          Authorization: `Bearer ACCESS TOKEN`,
+      const response = await axios.get(
+        `${API_BASE_URL}/communications/comments/1`,
+        {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ACCESS TOKEN`,
+          },
         },
-      });
+      );
       setComments(response.data);
     } catch (error) {
       console.error('댓글을 가져오는 데 실패했습니다.', error);

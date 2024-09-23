@@ -21,6 +21,7 @@ import {useFormState} from '../../hooks/useFormState';
 import {StyleSheet} from 'react-native';
 import RecordingTemplate from '../../components/RecordingTemplate';
 import {Image} from 'react-native';
+import {API_BASE_URL} from '@env';
 
 type ArtItem = {
   id: string;
@@ -252,8 +253,8 @@ export default function RecordingScreen() {
         const response = await axios({
           method: isEditMode ? 'PATCH' : 'POST',
           url: isEditMode
-            ? 'http://13.125.81.126/api/myReviews/modify'
-            : 'http://13.125.81.126/api/myReviews/save',
+            ? `${API_BASE_URL}/myReviews/modify`
+            : `${API_BASE_URL}/myReviews/save`,
           data: formData,
           headers: {
             Accept: 'application/json',
