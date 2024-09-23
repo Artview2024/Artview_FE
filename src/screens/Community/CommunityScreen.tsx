@@ -10,6 +10,7 @@ import {useInfiniteQuery} from '@tanstack/react-query';
 import {API_BASE_URL} from '@env';
 import GlobalStyle from '../../styles/GlobalStyle';
 import CommunityCard from '../../components/Community/CommunityCard';
+import CommunityDetailScreen from './CommunityDetailScreen';
 import FilterTabs from '../../components/Community/FilterTabs';
 
 import SearchIcon from '../../assets/icons/search-icon.svg';
@@ -93,7 +94,16 @@ export default function CommunityScreen() {
         style={{paddingBottom: 27}}
         data={posts}
         keyExtractor={item => item.communicationsId.toString()}
-        renderItem={({item}) => <CommunityCard Posts={item} />}
+        renderItem={({item}) => (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('CommunityDetail', {
+                communicationsId: item.communicationsId,
+              })
+            }>
+            <CommunityCard Posts={item} />
+          </TouchableOpacity>
+        )}
         // 사용자가 스크롤을 맨 끝까지 내렸을 때 다음 페이지 요청
         onEndReached={() => {
           if (hasNextPage) {
