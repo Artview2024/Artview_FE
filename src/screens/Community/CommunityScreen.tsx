@@ -22,15 +22,29 @@ type PageType = {
 };
 
 const fetchPosts = async ({
-  pageParam = 1,
+  pageParam = 0,
   category,
 }: {
   pageParam: number;
   category: string;
 }) => {
+  const apiCategory = category === '전체' ? 'all' : 'follow';
+
   const response = await fetch(
-    `${API_BASE_URL}api/communications/${category}?cursor=${pageParam}`,
+    `${API_BASE_URL}/communications/main/${apiCategory}/${pageParam}`,
+    {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ACCESS_TOKEN`,
+      },
+    },
   );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch posts');
+  }
+
   return response.json();
 };
 
@@ -49,8 +63,9 @@ export default function CommunityScreen() {
   } = useInfiniteQuery({
     queryKey: ['posts', activeTab], // 쿼리 키: 탭 선택에 따라
     queryFn: ({pageParam}) => fetchPosts({pageParam, category: activeTab}),
-    initialPageParam: 1,
-    getNextPageParam: lastPage => lastPage.nextCursor,
+    initialPageParam: 0,
+    getNextPageParam: lastPage =>
+      lastPage.hasNext ? lastPage.nextCursor : undefined,
   });
 
   return (
@@ -82,14 +97,14 @@ export default function CommunityScreen() {
         <FlatList
           style={{paddingBottom: 27}}
           data={data?.pages.flatMap((page: PageType) => page.items) || []}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.communicationsId.toString()}
           renderItem={({item}) => <CommunityCard Posts={item} />}
           onEndReached={() => {
             if (hasNextPage) {
               fetchNextPage();
             }
           }}
-          onEndReachedThreshold={0.5} // 리스트의 50% 지점에서 onEndReached
+          onEndReachedThreshold={0.5}
           ListFooterComponent={() =>
             isFetchingNextPage ? <Text>Loading...</Text> : null
           }
