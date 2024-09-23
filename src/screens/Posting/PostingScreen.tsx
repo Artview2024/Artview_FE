@@ -113,7 +113,7 @@ export default function PostingScreen() {
         console.log('전송 data:', postData);
 
         const response = await axios.post(
-          'http://13.125.81.126/api/communications/save',
+          `${API_BASE_URL}/communications/save`,
           postData,
           {
             headers: {
@@ -202,7 +202,7 @@ export default function PostingScreen() {
           <Text
             style={[
               GlobalStyle.mainText,
-              {fontWeight: 'bold', marginBottom: 10},
+              {fontWeight: 'bold', marginBottom: 10, color: '#000'},
             ]}>
             글쓰기
           </Text>

@@ -24,6 +24,7 @@ export default function PostingStartScreen() {
   const [selectedRecord, setSelectedRecord] = useState<number | null>(null);
   const isFocused = useIsFocused();
 
+  // 내 기록을 API에서 가져오기
   useEffect(() => {
     const fetchRecords = async () => {
       try {
@@ -53,19 +54,19 @@ export default function PostingStartScreen() {
     fetchRecords();
   }, [isFocused]);
 
+  // 레코드 선택할 때 호출
   const handleRecordSelect = (id: number) => {
     console.log('Record selected:', id);
     setSelectedRecord(id);
   };
 
-  const handleStartPosting = () => {
+  // 포스팅 시작 (레코드 선택 후)
+  useEffect(() => {
     if (selectedRecord !== null) {
-      console.log('선택 record recordId:', selectedRecord); // 네비게이션 시도 확인 로그
-      navigation.navigate('Posting', {recordId: selectedRecord}); // PostingScreen으로 이동
-    } else {
-      console.error('선택된 레코드 없음'); // 선택된 레코드가 없는 경우 오류 로그
+      console.log('선택 record recordId:', selectedRecord);
+      navigation.navigate('Posting', {recordId: selectedRecord});
     }
-  };
+  }, [selectedRecord]);
 
   return (
     <View style={{flex: 1}}>
@@ -73,10 +74,7 @@ export default function PostingStartScreen() {
         <Records
           exhibitions={records}
           selectedExhibition={selectedRecord}
-          onExhibitionSelect={id => {
-            handleRecordSelect(id);
-            handleStartPosting();
-          }}
+          onExhibitionSelect={handleRecordSelect}
           backAction={() => navigation.goBack()}
         />
       ) : (
