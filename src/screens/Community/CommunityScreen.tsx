@@ -1,11 +1,10 @@
 import React, {useState, useRef} from 'react';
-import {ScrollView, FlatList, View, Text, TouchableOpacity} from 'react-native';
+import {FlatList, View, Text, TouchableOpacity} from 'react-native';
 import {
   useNavigation,
   NavigationProp,
   useScrollToTop,
 } from '@react-navigation/native';
-import {StackParamList} from '../../navigator/StackParamList';
 import {useInfiniteQuery} from '@tanstack/react-query';
 
 import {API_BASE_URL} from '@env';
@@ -15,10 +14,11 @@ import FilterTabs from '../../components/Community/FilterTabs';
 
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import NotificationIcon from '../../assets/icons/notification-icon.svg';
+import {StackParamList} from '../../navigator/StackParamList';
 
 type PageType = {
-  items: any[];
-  nextCursor?: string;
+  detailCommunicationsContentResponseDtoList: any[]; // 게시물 데이터 리스트
+  nextCursor?: string; // 다음 페이지를 가져오기 위한 커서 값
 };
 
 const fetchPosts = async ({
@@ -54,63 +54,60 @@ export default function CommunityScreen() {
   const ref = useRef(null);
   useScrollToTop(ref);
 
-  // useInfiniteQuery 무한 스크롤
-  const {
-    data,
-    fetchNextPage, // 다음 페이지 데이터
-    hasNextPage, // 다음 페이지가 있는지 여부
-    isFetchingNextPage, // 다음 페이지를 가져오는 중 (로딩 상태)
-  } = useInfiniteQuery({
-    queryKey: ['posts', activeTab], // 쿼리 키: 탭 선택에 따라
-    queryFn: ({pageParam}) => fetchPosts({pageParam, category: activeTab}),
-    initialPageParam: 0,
-    getNextPageParam: lastPage =>
-      lastPage.hasNext ? lastPage.nextCursor : undefined,
-  });
+  const {data, fetchNextPage, hasNextPage, isFetchingNextPage} =
+    useInfiniteQuery({
+      queryKey: ['posts', activeTab],
+      queryFn: ({pageParam}) => fetchPosts({pageParam, category: activeTab}),
+      initialPageParam: 0,
+      getNextPageParam: lastPage => lastPage.nextCursor,
+    });
+
+  // 데이터 평탄화(flatten) -> 리스트
+  const posts =
+    data?.pages.flatMap(
+      (page: PageType) => page.detailCommunicationsContentResponseDtoList, // 페이지마다 리스트 병합(flatten)
+    ) || [];
 
   return (
     <View style={GlobalStyle.container}>
-      <ScrollView
-        style={{flex: 1}}
-        showsHorizontalScrollIndicator={false}
-        ref={ref}>
+      {/* 상단 헤더 */}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <Text style={GlobalStyle.header}>소통</Text>
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <Text style={GlobalStyle.header}>소통</Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingTop: 10,
-            }}>
-            <SearchIcon width={24} height={24} style={{marginRight: 10}} />
-            <NotificationIcon width={24} height={25} />
-          </View>
+          style={{flexDirection: 'row', alignItems: 'center', paddingTop: 10}}>
+          <SearchIcon width={24} height={24} style={{marginRight: 10}} />
+          <NotificationIcon width={24} height={25} />
         </View>
+      </View>
 
-        <FilterTabs activeTab={activeTab} onSelectTab={setActiveTab} />
+      {/* 카테고리 필터 */}
+      <FilterTabs activeTab={activeTab} onSelectTab={setActiveTab} />
 
-        <FlatList
-          style={{paddingBottom: 27}}
-          data={data?.pages.flatMap((page: PageType) => page.items) || []}
-          keyExtractor={item => item.communicationsId.toString()}
-          renderItem={({item}) => <CommunityCard Posts={item} />}
-          onEndReached={() => {
-            if (hasNextPage) {
-              fetchNextPage();
-            }
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={() =>
-            isFetchingNextPage ? <Text>Loading...</Text> : null
+      {/* 게시물 리스트 - 무한 스크롤 */}
+      <FlatList
+        style={{paddingBottom: 27}}
+        data={posts}
+        keyExtractor={item => item.communicationsId.toString()}
+        renderItem={({item}) => <CommunityCard Posts={item} />}
+        // 사용자가 스크롤을 맨 끝까지 내렸을 때 다음 페이지 요청
+        onEndReached={() => {
+          if (hasNextPage) {
+            fetchNextPage(); // 다음 페이지 데이터 요청
           }
-        />
-      </ScrollView>
+        }}
+        onEndReachedThreshold={0.5} // 화면의 50% 지점에서 다음 페이지 요청
+        ListFooterComponent={() =>
+          isFetchingNextPage ? <Text>Loading...</Text> : null
+        }
+        ref={ref}
+      />
 
+      {/* 글쓰기 버튼 */}
       <TouchableOpacity
         style={GlobalStyle.floatingButton}
         onPress={() => navigation.navigate('PostingStart')}>
