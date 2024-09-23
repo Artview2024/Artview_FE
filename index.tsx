@@ -8,7 +8,7 @@ import AppNavigator from './src/navigator/AppNavigator';
 import 'react-native-reanimated';
 import SplashScreen from 'react-native-splash-screen';
 import Reactotron from 'reactotron-react-native';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query'; // 추가
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
 if (__DEV__) {
   import('./ReactotronConfig').then(() =>

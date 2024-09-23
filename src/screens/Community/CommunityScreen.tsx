@@ -8,6 +8,7 @@ import {
 import {StackParamList} from '../../navigator/StackParamList';
 import {useInfiniteQuery} from '@tanstack/react-query';
 
+import {API_BASE_URL} from '@env';
 import GlobalStyle from '../../styles/GlobalStyle';
 import CommunityCard from '../../components/Community/CommunityCard';
 import FilterTabs from '../../components/Community/FilterTabs';
@@ -28,7 +29,7 @@ const fetchPosts = async ({
   category: string;
 }) => {
   const response = await fetch(
-    `https://your-api.com/api/communications/${category}?cursor=${pageParam}`,
+    `${API_BASE_URL}api/communications/${category}?cursor=${pageParam}`,
   );
   return response.json();
 };

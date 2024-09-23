@@ -20,6 +20,7 @@ import {StackParamList} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import RatingIcon from 'react-native-vector-icons/FontAwesome';
 import GlobalStyle from '../../styles/GlobalStyle';
+import {API_BASE_URL} from '@env';
 
 type PostingScreenRouteProp = RouteProp<StackParamList, 'Posting'>;
 
@@ -36,7 +37,7 @@ export default function PostingScreen() {
       if (recordId) {
         try {
           const response = await axios.get(
-            `http://13.125.81.126/api/communications/retrieve/${recordId}`,
+            `${API_BASE_URL}/communications/retrieve/${recordId}`,
             {
               headers: {
                 Accept: 'application/json',

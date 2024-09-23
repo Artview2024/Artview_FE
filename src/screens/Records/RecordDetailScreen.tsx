@@ -15,6 +15,7 @@ import {StackParamList, Record} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
 import GlobalStyle from '../../styles/GlobalStyle';
+import {API_BASE_URL} from '@env';
 
 type RecordDetailScreenRouteProp = RouteProp<StackParamList, 'RecordDetail'>;
 
@@ -28,15 +29,12 @@ export default function RecordDetailScreen() {
   useEffect(() => {
     const fetchRecordDetails = async () => {
       try {
-        const response = await axios.get(
-          `http://13.125.81.126/api/myReviews/${id}`,
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ACCESS_TOKEN`,
-            },
+        const response = await axios.get(`${API_BASE_URL}/myReviews/${id}`, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ACCESS_TOKEN`,
           },
-        );
+        });
         setRecord(response.data);
       } catch (error) {
         console.error('Error', error);
