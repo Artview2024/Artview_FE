@@ -73,12 +73,12 @@ const GlobalStyle = StyleSheet.create({
   mainText: {
     fontSize: 16,
     fontWeight: 'medium',
-    color: '#000',
+    color: 'black',
   },
   subText: {
     fontSize: 14,
     fontWeight: 'medium',
-    color: '#000',
+    color: 'black',
   },
   buttonText: {
     fontSize: 16,

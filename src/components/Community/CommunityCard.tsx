@@ -7,6 +7,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const PAGE_WIDTH = Dimensions.get('window').width;
 
 const CommunityCard = ({Posts}: {Posts: any}) => {
+  // 데이터 유효성 검사
+  if (!Posts || !Posts.ImageAndTitle) {
+    return (
+      <View style={{paddingBottom: 30}}>
+        <Text>No post data available</Text>
+      </View>
+    );
+  }
+
   const imageAndTitle = Object.entries(
     Posts.ImageAndTitle as Record<string, string>,
   );
@@ -37,24 +46,28 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
         <Text style={GlobalStyle.CommunityCardUser}>{Posts.writerName}</Text>
       </View>
 
-      <Carousel
-        width={PAGE_WIDTH}
-        height={PAGE_WIDTH * (4 / 3)}
-        data={imageAndTitle}
-        renderItem={renderItem}
-        loop={false}
-        autoPlay={false}
-        scrollAnimationDuration={1000}
-        style={{marginVertical: 13}}
-      />
+      {imageAndTitle.length > 0 ? (
+        <Carousel
+          width={PAGE_WIDTH}
+          height={PAGE_WIDTH * (4 / 3)}
+          data={imageAndTitle}
+          renderItem={renderItem}
+          loop={false}
+          autoPlay={false}
+          scrollAnimationDuration={1000}
+          style={{marginVertical: 13}}
+        />
+      ) : (
+        <Text>No images available</Text>
+      )}
 
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Text style={GlobalStyle.CommunityCardTitle}>{Posts.name}</Text>
-        <Text>
+        <Text style={{flexDirection: 'row', alignItems: 'center'}}>
           <Icon name="star" size={14} color="#EA1B83" />
-        </Text>
-        <Text style={[GlobalStyle.CommunityCardRating, {paddingLeft: 3}]}>
-          {Posts.rate}
+          <Text style={[GlobalStyle.CommunityCardRating, {paddingLeft: 3}]}>
+            {Posts.rate}
+          </Text>
         </Text>
       </View>
 
@@ -69,7 +82,7 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
       </Text>
 
       <View style={GlobalStyle.EmotionView}>
-        {Posts.keyword.map((emotion: string, index: number) => (
+        {Posts.keyword?.map((emotion: string, index: number) => (
           <Text key={index} style={GlobalStyle.EmotionButton}>
             {emotion}
           </Text>
@@ -95,13 +108,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     left: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 반투명한 배경
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     paddingHorizontal: 5,
     paddingVertical: 3,
     borderRadius: 5,
   },
   imageTitle: {
-    color: '#ffffff', // 흰색 글씨
+    color: '#ffffff',
     fontSize: 14,
     fontWeight: 'bold',
   },

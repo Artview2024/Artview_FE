@@ -6,22 +6,30 @@ const Comment = ({
   content,
   userImage,
   onReply,
+  isReply = false, // 답글인지 여부를 추가
 }: {
   username: string;
   content: string;
   userImage: any;
   onReply?: () => void;
+  isReply?: boolean; // 답글인지 여부를 전달
 }) => {
   return (
     <View style={styles.commentContainer}>
-      <Image
-        source={typeof userImage === 'string' ? {uri: userImage} : userImage}
-        style={styles.userImage}
-      />
+      {/* 이미지가 올바르게 전달되지 않았을 때 기본 이미지 처리 */}
+      {userImage ? (
+        <Image
+          source={typeof userImage === 'string' ? {uri: userImage} : userImage}
+          style={styles.userImage}
+        />
+      ) : (
+        <View style={styles.userImagePlaceholder} />
+      )}
       <View style={styles.textContainer}>
-        <Text style={styles.username}>{username}</Text>
+        <Text style={{color: 'black'}}>{username}</Text>
         <Text style={styles.content}>{content}</Text>
-        {onReply && (
+        {/* 답글이 아닌 경우에만 답글쓰기 버튼을 보여줌 */}
+        {!isReply && onReply && (
           <TouchableOpacity onPress={onReply}>
             <Text style={styles.replyButton}>답글쓰기</Text>
           </TouchableOpacity>
@@ -42,15 +50,17 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 10,
-    alignSelf: 'flex-start', // 이미지가 텍스트와 동일한 라인에 위치하도록 조정
+    alignSelf: 'flex-start',
+  },
+  userImagePlaceholder: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+    backgroundColor: '#ddd', // 기본 이미지 대신 사용할 색상
   },
   textContainer: {
     flex: 1,
-  },
-  username: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: 'black',
   },
   content: {
     fontSize: 14,
