@@ -35,6 +35,7 @@ interface Reply {
 
 interface CommentData {
   id: number;
+  commentId: number;
   writerId: number;
   writername: string;
   content: string;
@@ -116,7 +117,7 @@ export default function CommunityDetailScreen({
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
-        setReplyTo(null);
+        setReplyTo(null); // 키보드가 사라지면 답글 상태 초기화
       },
     );
 
@@ -127,7 +128,7 @@ export default function CommunityDetailScreen({
 
   const handleAddComment = async () => {
     if (newComment.trim()) {
-      await postComment(replyTo);
+      await postComment(replyTo); // replyTo에 따라 답글 또는 댓글 처리
     }
   };
 
@@ -138,7 +139,7 @@ export default function CommunityDetailScreen({
         {
           communicationsId: communicationsId,
           content: newComment,
-          parentContentId: parentContentId,
+          parentContentId: parentContentId || null, // parentContentId가 있으면 답글, 없으면 댓글
         },
         {
           headers: {
@@ -148,20 +149,17 @@ export default function CommunityDetailScreen({
         },
       );
 
-      await fetchComments();
+      await fetchComments(); // 댓글/답글 새로고침
       setNewComment('');
-      setReplyTo(null);
+      setReplyTo(null); // 댓글/답글 등록 후 초기화
     } catch (error) {
       console.error('댓글 등록에 실패했습니다.', error);
     }
   };
 
   const handleReply = (commentId: number) => {
-    setReplyTo(commentId);
-    inputRef.current?.focus();
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 100);
+    setReplyTo(commentId); // 답글을 달 commentId 설정
+    inputRef.current?.focus(); // 답글 작성용 input으로 포커스 이동
   };
 
   if (!post) {
@@ -173,9 +171,7 @@ export default function CommunityDetailScreen({
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={GlobalStyle.container}>
+    <View style={GlobalStyle.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <BackIcon
           name="chevron-back"
@@ -201,7 +197,7 @@ export default function CommunityDetailScreen({
                     username={comment.writername}
                     content={comment.content}
                     userImage={comment.writerImage}
-                    onReply={() => handleReply(comment.id)}
+                    onReply={() => handleReply(comment.commentId)} // 답글 버튼 누를 때 해당 commentId 저장
                   />
                   {comment.replies.map((reply: Reply) => (
                     <View
@@ -211,6 +207,7 @@ export default function CommunityDetailScreen({
                         username={reply.writername}
                         content={reply.content}
                         userImage={reply.writerImage}
+                        isReply={true} // 답글임을 표시
                       />
                     </View>
                   ))}
@@ -240,7 +237,7 @@ export default function CommunityDetailScreen({
           </TouchableOpacity>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
