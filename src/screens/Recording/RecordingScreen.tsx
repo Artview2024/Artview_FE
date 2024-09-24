@@ -308,7 +308,7 @@ export default function RecordingScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={{paddingTop: 7, paddingBottom: 13}}>
+        <Text style={{paddingTop: 7, paddingBottom: 13, color: 'black'}}>
           {exhibitionDate} | {gallery}
         </Text>
         <RecordingTemplate

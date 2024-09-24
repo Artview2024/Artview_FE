@@ -90,19 +90,22 @@ const RecordingTemplate: React.FC<RecordingTemplateProps> = ({
         <Text style={styles.checkboxLabel}>이전 작품 불러오기</Text>
       </View>
       <TextInput
-        style={[GlobalStyle.inputBox, {marginBottom: 16}]}
+        style={[GlobalStyle.inputBox, {marginBottom: 16, color: 'black'}]}
         placeholder="작품명"
         value={title}
         onChangeText={setTitle}
       />
       <TextInput
-        style={[GlobalStyle.inputBox, {marginBottom: 16}]}
+        style={[GlobalStyle.inputBox, {marginBottom: 16, color: 'black'}]}
         placeholder="작가"
         value={artist}
         onChangeText={setArtist}
       />
       <TextInput
-        style={[GlobalStyle.inputBox, {marginBottom: 16, height: 130}]}
+        style={[
+          GlobalStyle.inputBox,
+          {marginBottom: 16, height: 130, color: 'black'},
+        ]}
         placeholder="메모"
         value={memo}
         onChangeText={setMemo}
@@ -150,6 +153,7 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     marginLeft: 8,
     fontSize: 16,
+    color: 'black',
   },
 });
 

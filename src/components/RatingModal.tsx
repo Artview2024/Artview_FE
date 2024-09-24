@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   ratingText: {
     marginLeft: 10,
     fontSize: 16,
+    color: 'black',
   },
   submitButton: {
     backgroundColor: '#000',
