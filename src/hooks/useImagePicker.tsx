@@ -16,10 +16,15 @@ export const useImagePicker = () => {
         } else if (response.errorCode) {
           console.log('Camera Error: ', response.errorMessage);
         } else {
-          const uri =
+          let uri =
             response.assets && response.assets[0].uri
               ? response.assets[0].uri
               : '';
+
+          if (!uri.startsWith('file://')) {
+            uri = 'file://' + uri;
+          }
+
           setImageUri(uri);
         }
       },
@@ -37,10 +42,15 @@ export const useImagePicker = () => {
         } else if (response.errorCode) {
           console.log('ImagePicker Error: ', response.errorMessage);
         } else {
-          const uri =
+          let uri =
             response.assets && response.assets[0].uri
               ? response.assets[0].uri
               : '';
+
+          if (!uri.startsWith('file://')) {
+            uri = 'file://' + uri;
+          }
+
           setImageUri(uri);
         }
       },
