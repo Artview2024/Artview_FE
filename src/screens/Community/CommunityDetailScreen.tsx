@@ -6,10 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   StyleSheet,
-  Alert,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import {
   useScrollToTop,
