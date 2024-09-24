@@ -1,19 +1,21 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 
+interface CommentProps {
+  username: string;
+  content: string;
+  userImage: string | {uri: string} | undefined; // 이미지의 타입 명확화
+  onReply?: () => void;
+  isReply?: boolean; // 답글인지 여부
+}
+
 const Comment = ({
   username,
   content,
   userImage,
   onReply,
-  isReply = false, // 답글인지 여부를 추가
-}: {
-  username: string;
-  content: string;
-  userImage: any;
-  onReply?: () => void;
-  isReply?: boolean; // 답글인지 여부를 전달
-}) => {
+  isReply = false, // 기본값 false로 설정
+}: CommentProps) => {
   return (
     <View style={styles.commentContainer}>
       {/* 이미지가 올바르게 전달되지 않았을 때 기본 이미지 처리 */}

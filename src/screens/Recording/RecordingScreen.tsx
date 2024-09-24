@@ -193,55 +193,35 @@ export default function RecordingScreen() {
         rating: rating.toString(),
       };
 
-      // FormData 객체 생성
       const formData = new FormData();
 
-      // 기본 텍스트 필드 추가
       formData.append('id', updatedFinalData.id || '10001');
       formData.append('name', updatedFinalData.name || '');
       formData.append('date', updatedFinalData.date || '');
       formData.append('gallery', updatedFinalData.gallery || '');
       formData.append('rating', updatedFinalData.rating || '');
 
-      // 각 artList 항목을 개별적으로 FormData에 추가
       updatedFinalData.artList.forEach((art: any, index: number) => {
         formData.append(`artList[${index}].title`, art.title || '');
         formData.append(`artList[${index}].artist`, art.artist || '');
-        formData.append(`artList[${index}].contents`, art.memo || '');
+        formData.append(`artList[${index}].content`, art.memo || '');
 
         if (art.addImage) {
-          // 새로 추가된 이미지를 file로 전송
-          let addImageUri = art.addImage;
-
-          if (addImageUri.startsWith('/data/')) {
-            addImageUri = 'file://' + addImageUri;
-          } else if (addImageUri.startsWith('file://')) {
-            addImageUri = addImageUri.replace('file://', '');
-          }
-
           const addImageFile = {
-            uri: addImageUri,
-            type: mime.lookup(addImageUri) || 'image/jpeg',
+            uri: art.addImage,
+            type: mime.lookup(art.addImage) || 'image/jpeg',
             name: `art_${index}_add.jpeg`,
           };
           formData.append(`artList[${index}].addImage`, addImageFile);
         } else if (art.image && art.image.startsWith('http://')) {
-          // 기존 이미지 URL을 string으로 전송
           formData.append(`artList[${index}].image`, art.image);
         }
       });
 
-      // 메인 이미지 처리 - 기존 이미지는 URL을 string으로, 새로운 이미 파일은 file로 전송하도록 수정필요
       if (updatedFinalData.mainImage) {
-        let mainImageUri = updatedFinalData.mainImage;
-
-        if (mainImageUri.startsWith('file://')) {
-          mainImageUri = mainImageUri.replace('file://', '');
-        }
-
         const mainImageFile = {
-          uri: mainImageUri,
-          type: mime.lookup(mainImageUri) || 'image/jpeg',
+          uri: updatedFinalData.mainImage,
+          type: mime.lookup(updatedFinalData.mainImage) || 'image/jpeg',
           name: 'mainImage.jpeg',
         };
         formData.append('mainImage', mainImageFile);

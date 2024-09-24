@@ -3,11 +3,11 @@ import {View, Text, Image, Dimensions, StyleSheet} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import GlobalStyle from '../../styles/GlobalStyle';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import LikeButton from './LikeButton';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
 
 const CommunityCard = ({Posts}: {Posts: any}) => {
-  // 데이터 유효성 검사
   if (!Posts || !Posts.ImageAndTitle) {
     return (
       <View style={{paddingBottom: 30}}>
@@ -58,17 +58,29 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
           style={{marginVertical: 13}}
         />
       ) : (
-        <Text>No images available</Text>
+        <Text>이미지 없음</Text>
       )}
 
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Text style={GlobalStyle.CommunityCardTitle}>{Posts.name}</Text>
-        <Text style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Icon name="star" size={14} color="#EA1B83" />
-          <Text style={[GlobalStyle.CommunityCardRating, {paddingLeft: 3}]}>
-            {Posts.rate}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Text style={GlobalStyle.CommunityCardTitle}>{Posts.name}</Text>
+          <Text style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon name="star" size={14} color="#EA1B83" />
+            <Text style={[GlobalStyle.CommunityCardRating, {paddingLeft: 3}]}>
+              {Posts.rate}
+            </Text>
           </Text>
-        </Text>
+        </View>
+
+        <LikeButton
+          communicationsId={Posts.communicationsId}
+          isHeartClicked={Posts.isHeartClicked}
+        />
       </View>
 
       <View style={{paddingBottom: 7}}>
