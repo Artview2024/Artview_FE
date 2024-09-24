@@ -109,12 +109,10 @@ export default function CommunityDetailScreen({
     }
   };
 
-  // 처음 렌더링 시 게시물과 댓글을 가져옴
   useEffect(() => {
     fetchPost();
     fetchComments();
 
-    // 키보드가 닫힐 때 replyTo 상태 초기화
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
@@ -127,14 +125,12 @@ export default function CommunityDetailScreen({
     };
   }, [communicationsId]);
 
-  // 댓글 추가
   const handleAddComment = async () => {
     if (newComment.trim()) {
-      await postComment(replyTo); // replyTo 값에 따라 댓글 또는 답글 처리
+      await postComment(replyTo);
     }
   };
 
-  // 댓글/답글 POST
   const postComment = async (parentContentId: number | null) => {
     try {
       await axios.post(
@@ -142,7 +138,7 @@ export default function CommunityDetailScreen({
         {
           communicationsId: communicationsId,
           content: newComment,
-          parentContentId: parentContentId, // parentContentId가 null이면 최상위 댓글
+          parentContentId: parentContentId,
         },
         {
           headers: {
@@ -152,28 +148,20 @@ export default function CommunityDetailScreen({
         },
       );
 
-      // 댓글 목록 재소환 - 댓글 실시간 반영
       await fetchComments();
-
       setNewComment('');
       setReplyTo(null);
     } catch (error) {
       console.error('댓글 등록에 실패했습니다.', error);
-      Alert.alert('Error', '댓글 등록에 실패했습니다.');
     }
   };
 
-  // 답글 작성
   const handleReply = (commentId: number) => {
-    setReplyTo(commentId); // 댓글 ID를 설정하여 답글 대상 설정
-    inputRef.current?.focus(); // 답글 버튼을 누르면 입력창에 포커스
-
-    // 키보드가 열리도록 강제로 요청
+    setReplyTo(commentId);
+    inputRef.current?.focus();
     setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus(); // 포커스 맞추기
-      }
-    }, 100); // 타이머를 통해 포커스 맞춘 후 키보드 재활성화
+      inputRef.current?.focus();
+    }, 100);
   };
 
   if (!post) {
@@ -185,84 +173,74 @@ export default function CommunityDetailScreen({
   }
 
   return (
-    <>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={GlobalStyle.container}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <BackIcon
-            name="chevron-back"
-            size={24}
-            color={'black'}
-            style={{paddingRight: 3, paddingVertical: 18}}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={GlobalStyle.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <BackIcon
+          name="chevron-back"
+          size={24}
+          color={'black'}
+          style={{paddingRight: 3, paddingVertical: 18}}
+        />
+      </TouchableOpacity>
+      <ScrollView ref={ref}>
+        <CommunityCard Posts={post} />
+        {comments.length > 0 ? (
+          <>
+            <View
+              style={{
+                marginBottom: 10,
+                borderWidth: 0.2,
+                borderColor: '#ddd',
+              }}></View>
+            <View>
+              {comments.map(comment => (
+                <View key={comment.id}>
+                  <Comment
+                    username={comment.writername}
+                    content={comment.content}
+                    userImage={comment.writerImage}
+                    onReply={() => handleReply(comment.id)}
+                  />
+                  {comment.replies.map((reply: Reply) => (
+                    <View
+                      key={reply.id}
+                      style={{marginLeft: 40, marginTop: -10}}>
+                      <Comment
+                        username={reply.writername}
+                        content={reply.content}
+                        userImage={reply.writerImage}
+                      />
+                    </View>
+                  ))}
+                </View>
+              ))}
+            </View>
+          </>
+        ) : (
+          <Text>댓글이 없습니다.</Text>
+        )}
+      </ScrollView>
+
+      <View style={styles.commentInputContainer}>
+        <View style={styles.inputWrapper}>
+          <TextInput
+            ref={inputRef}
+            style={styles.commentInput}
+            value={newComment}
+            onChangeText={setNewComment}
+            placeholder={replyTo ? '답글 남기기' : '댓글 남기기'}
+            placeholderTextColor="#999"
           />
-        </TouchableOpacity>
-        <ScrollView ref={ref}>
-          {/* 게시물 상세 정보 */}
-          <CommunityCard Posts={post} />
-
-          <View style={{marginTop: 20}}></View>
-
-          {/* 댓글이 있을 경우에만 댓글을 보여줌 */}
-          {comments.length > 0 ? (
-            <>
-              <View
-                style={{
-                  marginBottom: 10,
-                  borderWidth: 0.2,
-                  borderColor: '#ddd',
-                }}></View>
-
-              {/* 댓글 및 답글 목록 */}
-              <View>
-                {comments.map(comment => (
-                  <View key={comment.id}>
-                    <Comment
-                      username={comment.writername} // 올바르게 전달된 username
-                      content={comment.content}
-                      userImage={comment.writerImage}
-                      onReply={() => handleReply(comment.id)}
-                    />
-                    {comment.replies.map((reply: Reply) => (
-                      <View
-                        key={reply.id}
-                        style={{marginLeft: 40, marginTop: -10}}>
-                        <Comment
-                          username={reply.writername}
-                          content={reply.content}
-                          userImage={reply.writerImage}
-                        />
-                      </View>
-                    ))}
-                  </View>
-                ))}
-              </View>
-            </>
-          ) : (
-            <Text>댓글이 없습니다.</Text> // 댓글이 없을 때 대체 텍스트
-          )}
-        </ScrollView>
-
-        {/* 댓글 입력창 */}
-        <View style={styles.commentInputContainer}>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              ref={inputRef}
-              style={styles.commentInput}
-              value={newComment}
-              onChangeText={setNewComment}
-              placeholder={replyTo ? '답글 남기기' : '댓글 남기기'}
-              placeholderTextColor="#999" // placeholder 텍스트 색상 지정
-            />
-            <TouchableOpacity
-              style={styles.postButton}
-              onPress={handleAddComment}>
-              <Text style={styles.postButtonText}>Post</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.postButton}
+            onPress={handleAddComment}>
+            <Text style={styles.postButtonText}>Post</Text>
+          </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
-    </>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
