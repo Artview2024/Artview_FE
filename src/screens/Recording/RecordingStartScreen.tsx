@@ -44,15 +44,17 @@ export default function RecordingStartScreen() {
       </TouchableOpacity>
       <Text style={GlobalStyle.sectionTitle}>전시회</Text>
       <TextInput
-        style={[GlobalStyle.inputBox, {marginBottom: 20}]}
+        style={[GlobalStyle.inputBox, {marginBottom: 20, color: 'black'}]}
         placeholder="전시회 검색하기"
+        placeholderTextColor={'#000'}
         value={exhibition}
         onChangeText={setExhibition}
       />
       <Text style={GlobalStyle.sectionTitle}>장소</Text>
       <TextInput
-        style={[GlobalStyle.inputBox, {marginBottom: 20}]}
+        style={[GlobalStyle.inputBox, {marginBottom: 20, color: 'black'}]}
         placeholder="장소 검색하기"
+        placeholderTextColor={'#000'}
         value={location}
         onChangeText={setLocation}
       />

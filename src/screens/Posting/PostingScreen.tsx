@@ -199,17 +199,13 @@ export default function PostingScreen() {
 
         {/* 글쓰기 입력 */}
         <View style={{marginTop: 28}}>
-          <Text
-            style={[
-              GlobalStyle.mainText,
-              {fontWeight: 'bold', marginBottom: 10, color: '#000'},
-            ]}>
+          <Text style={[{fontWeight: 'bold', marginBottom: 10, color: '#000'}]}>
             글쓰기
           </Text>
           <TextInput
             style={[
               GlobalStyle.inputBox,
-              {height: 205, textAlignVertical: 'top'},
+              {height: 205, textAlignVertical: 'top', color: 'black'},
             ]}
             placeholder="..."
             multiline
@@ -241,8 +237,10 @@ export default function PostingScreen() {
                 <Text
                   style={[
                     styles.keywordText,
-                    selectedKeywords.includes(keyword) && {
-                      color: '#ffff',
+                    {
+                      color: selectedKeywords.includes(keyword)
+                        ? '#ffff'
+                        : '#000',
                     },
                   ]}>
                   {keyword}
