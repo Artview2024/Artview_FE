@@ -42,9 +42,12 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
               ? {uri: Posts.writerImage}
               : require('../../assets/images/user.png')
           }
-          style={{width: 40, height: 40, borderRadius: 20, marginRight: 10}}
+          style={{width: 35, height: 35, borderRadius: 20, marginRight: 10}}
         />
-        <Text style={GlobalStyle.CommunityCardUser}>{Posts.writerName}</Text>
+        <Text
+          style={[GlobalStyle.CommunityCardUser, {flexShrink: 1, flexGrow: 1}]}>
+          {Posts.writerName}
+        </Text>
       </View>
 
       {imageAndTitle.length > 0 ? (
@@ -70,12 +73,12 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Text style={GlobalStyle.CommunityCardTitle}>{Posts.name}</Text>
-          <Text style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Icon name="star" size={14} color="#EA1B83" />
             <Text style={[GlobalStyle.CommunityCardRating, {paddingLeft: 3}]}>
               {Posts.rate}
             </Text>
-          </Text>
+          </View>
         </View>
 
         <LikeButton

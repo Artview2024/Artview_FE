@@ -98,12 +98,13 @@ const GlobalStyle = StyleSheet.create({
   },
   floatingButtonText: {
     color: 'white',
+    fontWeight: 'bold',
     fontSize: 14,
   },
   CommunityCardUser: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
     color: 'black',
+    fontWeight: 'medium',
   },
   CommunityCardTitle: {
     fontSize: 16,

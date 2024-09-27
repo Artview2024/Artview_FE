@@ -226,6 +226,7 @@ export default function CommunityDetailScreen({
             onChangeText={setNewComment}
             placeholder={replyTo ? '답글 남기기' : '댓글 남기기'}
             placeholderTextColor="#999"
+            allowFontScaling={false}
           />
           <TouchableOpacity
             style={styles.postButton}
