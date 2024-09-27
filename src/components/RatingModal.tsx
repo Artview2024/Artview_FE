@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {
   View,
-  Text,
   Modal,
   TouchableOpacity,
   StyleSheet,
   Dimensions,
 } from 'react-native';
+import Text from '../components/Text';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface RatingModalProps {

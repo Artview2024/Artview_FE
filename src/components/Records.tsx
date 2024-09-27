@@ -2,11 +2,11 @@ import React from 'react';
 import {
   ScrollView,
   View,
-  Text,
   TouchableOpacity,
   Image,
   StyleSheet,
 } from 'react-native';
+import Text from '../components/Text';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../styles/GlobalStyle';
 

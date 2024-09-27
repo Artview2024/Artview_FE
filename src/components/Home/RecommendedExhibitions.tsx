@@ -1,12 +1,12 @@
 import React from 'react';
 import {
   View,
-  Text,
   Image,
   FlatList,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import Text from '../../components/Text';
 
 type Exhibition = {
   key: string;

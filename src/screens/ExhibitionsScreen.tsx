@@ -1,5 +1,6 @@
 import React, {useRef} from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import {View, ScrollView} from 'react-native';
+import Text from '../components/Text';
 import {useScrollToTop} from '@react-navigation/native';
 
 export default function ExhibitionsScreen() {

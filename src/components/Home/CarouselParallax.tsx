@@ -1,12 +1,12 @@
 import React from 'react';
 import {
   View,
-  Text,
   Image,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
+import Text from '../../components/Text';
 import Carousel from 'react-native-reanimated-carousel';
 import {useSharedValue} from 'react-native-reanimated';
 

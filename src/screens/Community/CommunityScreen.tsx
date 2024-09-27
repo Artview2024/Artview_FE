@@ -2,11 +2,11 @@ import React, {useState, useRef, useCallback} from 'react';
 import {
   FlatList,
   View,
-  Text,
   TouchableOpacity,
   RefreshControl,
   FlatList as FlatListType,
 } from 'react-native';
+import Text from '../../components/Text';
 import {
   useNavigation,
   NavigationProp,

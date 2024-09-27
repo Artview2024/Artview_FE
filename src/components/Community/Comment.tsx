@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import Text from '../../components/Text';
 
 interface CommentProps {
   username: string;

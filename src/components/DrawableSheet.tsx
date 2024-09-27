@@ -1,12 +1,6 @@
 import React, {forwardRef, useImperativeHandle, useState} from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {Modal, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import Text from '../components/Text';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
