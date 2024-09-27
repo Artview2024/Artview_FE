@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, TextInput} from 'react-native';
+import {View, TouchableOpacity, TextInput} from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../../styles/GlobalStyle';
 import {StackParamList} from '../../navigator/StackParamList';
+import Text from '../../components/Text';
 
 export default function RecordingStartScreen() {
   const [exhibition, setExhibition] = useState('');
@@ -49,6 +50,7 @@ export default function RecordingStartScreen() {
         placeholderTextColor={'#000'}
         value={exhibition}
         onChangeText={setExhibition}
+        maxFontSizeMultiplier={1}
       />
       <Text style={GlobalStyle.sectionTitle}>장소</Text>
       <TextInput
@@ -57,6 +59,7 @@ export default function RecordingStartScreen() {
         placeholderTextColor={'#000'}
         value={location}
         onChangeText={setLocation}
+        maxFontSizeMultiplier={1}
       />
       <Text style={GlobalStyle.sectionTitle}>날짜</Text>
       <TouchableOpacity

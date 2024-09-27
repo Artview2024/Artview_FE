@@ -1,13 +1,13 @@
 import React, {useRef, useState, useEffect} from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   TextInput,
   StyleSheet,
   Keyboard,
 } from 'react-native';
+import Text from '../../components/Text';
 import {
   useScrollToTop,
   useNavigation,

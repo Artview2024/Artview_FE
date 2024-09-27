@@ -1,5 +1,6 @@
 import React, {useRef, useState, useEffect} from 'react';
-import {View, ScrollView, Text, TouchableOpacity} from 'react-native';
+import {View, ScrollView, TouchableOpacity} from 'react-native';
+import Text from '../../components/Text';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import MenuIcon from 'react-native-vector-icons/Feather';
 import GlobalStyle from '../../styles/GlobalStyle';

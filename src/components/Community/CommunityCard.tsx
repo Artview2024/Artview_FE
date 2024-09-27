@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, Text, Image, Dimensions, StyleSheet} from 'react-native';
+import {View, Image, Dimensions, StyleSheet} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import GlobalStyle from '../../styles/GlobalStyle';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LikeButton from './LikeButton';
+import Text from '../../components/Text';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
 

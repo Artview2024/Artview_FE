@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   Image,
   StyleSheet,
   Dimensions,
 } from 'react-native';
+import Text from '../components/Text';
 import CheckBox from '@react-native-community/checkbox';
 import GlobalStyle from '../styles/GlobalStyle';
 

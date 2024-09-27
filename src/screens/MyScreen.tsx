@@ -1,12 +1,12 @@
 import React, {useRef, useState} from 'react';
 import {
   View,
-  Text,
   Image,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import Text from '../components/Text';
 import {useScrollToTop} from '@react-navigation/native';
 import GlobalStyle from '../styles/GlobalStyle';
 

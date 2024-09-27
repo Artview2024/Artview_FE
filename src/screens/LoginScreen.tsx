@@ -1,11 +1,6 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {View, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import Text from '../components/Text';
 import KakaoLogin from '../assets/images/kakao_login.svg';
 import CheckBoxCircle from '../assets/icons/checkbox-circle-icon.jsx';
 

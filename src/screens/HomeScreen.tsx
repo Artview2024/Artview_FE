@@ -1,7 +1,6 @@
 import React, {useState, useRef} from 'react';
 import {
   View,
-  Text,
   Image,
   ScrollView,
   StyleSheet,
@@ -13,6 +12,7 @@ import {
   NavigationProp,
   useScrollToTop,
 } from '@react-navigation/native';
+import Text from '../components/Text';
 import CarouselParallax from '../components/Home/CarouselParallax';
 import {StackParamList} from '../navigator/StackParamList';
 import GlobalStyle from '../styles/GlobalStyle';
