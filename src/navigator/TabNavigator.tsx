@@ -1,6 +1,6 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Image, ImageSourcePropType} from 'react-native';
+import {Image, ImageSourcePropType, Text} from 'react-native'; // Text 가져오기
 import HomeScreen from '../screens/HomeScreen';
 import CommunityScreen from '../screens/Community/CommunityScreen';
 import ExhibitionsScreen from '../screens/ExhibitionsScreen';
@@ -52,26 +52,51 @@ export default function TabNavigator() {
             />
           );
         },
+        tabBarLabel: ({focused, color}) => {
+          let label = '';
+
+          if (route.name === 'Home') {
+            label = '홈';
+          } else if (route.name === 'Community') {
+            label = '소통';
+          } else if (route.name === 'Exhibitions') {
+            label = '전시';
+          } else if (route.name === 'My') {
+            label = 'MY';
+          }
+
+          return (
+            <Text
+              allowFontScaling={false}
+              style={{
+                color: focused ? color : 'gray',
+                fontSize: 12,
+                paddingRight: 2,
+              }}>
+              {label}
+            </Text>
+          );
+        },
       })}>
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{title: '홈', headerShown: false}}
+        options={{headerShown: false}}
       />
       <Tab.Screen
         name="Community"
         component={CommunityScreen}
-        options={{title: '소통', headerShown: false}}
+        options={{headerShown: false}}
       />
       <Tab.Screen
         name="Exhibitions"
         component={ExhibitionsScreen}
-        options={{title: '전시', headerShown: false}}
+        options={{headerShown: false}}
       />
       <Tab.Screen
         name="My"
         component={MyScreen}
-        options={{title: 'MY', headerShown: false}}
+        options={{headerShown: false}}
       />
     </Tab.Navigator>
   );
