@@ -42,7 +42,9 @@ export default function RecordingScreen() {
     exhibitionDate,
     gallery,
     artList: initialArtList,
+    mainImage,
     isEditMode = false,
+    myReviewsId,
   } = route.params;
 
   // 이미지 선택 및 카메라 촬영을 처리하는 커스텀 훅 사용
@@ -92,6 +94,18 @@ export default function RecordingScreen() {
       setImageUri('');
     }
   }, [artIndex]);
+
+  useEffect(() => {
+    // 수정 모드일 때만 실행되는 useEffect
+    if (isEditMode && mainImage && initialArtList.length > 0) {
+      const mainImageIndex = initialArtList.findIndex(
+        art => art.image === mainImage,
+      );
+      if (mainImageIndex !== -1) {
+        setMainImageIndex(mainImageIndex); // 수정 모드일 때 기존의 대표사진을 설정
+      }
+    }
+  }, [isEditMode, mainImage, initialArtList]);
 
   const handleOpenDrawableSheet = () => {
     if (drawableSheetRef.current) {
@@ -169,6 +183,7 @@ export default function RecordingScreen() {
         gallery: gallery,
         rating: '',
         artList: updatedArtList,
+        mainImage: mainImageUri,
       });
       setModalVisible(true);
     }
@@ -177,10 +192,16 @@ export default function RecordingScreen() {
   const handleRatingSubmit = async (rating: number) => {
     if (finalData) {
       try {
+        const dataToSend = {
+          ...finalData,
+          myReviewsId,
+          mainImage: finalData.artList[mainImageIndex || 0]?.image,
+        };
+
         if (isEditMode) {
-          await handlePatchSubmit(finalData, rating, 'ACCESS_TOKEN');
+          await handlePatchSubmit(dataToSend, rating, 'ACCESS_TOKEN');
         } else {
-          await handlePostSubmit(finalData, rating, 'ACCESS_TOKEN');
+          await handlePostSubmit(dataToSend, rating, 'ACCESS_TOKEN');
         }
         setModalVisible(false);
         navigation.navigate('Records');

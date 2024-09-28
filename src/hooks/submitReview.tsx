@@ -1,7 +1,7 @@
+import {Image} from 'react-native';
 import axios from 'axios';
 import mime from 'react-native-mime-types';
 import {API_BASE_URL} from '@env';
-import {Image} from 'react-native';
 
 type ArtItem = {
   id: string;
@@ -36,37 +36,49 @@ export const handlePatchSubmit = async (
 
   const formData = new FormData();
   formData.append('id', updatedFinalData.id);
+
   formData.append('myReviewsId', updatedFinalData.myReviewsId || '');
+
   formData.append('name', updatedFinalData.name || '');
+
   formData.append('date', updatedFinalData.date || '');
+
   formData.append('gallery', updatedFinalData.gallery || '');
+
   formData.append('rating', updatedFinalData.rating || '');
 
   updatedFinalData.artList.forEach((art: ArtItem, index: number) => {
     formData.append(`artList[${index}].title`, art.title || '');
-    formData.append(`artList[${index}].artist`, art.artist || '');
-    formData.append(`artList[${index}].content`, art.memo || '');
 
-    if (art.addImage) {
+    formData.append(`artList[${index}].artist`, art.artist || '');
+
+    formData.append(`artList[${index}].contents`, art.memo || '');
+
+    // art.image가 파일 형식인지 확인하여 addImage로 전송, 문자열이면 image로 전송
+    if (art.image && art.image.startsWith('file://')) {
+      // 파일 형식인 경우 addImage로 전송
       const addImageFile = {
-        uri: art.addImage.startsWith('file://')
-          ? art.addImage
-          : `file://${art.addImage}`,
-        type: mime.lookup(art.addImage) || 'image/jpeg',
+        uri: art.image.startsWith('file://')
+          ? art.image
+          : `file://${art.image}`,
+        type: mime.lookup(art.image) || 'image/jpeg',
         name: `art_${index}_add.${mime.extension(
-          mime.lookup(art.addImage) || 'jpeg',
+          mime.lookup(art.image) || 'jpeg',
         )}`,
       };
       formData.append(`artList[${index}].addImage`, addImageFile);
+      console.log(`artList[${index}].addImage:`, addImageFile);
     } else if (art.image) {
+      // 문자열 형식인 경우 image로 전송
       formData.append(`artList[${index}].image`, art.image);
+      console.log(`artList[${index}].image:`, art.image);
     }
   });
 
-  // mainImage 처리
   if (updatedFinalData.mainImage) {
     if (updatedFinalData.mainImage.startsWith('http')) {
       formData.append('mainImage', updatedFinalData.mainImage);
+      console.log('mainImage:', updatedFinalData.mainImage);
     } else {
       const mainImageFile = {
         uri: updatedFinalData.mainImage.startsWith('file://')
@@ -76,7 +88,20 @@ export const handlePatchSubmit = async (
         name: 'mainImage.jpeg',
       };
       formData.append('mainImage', mainImageFile);
+      console.log('mainImageFile:', mainImageFile);
     }
+  } else {
+    const resolvedAsset = Image.resolveAssetSource(
+      require('../assets/images/thumbnail_basic.png'),
+    );
+
+    const defaultImageFile = {
+      uri: resolvedAsset.uri,
+      type: mime.lookup('png') || 'image/png',
+      name: 'mainImage.png',
+    };
+    formData.append('mainImage', defaultImageFile);
+    console.log('default mainImage:', defaultImageFile);
   }
 
   try {
