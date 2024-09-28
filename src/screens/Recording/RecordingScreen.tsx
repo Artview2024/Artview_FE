@@ -13,8 +13,6 @@ import {
 import {StackParamList} from '../../navigator/StackParamList';
 import RatingModal from '../../components/RatingModal';
 import DrawableSheet from '../../components/DrawableSheet';
-import axios from 'axios';
-import mime from 'react-native-mime-types';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
 import {updateArtImage} from '../../hooks/updateArtImages';
@@ -22,7 +20,7 @@ import {useFormState} from '../../hooks/useFormState';
 import {StyleSheet} from 'react-native';
 import RecordingTemplate from '../../components/RecordingTemplate';
 import {Image} from 'react-native';
-import {API_BASE_URL} from '@env';
+import {handlePatchSubmit, handlePostSubmit} from '../../hooks/submitReview';
 
 type ArtItem = {
   id: string;
@@ -149,7 +147,6 @@ export default function RecordingScreen() {
   // 기록 종료 시 최종 데이터를 설정하고 모달
   const handleEndTour = () => {
     if (title || artist || memo || imageUri) {
-      // 현재 작성 중인 아트 항목을 최종적으로 업데이트
       const updatedArtList = updateArtImage(artIndex, imageUri, artList);
       setArtList(updatedArtList);
 
@@ -174,90 +171,22 @@ export default function RecordingScreen() {
         rating: '',
         artList: updatedArtList,
       });
-      console.log({
-        id: 10001, // 임시 ID
-        name: exhibitionName,
-        date: exhibitionDate,
-        gallery: gallery,
-        mainImage: mainImageUri,
-        rating: '',
-        artList: updatedArtList,
-      });
       setModalVisible(true);
     }
   };
 
   const handleRatingSubmit = async (rating: number) => {
     if (finalData) {
-      const updatedFinalData = {
-        ...finalData,
-        rating: rating.toString(),
-      };
-
-      const formData = new FormData();
-
-      formData.append('id', updatedFinalData.id || '10001');
-      formData.append('name', updatedFinalData.name || '');
-      formData.append('date', updatedFinalData.date || '');
-      formData.append('gallery', updatedFinalData.gallery || '');
-      formData.append('rating', updatedFinalData.rating || '');
-
-      updatedFinalData.artList.forEach((art: any, index: number) => {
-        formData.append(`artList[${index}].title`, art.title || '');
-        formData.append(`artList[${index}].artist`, art.artist || '');
-        formData.append(`artList[${index}].content`, art.memo || '');
-
-        if (art.addImage) {
-          const addImageFile = {
-            uri: art.addImage,
-            type: mime.lookup(art.addImage) || 'image/jpeg',
-            name: `art_${index}_add.jpeg`,
-          };
-          formData.append(`artList[${index}].addImage`, addImageFile);
-        } else if (art.image && art.image.startsWith('http://')) {
-          formData.append(`artList[${index}].image`, art.image);
-        }
-      });
-
-      if (updatedFinalData.mainImage) {
-        const mainImageFile = {
-          uri: updatedFinalData.mainImage,
-          type: mime.lookup(updatedFinalData.mainImage) || 'image/jpeg',
-          name: 'mainImage.jpeg',
-        };
-        formData.append('mainImage', mainImageFile);
-      } else {
-        formData.append('mainImage', null);
-      }
-
       try {
-        const response = await axios({
-          method: isEditMode ? 'PATCH' : 'POST',
-          url: isEditMode
-            ? `${API_BASE_URL}/myReviews/modify`
-            : `${API_BASE_URL}/myReviews/save`,
-          data: formData,
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ACCESS_TOKEN`,
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-        console.log('Response:', response.data);
+        if (isEditMode) {
+          await handlePatchSubmit(finalData, rating, 'ACCESS_TOKEN');
+        } else {
+          await handlePostSubmit(finalData, rating, 'ACCESS_TOKEN');
+        }
         setModalVisible(false);
         navigation.navigate('Records');
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          if (error.response) {
-            console.error('Error response data:', error.response.data);
-          } else if (error.request) {
-            console.error('No response received:', error.request);
-          } else {
-            console.error('Error during setup:', error.message);
-          }
-        } else {
-          console.error('Unknown error:', (error as Error).message);
-        }
+        console.error('Error:', error);
       }
     }
   };
