@@ -156,7 +156,7 @@ export default function RecordingScreen() {
           mainImageUri = updatedArtList[mainImageIndex].image || '';
         } else {
           const resolvedAsset = Image.resolveAssetSource(
-            require('../../assets/images/android.png'),
+            require('../../assets/images/thumbnail_basic.png'),
           );
           mainImageUri = resolvedAsset.uri;
         }
@@ -167,7 +167,6 @@ export default function RecordingScreen() {
         name: exhibitionName,
         date: exhibitionDate,
         gallery: gallery,
-        mainImage: mainImageUri,
         rating: '',
         artList: updatedArtList,
       });
