@@ -85,8 +85,10 @@ export default function RecordDetailScreen() {
           artist: art.artist || null,
           memo: art.memo || null,
         })),
+        mainImage: record.mainImage || null,
         isEditMode: true,
         artIndex: 0,
+        myReviewsId: record.id,
       });
     }
   };
