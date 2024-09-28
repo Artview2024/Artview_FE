@@ -1,6 +1,7 @@
 import axios from 'axios';
 import mime from 'react-native-mime-types';
 import {API_BASE_URL} from '@env';
+import {Image} from 'react-native';
 
 type ArtItem = {
   id: string;
@@ -147,6 +148,16 @@ export const handlePostSubmit = async (
       name: 'mainImage.jpeg',
     };
     formData.append('mainImage', mainImageFile);
+  } else {
+    const resolvedAsset = Image.resolveAssetSource(
+      require('../assets/images/thumbnail_basic.png'),
+    );
+    const defaultImageFile = {
+      uri: resolvedAsset.uri,
+      type: mime.lookup('png') || 'image/png',
+      name: 'mainImage.png',
+    };
+    formData.append('mainImage', defaultImageFile);
   }
 
   try {
