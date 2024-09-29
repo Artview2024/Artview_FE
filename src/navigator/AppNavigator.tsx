@@ -21,12 +21,12 @@ export default function AppNavigator() {
         component={CommunityDetailScreen}
         options={{headerShown: false}}
       /> 
+      */}
       <Stack.Screen
         name="Login"
         component={LoginScreen}
         options={{headerShown: false}}
-      /> 
-      */}
+      />
       <Stack.Screen
         name="Tabs"
         component={TabNavigator}
