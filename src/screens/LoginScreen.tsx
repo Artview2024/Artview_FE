@@ -12,6 +12,7 @@ import Text from '../components/Text';
 import KakaoLogin from '../assets/images/kakao_login.svg';
 import CheckBoxCircle from '../assets/icons/checkbox-circle-icon.jsx';
 import {KAKAO_CLIENT_ID, KAKAO_REDIRECT_URI} from '@env';
+import {useTokenStore} from '../hooks/useTokenStore';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {StackParamList} from '../navigator/StackParamList.js';
 
@@ -26,7 +27,9 @@ export default function LoginScreen() {
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}`;
 
   // WebView의 네비게이션 상태가 바뀔 때
-  const handleWebViewNavigationStateChange = (navState: WebViewNavigation) => {
+  const handleWebViewNavigationStateChange = async (
+    navState: WebViewNavigation,
+  ) => {
     const {url} = navState; // 현재 WebView의 URL
 
     // 리다이렉트 URI로 리다이렉션 되었는지 확인
@@ -36,6 +39,16 @@ export default function LoginScreen() {
       if (code) {
         // 인증 코드가 존재하면 WebView를 닫고, 이후 서버에서 토큰 처리
         setWebViewVisible(false);
+
+        // 토큰 상태 저장
+        const tokens = {
+          accessToken: 'accessToken',
+          refreshToken: 'refreshToken',
+        };
+
+        // Zustand 스토어에 토큰 저장
+        useTokenStore.getState().setAccessToken(tokens.accessToken);
+        useTokenStore.getState().setRefreshToken(tokens.refreshToken);
 
         // 로그인 후 홈 화면으로 이동
         navigation.navigate('Tabs', {screen: 'Home'});
@@ -98,7 +111,6 @@ export default function LoginScreen() {
       <Modal
         visible={isWebViewVisible}
         onRequestClose={() => setWebViewVisible(false)}>
-        {' '}
         {/* 모달 닫기 */}
         <WebView
           source={{uri: KAKAO_AUTH_URL}} // Kakao OAuth URL 로드
