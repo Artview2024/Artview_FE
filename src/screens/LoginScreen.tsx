@@ -87,8 +87,6 @@ export default function LoginScreen() {
       <TouchableOpacity
         style={styles.kakaoButton}
         onPress={() => setWebViewVisible(true)}>
-        {' '}
-        {/* WebView 모달 열기 */}
         <KakaoLogin
           width="100%"
           height="100%"
