@@ -30,8 +30,8 @@ export type StackParamList = {
     }>;
     artIndex?: number;
     isEditMode: boolean;
-    myReviewsId: number;
-    mainImage: string | null;
+    myReviewsId?: number;
+    mainImage?: string | null;
   };
   RecordingStart: undefined;
   Posting: {
