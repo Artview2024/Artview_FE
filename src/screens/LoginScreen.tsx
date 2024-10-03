@@ -11,10 +11,11 @@ import {WebViewNavigation} from 'react-native-webview';
 import Text from '../components/Text';
 import KakaoLogin from '../assets/images/kakao_login.svg';
 import CheckBoxCircle from '../assets/icons/checkbox-circle-icon.jsx';
-import {KAKAO_CLIENT_ID, KAKAO_REDIRECT_URI} from '@env';
+import {API_BASE_URL, KAKAO_REDIRECT_URI, KAKAO_CLIENT_ID} from '@env';
 import {useTokenStore} from '../hooks/useTokenStore';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {StackParamList} from '../navigator/StackParamList.js';
+import axios from 'axios';
 
 export default function LoginScreen() {
   const [isChecked, setIsChecked] = useState(false);
@@ -23,35 +24,37 @@ export default function LoginScreen() {
   const [isWebViewVisible, setWebViewVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
-  // Kakao OAuth URL
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}`;
 
-  // WebView의 네비게이션 상태가 바뀔 때
   const handleWebViewNavigationStateChange = async (
     navState: WebViewNavigation,
   ) => {
-    const {url} = navState; // 현재 WebView의 URL
+    const {url} = navState;
 
-    // 리다이렉트 URI로 리다이렉션 되었는지 확인
     if (url.startsWith(KAKAO_REDIRECT_URI)) {
-      // URL에서 인증 코드 추출
       const code = url.split('code=')[1];
       if (code) {
-        // 인증 코드가 존재하면 WebView를 닫고, 이후 서버에서 토큰 처리
         setWebViewVisible(false);
 
-        // 토큰 상태 저장
-        const tokens = {
-          accessToken: 'accessToken',
-          refreshToken: 'refreshToken',
-        };
+        try {
+          const response = await axios.get(
+            `${API_BASE_URL}/auth/kakao-login?code=${code}`,
+            {
+              headers: {
+                Accept: 'application/json',
+              },
+            },
+          );
 
-        // Zustand 스토어에 토큰 저장
-        useTokenStore.getState().setAccessToken(tokens.accessToken);
-        useTokenStore.getState().setRefreshToken(tokens.refreshToken);
+          const {accessToken, refreshToken} = response.data;
 
-        // 로그인 후 홈 화면으로 이동
-        navigation.navigate('Tabs', {screen: 'Home'});
+          useTokenStore.getState().setAccessToken(accessToken);
+          useTokenStore.getState().setRefreshToken(refreshToken);
+
+          navigation.navigate('Tabs', {screen: 'Home'});
+        } catch (error) {
+          console.error('토큰 요청 실패:', error);
+        }
       }
     }
   };
