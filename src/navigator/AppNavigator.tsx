@@ -16,12 +16,6 @@ const Stack = createNativeStackNavigator<StackParamList>();
 export default function AppNavigator() {
   return (
     <Stack.Navigator>
-      {/* <Stack.Screen
-        name="CommunityDetail"
-        component={CommunityDetailScreen}
-        options={{headerShown: false}}
-      /> 
-      */}
       <Stack.Screen
         name="Login"
         component={LoginScreen}

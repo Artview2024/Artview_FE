@@ -14,6 +14,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import axios from 'axios';
+import {useTokenStore} from '../../hooks/useTokenStore';
 import {API_BASE_URL} from '@env';
 import CommunityCard from '../../components/Community/CommunityCard';
 import GlobalStyle from '../../styles/GlobalStyle';
@@ -24,7 +25,7 @@ import {StackParamList} from '../../navigator/StackParamList';
 interface Reply {
   id: number;
   writerId: number;
-  writername: string;
+  writerName: string;
   content: string;
   writerImage: string;
   createDate: string;
@@ -34,7 +35,7 @@ interface CommentData {
   id: number;
   commentId: number;
   writerId: number;
-  writername: string;
+  writerName: string;
   content: string;
   writerImage: string;
   createDate: string;
@@ -71,7 +72,6 @@ export default function CommunityDetailScreen({
   const [newComment, setNewComment] = useState('');
   const [replyTo, setReplyTo] = useState<number | null>(null);
 
-  // 게시물 정보 가져오기
   const fetchPost = async () => {
     try {
       const response = await axios.get(
@@ -79,7 +79,6 @@ export default function CommunityDetailScreen({
         {
           headers: {
             Accept: 'application/json',
-            Authorization: `Bearer ACCESS_TOKEN`,
           },
         },
       );
@@ -97,7 +96,6 @@ export default function CommunityDetailScreen({
         {
           headers: {
             Accept: 'application/json',
-            Authorization: `Bearer ACCESS TOKEN`,
           },
         },
       );
@@ -114,7 +112,7 @@ export default function CommunityDetailScreen({
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
       () => {
-        setReplyTo(null); // 키보드가 사라지면 답글 상태 초기화
+        setReplyTo(null);
       },
     );
 
@@ -125,38 +123,42 @@ export default function CommunityDetailScreen({
 
   const handleAddComment = async () => {
     if (newComment.trim()) {
-      await postComment(replyTo); // replyTo에 따라 답글 또는 댓글 처리
+      await postComment(replyTo);
     }
   };
 
   const postComment = async (parentContentId: number | null) => {
     try {
+      const accessToken = useTokenStore.getState().accessToken;
+      console.log('AccessToken:', accessToken);
+
       await axios.post(
         `${API_BASE_URL}/communications/comment`,
         {
           communicationsId: communicationsId,
           content: newComment,
-          parentContentId: parentContentId || null, // parentContentId가 있으면 답글, 없으면 댓글
+          parentContentId: parentContentId || null,
         },
         {
           headers: {
             Accept: 'application/json',
-            Authorization: `Bearer ACCESS TOKEN`,
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );
 
-      await fetchComments(); // 댓글/답글 새로고침
+      await fetchComments();
+
       setNewComment('');
-      setReplyTo(null); // 댓글/답글 등록 후 초기화
+      setReplyTo(null);
     } catch (error) {
-      console.error('댓글 등록에 실패했습니다.', error);
+      console.error('댓글 작성 실패:', error);
     }
   };
 
   const handleReply = (commentId: number) => {
-    setReplyTo(commentId); // 답글을 달 commentId 설정
-    inputRef.current?.focus(); // 답글 작성용 input으로 포커스 이동
+    setReplyTo(commentId); 
+    inputRef.current?.focus(); 
   };
 
   if (!post) {
@@ -191,20 +193,20 @@ export default function CommunityDetailScreen({
               {comments.map(comment => (
                 <View key={comment.id}>
                   <Comment
-                    username={comment.writername}
+                    username={comment.writerName}
                     content={comment.content}
                     userImage={comment.writerImage}
-                    onReply={() => handleReply(comment.commentId)} // 답글 버튼 누를 때 해당 commentId 저장
+                    onReply={() => handleReply(comment.commentId)} 
                   />
                   {comment.replies.map((reply: Reply) => (
                     <View
                       key={reply.id}
                       style={{marginLeft: 40, marginTop: -10}}>
                       <Comment
-                        username={reply.writername}
+                        username={reply.writerName}
                         content={reply.content}
                         userImage={reply.writerImage}
-                        isReply={true} // 답글임을 표시
+                        isReply={true} 
                       />
                     </View>
                   ))}
