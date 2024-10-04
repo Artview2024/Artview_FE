@@ -14,6 +14,7 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import axios from 'axios';
+import {useTokenStore} from '../../hooks/useTokenStore';
 import {API_BASE_URL} from '@env';
 import CommunityCard from '../../components/Community/CommunityCard';
 import GlobalStyle from '../../styles/GlobalStyle';
@@ -131,6 +132,9 @@ export default function CommunityDetailScreen({
 
   const postComment = async (parentContentId: number | null) => {
     try {
+      const accessToken = useTokenStore.getState().accessToken; // Zustand에서 accessToken 가져오기
+      console.log('AccessToken:', accessToken); // 토큰이 제대로 들어오는지 확인
+
       await axios.post(
         `${API_BASE_URL}/communications/comment`,
         {
@@ -141,16 +145,12 @@ export default function CommunityDetailScreen({
         {
           headers: {
             Accept: 'application/json',
-            Authorization: `Bearer ACCESS TOKEN`,
+            Authorization: `Bearer ${accessToken}`, // 토큰을 헤더에 포함
           },
         },
       );
-
-      await fetchComments(); // 댓글/답글 새로고침
-      setNewComment('');
-      setReplyTo(null); // 댓글/답글 등록 후 초기화
     } catch (error) {
-      console.error('댓글 등록에 실패했습니다.', error);
+      console.error('댓글 작성 실패:', error);
     }
   };
 
