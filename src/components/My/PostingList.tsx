@@ -6,7 +6,7 @@ interface Posting {
   id: number;
   name: string;
   date: string;
-  image: any;
+  image: {uri: string};
 }
 
 interface PostingListProps {
@@ -18,7 +18,14 @@ const PostingList: React.FC<PostingListProps> = ({postings}) => (
     {postings.map(posting => (
       <View key={posting.id} style={styles.postingWrapper}>
         <TouchableOpacity>
-          <Image source={posting.image} style={styles.postingImage} />
+          {posting.image ? (
+            <Image source={posting.image} style={styles.postingImage} />
+          ) : (
+            <Image
+              source={require('../../assets/images/thumbnail_basic.png')}
+              style={styles.postingImage}
+            />
+          )}
           <View style={{paddingTop: 7}}>
             <Text style={styles.postingName}>{posting.name}</Text>
             <Text style={styles.postingDate}>{posting.date}</Text>

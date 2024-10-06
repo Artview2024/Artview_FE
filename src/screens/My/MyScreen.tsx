@@ -1,78 +1,104 @@
-import React, {useRef, useState} from 'react';
-import {
-  View,
-  Image,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useRef, useState, useCallback} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import customAxios from '../../services/customAxios';
 import Text from '../../components/Text';
-import {useScrollToTop} from '@react-navigation/native';
+import {useScrollToTop, useFocusEffect} from '@react-navigation/native';
 import GlobalStyle from '../../styles/GlobalStyle';
 import UserInfo from '../../components/My/userInfo';
 import Tabs from '../../components/My/Tabs';
 import PostingList from '../../components/My/PostingList';
-
-const posting = [
-  {
-    id: 1,
-    name: '이경준 사진전',
-    date: '2023.12.18',
-    gallery: '서울미술관',
-    image: require('../../assets/images/artList3.jpg'),
-    rating: '4.5',
-    imageList: [
-      require('../../assets/images/artList3.jpg'),
-      require('../../assets/images/artList2.jpg'),
-      require('../../assets/images/artList1.jpg'),
-    ],
-  },
-  {
-    id: 2,
-    name: '인상주의의 출현',
-    date: '2023.11.11',
-    gallery: '서울미술관',
-    image: require('../../assets/images/carousel4.jpg'),
-    rating: '4.0',
-    imageList: [
-      require('../../assets/images/carousel4.jpg'),
-      require('../../assets/images/carousel4.jpg'),
-      require('../../assets/images/carousel4.jpg'),
-    ],
-  },
-  {
-    id: 3,
-    name: '2021 SF:오디세이 서울',
-    date: '2022.10.28',
-    gallery: '서울미술관',
-    image: require('../../assets/images/carousel7.jpg'),
-    rating: '3.8',
-    imageList: [
-      require('../../assets/images/carousel4.jpg'),
-      require('../../assets/images/carousel4.jpg'),
-    ],
-  },
-  {
-    id: 4,
-    name: '디미 전시회',
-    date: '2024.06.17',
-    gallery: '서울여대',
-    image: require('../../assets/images/android.png'),
-    rating: '3.8',
-    imageList: [
-      require('../../assets/images/carousel4.jpg'),
-      require('../../assets/images/carousel4.jpg'),
-    ],
-  },
-];
+import ExhibitionList from '../../components/My/ExhibitionList';
 
 export default function MyScreen() {
   const ref = useRef(null);
-  const following = '12';
-  const follower = '31';
-  const enjoyed = '29';
   const [activeTab, setActiveTab] = useState('게시물');
+  const [userInfo, setUserInfo] = useState({
+    following: '',
+    follower: '',
+    enjoyed: '',
+    userName: '',
+    userImageUrl: '',
+  });
+  const [postings, setPostings] = useState([]);
+  const [exhibitions, setexhibitions] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useScrollToTop(ref);
+
+  // 마이페이지가 다시 포커스될 때 activeTab을 '게시물'로 초기화
+  useFocusEffect(
+    useCallback(() => {
+      setActiveTab('게시물');
+    }, []),
+  );
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await customAxios.get('/user/myPage/userInfo');
+        const data = response.data;
+        setUserInfo({
+          following: data.followees.toString(),
+          follower: data.follower.toString(),
+          enjoyed: data.numberOfMyReviews.toString(),
+          userName: data.userName,
+          userImageUrl: data.userImageUrl,
+        });
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
+  useEffect(() => {
+    const fetchPostings = async () => {
+      try {
+        const response = await customAxios.get('/user/myPage/myReview');
+        const data = response.data;
+        const formattedPostings = data.map((item: any) => ({
+          id: item.id,
+          name: item.title,
+          date: item.date,
+          image: {uri: item.imageUrl},
+        }));
+        setPostings(formattedPostings);
+      } catch (error) {
+        console.error('Failed to fetch postings:', error);
+      }
+    };
+
+    const fetchExhibitions = async () => {
+      try {
+        const response = await customAxios.get('/user/myPage/communication');
+        const data = response.data;
+        console.log('Fetched Exhibition Data:', data);
+        const formattedExhibitions = data.map((item: any) => ({
+          id: item.id,
+          title: item.title,
+          date: item.date,
+          image: {uri: item.imageUrl},
+        }));
+        setexhibitions(formattedExhibitions);
+      } catch (error) {
+        console.error('Failed to fetch Exhibitions:', error);
+      }
+    };
+
+    fetchPostings();
+    fetchExhibitions();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={GlobalStyle.container}>
+        <Text>로딩 중...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={[GlobalStyle.container]}>
@@ -85,10 +111,19 @@ export default function MyScreen() {
           }}>
           <Text style={GlobalStyle.header}>마이</Text>
         </View>
-
-        <UserInfo following={following} follower={follower} enjoyed={enjoyed} />
+        <UserInfo
+          following={userInfo.following}
+          follower={userInfo.follower}
+          enjoyed={userInfo.enjoyed}
+          userName={userInfo.userName}
+          userImageUrl={userInfo.userImageUrl}
+        />
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        <PostingList postings={posting} />
+        {activeTab === '게시물' ? (
+          <PostingList postings={postings} />
+        ) : (
+          <ExhibitionList exhibitions={exhibitions} />
+        )}
       </ScrollView>
     </View>
   );

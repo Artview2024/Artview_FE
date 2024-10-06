@@ -6,15 +6,20 @@ interface UserInfoProps {
   following: string;
   follower: string;
   enjoyed: string;
+  userName: string;
+  userImageUrl: string;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({following, follower, enjoyed}) => (
+const UserInfo: React.FC<UserInfoProps> = ({
+  following,
+  follower,
+  enjoyed,
+  userName,
+  userImageUrl,
+}) => (
   <View style={styles.userInfo}>
-    <Image
-      style={styles.profileImage}
-      source={require('../../assets/images/user.png')}
-    />
-    <Text style={styles.profileName}>김민주</Text>
+    <Image style={styles.profileImage} source={{uri: userImageUrl}} />
+    <Text style={styles.profileName}>{userName}</Text>
     <View style={styles.profileStats}>
       <View style={{flexDirection: 'row'}}>
         <Text style={styles.statsText}>팔로잉 </Text>
