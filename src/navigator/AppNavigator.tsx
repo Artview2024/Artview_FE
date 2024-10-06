@@ -10,10 +10,12 @@ import PostingStartScreen from '../screens/Posting/PostingStartScreen';
 import PostingScreen from '../screens/Posting/PostingScreen';
 import {StackParamList} from './StackParamList';
 import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
+import useAutoLogin from '../hooks/useAutoLogin';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
 export default function AppNavigator() {
+  useAutoLogin();
   return (
     <Stack.Navigator>
       <Stack.Screen

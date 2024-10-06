@@ -4,7 +4,7 @@ import {Image, ImageSourcePropType, Text} from 'react-native'; // Text 가져오
 import HomeScreen from '../screens/HomeScreen';
 import CommunityScreen from '../screens/Community/CommunityScreen';
 import ExhibitionsScreen from '../screens/ExhibitionsScreen';
-import MyScreen from '../screens/MyScreen';
+import MyScreen from '../screens/My/MyScreen';
 
 const HomeStrokeIcon: ImageSourcePropType = require('../assets/icons/home-stroke-icon.png');
 const HomeFillIcon: ImageSourcePropType = require('../assets/icons/home-fill-icon.png');

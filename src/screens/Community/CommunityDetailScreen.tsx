@@ -14,13 +14,13 @@ import {
   RouteProp,
 } from '@react-navigation/native';
 import axios from 'axios';
-import {useTokenStore} from '../../hooks/useTokenStore';
 import {API_BASE_URL} from '@env';
 import CommunityCard from '../../components/Community/CommunityCard';
 import GlobalStyle from '../../styles/GlobalStyle';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import Comment from '../../components/Community/Comment';
 import {StackParamList} from '../../navigator/StackParamList';
+import customAxios from '../../services/customAxios';
 
 interface Reply {
   id: number;
@@ -129,23 +129,11 @@ export default function CommunityDetailScreen({
 
   const postComment = async (parentContentId: number | null) => {
     try {
-      const accessToken = useTokenStore.getState().accessToken;
-      console.log('AccessToken:', accessToken);
-
-      await axios.post(
-        `${API_BASE_URL}/communications/comment`,
-        {
-          communicationsId: communicationsId,
-          content: newComment,
-          parentContentId: parentContentId || null,
-        },
-        {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
+      await customAxios.post('/communications/comment', {
+        communicationsId: communicationsId,
+        content: newComment,
+        parentContentId: parentContentId || null,
+      });
 
       await fetchComments();
 
@@ -157,8 +145,8 @@ export default function CommunityDetailScreen({
   };
 
   const handleReply = (commentId: number) => {
-    setReplyTo(commentId); 
-    inputRef.current?.focus(); 
+    setReplyTo(commentId);
+    inputRef.current?.focus();
   };
 
   if (!post) {
@@ -196,7 +184,7 @@ export default function CommunityDetailScreen({
                     username={comment.writerName}
                     content={comment.content}
                     userImage={comment.writerImage}
-                    onReply={() => handleReply(comment.commentId)} 
+                    onReply={() => handleReply(comment.commentId)}
                   />
                   {comment.replies.map((reply: Reply) => (
                     <View
@@ -206,7 +194,7 @@ export default function CommunityDetailScreen({
                         username={reply.writerName}
                         content={reply.content}
                         userImage={reply.writerImage}
-                        isReply={true} 
+                        isReply={true}
                       />
                     </View>
                   ))}
