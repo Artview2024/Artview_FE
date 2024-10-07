@@ -4,12 +4,20 @@ import customAxios from '../../services/customAxios';
 import Text from '../../components/Text';
 import {useScrollToTop, useFocusEffect} from '@react-navigation/native';
 import GlobalStyle from '../../styles/GlobalStyle';
-import UserInfo from '../../components/My/userInfo';
+import UserInfo from '../../components/My/UserInfo';
 import Tabs from '../../components/My/Tabs';
 import PostingList from '../../components/My/PostingList';
 import ExhibitionList from '../../components/My/ExhibitionList';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {StackParamList} from '../../navigator/StackParamList';
 
-export default function MyScreen() {
+type MyScreenNavigationProp = StackNavigationProp<StackParamList, 'MyScreen'>;
+
+interface MyScreenProps {
+  navigation: MyScreenNavigationProp;
+}
+
+export default function MyScreen({navigation}: MyScreenProps) {
   const ref = useRef(null);
   const [activeTab, setActiveTab] = useState('게시물');
   const [userInfo, setUserInfo] = useState({
@@ -20,12 +28,11 @@ export default function MyScreen() {
     userImageUrl: '',
   });
   const [postings, setPostings] = useState([]);
-  const [exhibitions, setexhibitions] = useState([]);
+  const [exhibitions, setExhibitions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useScrollToTop(ref);
 
-  // 마이페이지가 다시 포커스될 때 activeTab을 '게시물'로 초기화
   useFocusEffect(
     useCallback(() => {
       setActiveTab('게시물');
@@ -75,14 +82,13 @@ export default function MyScreen() {
       try {
         const response = await customAxios.get('/user/myPage/communication');
         const data = response.data;
-        console.log('Fetched Exhibition Data:', data);
         const formattedExhibitions = data.map((item: any) => ({
           id: item.id,
           title: item.title,
           date: item.date,
           image: {uri: item.imageUrl},
         }));
-        setexhibitions(formattedExhibitions);
+        setExhibitions(formattedExhibitions);
       } catch (error) {
         console.error('Failed to fetch Exhibitions:', error);
       }
@@ -117,6 +123,7 @@ export default function MyScreen() {
           enjoyed={userInfo.enjoyed}
           userName={userInfo.userName}
           userImageUrl={userInfo.userImageUrl}
+          navigation={navigation}
         />
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === '게시물' ? (

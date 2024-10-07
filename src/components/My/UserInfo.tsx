@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import Text from '../../components/Text';
+import Text from '../Text';
 
 interface UserInfoProps {
   following: string;
@@ -8,6 +8,7 @@ interface UserInfoProps {
   enjoyed: string;
   userName: string;
   userImageUrl: string;
+  navigation: any;
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({
@@ -16,27 +17,42 @@ const UserInfo: React.FC<UserInfoProps> = ({
   enjoyed,
   userName,
   userImageUrl,
+  navigation,
 }) => (
   <View style={styles.userInfo}>
     <Image style={styles.profileImage} source={{uri: userImageUrl}} />
     <Text style={styles.profileName}>{userName}</Text>
     <View style={styles.profileStats}>
-      <View style={{flexDirection: 'row'}}>
-        <Text style={styles.statsText}>팔로잉 </Text>
-        <Text style={[styles.statsText, {color: '#EA1B83'}]}>{following}</Text>
-      </View>
-      <View style={{flexDirection: 'row'}}>
-        <Text style={styles.statsText}>팔로워 </Text>
-        <Text style={[styles.statsText, {color: '#EA1B83'}]}>{follower}</Text>
-      </View>
-      <View style={{flexDirection: 'row'}}>
-        <Text style={styles.statsText}>관람수 </Text>
-        <Text style={[styles.statsText, {color: '#EA1B83'}]}>{enjoyed}</Text>
-      </View>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('MyFollowScreen', {activeTab: '팔로잉'})
+        }>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.statsText}>팔로잉 </Text>
+          <Text style={[styles.statsText, {color: '#EA1B83'}]}>
+            {following}
+          </Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('MyFollowScreen', {activeTab: '팔로워'})
+        }>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.statsText}>팔로워 </Text>
+          <Text style={[styles.statsText, {color: '#EA1B83'}]}>{follower}</Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('MyFollowScreen', {activeTab: '관람'})
+        }>
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.statsText}>관람수 </Text>
+          <Text style={[styles.statsText, {color: '#EA1B83'}]}>{enjoyed}</Text>
+        </View>
+      </TouchableOpacity>
     </View>
-    <TouchableOpacity style={styles.editButton}>
-      <Text style={styles.editButtonText}>프로필 수정</Text>
-    </TouchableOpacity>
   </View>
 );
 
@@ -51,15 +67,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   statsText: {fontSize: 14, color: '#828282'},
-  editButton: {
-    borderColor: '#000',
-    borderWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 5,
-    marginTop: 8,
-  },
-  editButtonText: {fontSize: 14},
 });
 
 export default UserInfo;
