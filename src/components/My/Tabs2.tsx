@@ -2,23 +2,34 @@ import React from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Text from '../Text';
 
-interface TabsProps {
+interface Tabs2Props {
   activeTab: string;
   setActiveTab: (tab: string) => void;
 }
 
-const Tabs: React.FC<TabsProps> = ({activeTab, setActiveTab}) => (
+const Tabs2: React.FC<Tabs2Props> = ({activeTab, setActiveTab}) => (
   <View style={styles.tabs}>
     <View style={styles.tabContainer}>
-      <TouchableOpacity onPress={() => setActiveTab('게시물')}>
+      <TouchableOpacity onPress={() => setActiveTab('팔로잉')}>
         <Text
           style={
-            activeTab === '게시물' ? styles.tabTextActive : styles.tabText
+            activeTab === '팔로잉' ? styles.tabTextActive : styles.tabText
           }>
-          게시물
+          팔로잉
         </Text>
       </TouchableOpacity>
-      {activeTab === '게시물' && <View style={styles.activeTabLine} />}
+      {activeTab === '팔로잉' && <View style={styles.activeTabLine} />}
+    </View>
+    <View style={styles.tabContainer}>
+      <TouchableOpacity onPress={() => setActiveTab('팔로워')}>
+        <Text
+          style={
+            activeTab === '팔로워' ? styles.tabTextActive : styles.tabText
+          }>
+          팔로워
+        </Text>
+      </TouchableOpacity>
+      {activeTab === '팔로워' && <View style={styles.activeTabLine} />}
     </View>
     <View style={styles.tabContainer}>
       <TouchableOpacity onPress={() => setActiveTab('관람')}>
@@ -37,8 +48,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: 18,
-    paddingBottom: 20,
-    position: 'relative',
   },
   tabContainer: {alignItems: 'center', flex: 1},
   activeTabLine: {
@@ -62,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Tabs;
+export default Tabs2;

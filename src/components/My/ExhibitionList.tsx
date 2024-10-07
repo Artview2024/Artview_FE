@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import Text from '../../components/Text';
+import Text from '../Text';
 
 interface Exhibition {
   id: number;

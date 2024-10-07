@@ -8,6 +8,7 @@ import RecordsScreen from '../screens/Records/RecordsScreen';
 import RecordDetailScreen from '../screens/Records/RecordDetailScreen';
 import PostingStartScreen from '../screens/Posting/PostingStartScreen';
 import PostingScreen from '../screens/Posting/PostingScreen';
+import MyFollowScreen from '../screens/My/MyFollowScreen';
 import {StackParamList} from './StackParamList';
 import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
 import useAutoLogin from '../hooks/useAutoLogin';
@@ -61,6 +62,11 @@ export default function AppNavigator() {
       <Stack.Screen
         name="CommunityDetail"
         component={CommunityDetailScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="MyFollowScreen"
+        component={MyFollowScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
