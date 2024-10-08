@@ -16,17 +16,17 @@ const MyFollowScreen = () => {
   const {activeTab: initialTab} = route.params || {activeTab: '팔로잉'};
   const [activeTab, setActiveTab] = useState(initialTab);
 
-  const mockFollowings = [
-    {id: 1, name: '사용자1'},
-    {id: 2, name: '사용자2'},
-  ];
+  // API로 가져오는 userInfo 데이터 추가
+  const [userInfo, setUserInfo] = useState({
+    following: '0',
+    follower: '0',
+    enjoyed: '0',
+    userName: '',
+  });
 
-  const mockFollowers = [
-    {id: 3, name: '사용자3'},
-    {id: 4, name: '사용자4'},
-  ];
-
-  const [exhibitions, setExhibitions] = useState([]);
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
 
   useEffect(() => {
     if (activeTab === '관람') {
@@ -34,9 +34,24 @@ const MyFollowScreen = () => {
     }
   }, [activeTab]);
 
+  const fetchUserInfo = async () => {
+    try {
+      const response = await customAxios.get('/user/myPage/userInfo');
+      const data = response.data;
+      setUserInfo({
+        following: data.followees.toString(),
+        follower: data.follower.toString(),
+        enjoyed: data.numberOfMyReviews.toString(),
+        userName: data.userName,
+      });
+    } catch (error) {
+      console.error('Failed to fetch user info:', error);
+    }
+  };
+
   const fetchExhibitions = async () => {
     try {
-      const response = await customAxios.get('/user/myPage/communication'); // MyScreen과 동일한 API 호출
+      const response = await customAxios.get('/user/myPage/communication');
       const data = response.data;
       const formattedExhibitions = data.map((item: any) => ({
         id: item.id,
@@ -50,10 +65,28 @@ const MyFollowScreen = () => {
     }
   };
 
+  const mockFollowings = [
+    {id: 1, name: '사용자1'},
+    {id: 2, name: '사용자2'},
+  ];
+
+  const mockFollowers = [
+    {id: 3, name: '사용자3'},
+    {id: 4, name: '사용자4'},
+  ];
+
+  const [exhibitions, setExhibitions] = useState([]);
+
   return (
     <View style={[GlobalStyle.container]}>
-      <Header title="김민주" />
-      <Tabs2 activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Header title={userInfo.userName} /> {/* userName 데이터 전달 */}
+      <Tabs2
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        following={userInfo.following} // 팔로잉 수 전달
+        follower={userInfo.follower} // 팔로워 수 전달
+        enjoyed={userInfo.enjoyed} // 관람 수 전달
+      />
       <ScrollView>
         {activeTab === '팔로잉' && <FollowList followList={mockFollowings} />}
         {activeTab === '팔로워' && <FollowList followList={mockFollowers} />}
