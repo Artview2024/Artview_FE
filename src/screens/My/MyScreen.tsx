@@ -125,6 +125,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
           userImageUrl={userInfo.userImageUrl}
           navigation={navigation}
         />
+
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === '게시물' ? (
           <PostingList postings={postings} />

@@ -9,6 +9,7 @@ import RecordDetailScreen from '../screens/Records/RecordDetailScreen';
 import PostingStartScreen from '../screens/Posting/PostingStartScreen';
 import PostingScreen from '../screens/Posting/PostingScreen';
 import MyFollowScreen from '../screens/My/MyFollowScreen';
+import MyEditScreen from '../screens/My/MyEditScreen';
 import ExhibitionDetailScreen from '../screens/Exhibitions/ExhibitionDetailScreen';
 import {StackParamList} from './StackParamList';
 import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
@@ -68,6 +69,11 @@ export default function AppNavigator() {
       <Stack.Screen
         name="MyFollowScreen"
         component={MyFollowScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="MyEdit"
+        component={MyEditScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen
