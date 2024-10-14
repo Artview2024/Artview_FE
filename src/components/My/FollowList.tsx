@@ -15,17 +15,19 @@ interface FollowListProps {
 const FollowList: React.FC<FollowListProps> = ({followList, activeTab}) => (
   <View style={{paddingTop: 5}}>
     {followList.map(item => (
-      <TouchableOpacity key={item.id} style={styles.listItem}>
-        <Image
-          source={require('../../assets/images/user.png')}
-          style={styles.avatar}
-        />
-        {/* <Image source={{uri: item.imageUrl}} style={styles.avatar} /> */}
-        <Text style={styles.name}>{item.name}</Text>
+      <View key={item.id} style={styles.listItem}>
+        <View style={styles.userInfo}>
+          <Image
+            source={require('../../assets/images/user.png')}
+            style={styles.avatar}
+          />
+          {/* <Image source={{uri: item.imageUrl}} style={styles.avatar} /> */}
+          <Text style={styles.name}>{item.name}</Text>
+        </View>
         {activeTab === '팔로워' && (
           <FollowButton isFollowing={item.isFollowing} />
         )}
-      </TouchableOpacity>
+      </View>
     ))}
   </View>
 );
@@ -57,6 +59,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   avatar: {
     width: 40,
     height: 40,
@@ -87,7 +93,6 @@ const styles = StyleSheet.create({
   },
   notFollowingText: {
     color: '#fff',
-    fontWeight: 'bold',
   },
 });
 
