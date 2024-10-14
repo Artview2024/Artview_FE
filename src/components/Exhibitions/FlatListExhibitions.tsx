@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import Text from '../../components/Text';
+import Text from '../Text';
 
 type Exhibition = {
   key: string;
@@ -18,13 +18,20 @@ type Exhibition = {
 
 type Props = {
   data: Exhibition[];
+
+  title: string;
+  small?: boolean;
 };
 
-export default function RecommendedExhibitions({data}: Props) {
+export default function FlatListExhibitions({
+  data,
+  small = false,
+  title = '추천전시',
+}: Props) {
   return (
-    <View style={{flex: 1, backgroundColor: '#fff', paddingLeft: 20}}>
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={styles.titleContainer}>
-        <Text style={styles.sectionTitle}>추천전시</Text>
+        <Text style={styles.sectionTitle}>{title}</Text>
         <TouchableOpacity>
           <Text style={styles.viewAllText}>전체보기 &gt;</Text>
         </TouchableOpacity>
@@ -35,11 +42,14 @@ export default function RecommendedExhibitions({data}: Props) {
         data={data}
         showsHorizontalScrollIndicator={false}
         renderItem={({item}) => (
-          <View style={styles.recommendedItem}>
-            <Image source={item.image} style={styles.recommendedImage} />
+          <View style={small ? styles.smallItem : styles.recommendedItem}>
+            <Image
+              source={item.image}
+              style={small ? styles.smallImage : styles.recommendedImage}
+            />
             <Text style={styles.recommendedText}>{item.title}</Text>
-            <Text style={styles.recommendedSubText}>{item.date}</Text>
-            <Text style={styles.recommendedSubText}>{item.gallery}</Text>
+            <Text style={styles.recommendedSubText}>📅 {item.date}</Text>
+            <Text style={styles.recommendedSubText}>📍{item.gallery}</Text>
           </View>
         )}
         keyExtractor={item => item.key}
@@ -66,14 +76,24 @@ const styles = StyleSheet.create({
   },
   sectionFlatList: {
     margin: 0,
+    marginBottom: 15,
   },
   recommendedItem: {
     width: 180,
     marginRight: 8,
   },
+  smallItem: {
+    width: 140,
+  },
   recommendedImage: {
     width: 180,
     height: 240,
+    resizeMode: 'cover',
+    borderRadius: 5,
+  },
+  smallImage: {
+    width: 120,
+    height: 160,
     resizeMode: 'cover',
     borderRadius: 5,
   },
