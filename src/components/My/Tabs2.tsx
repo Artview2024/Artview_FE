@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Text from '../Text';
-import GlobalStyle from '../../styles/GlobalStyle'; // GlobalStyle import
+import GlobalStyle from '../../styles/GlobalStyle';
 
 interface Tabs2Props {
   activeTab: string;
@@ -20,7 +20,6 @@ const Tabs2: React.FC<Tabs2Props> = ({
 }) => (
   <View style={styles.tabs}>
     <View style={styles.tabContainer}>
-      {/* 팔로잉 숫자 */}
       <Text style={[styles.countText, GlobalStyle.pointColor]}>
         {following}
       </Text>
@@ -36,7 +35,6 @@ const Tabs2: React.FC<Tabs2Props> = ({
     </View>
 
     <View style={styles.tabContainer}>
-      {/* 팔로워 숫자 */}
       <Text style={[styles.countText, GlobalStyle.pointColor]}>{follower}</Text>
       <TouchableOpacity onPress={() => setActiveTab('팔로워')}>
         <Text
@@ -50,7 +48,6 @@ const Tabs2: React.FC<Tabs2Props> = ({
     </View>
 
     <View style={styles.tabContainer}>
-      {/* 관람 숫자 */}
       <Text style={[styles.countText, GlobalStyle.pointColor]}>{enjoyed}</Text>
       <TouchableOpacity onPress={() => setActiveTab('관람')}>
         <Text

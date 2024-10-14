@@ -16,7 +16,6 @@ const MyFollowScreen = () => {
   const {activeTab: initialTab} = route.params || {activeTab: '팔로잉'};
   const [activeTab, setActiveTab] = useState(initialTab);
 
-  // API로 가져오는 userInfo 데이터 추가
   const [userInfo, setUserInfo] = useState({
     following: '0',
     follower: '0',
@@ -66,30 +65,34 @@ const MyFollowScreen = () => {
   };
 
   const mockFollowings = [
-    {id: 1, name: '사용자1'},
-    {id: 2, name: '사용자2'},
+    {id: 1, name: '사용자1', isFollowing: true},
+    {id: 2, name: '사용자2', isFollowing: true},
   ];
 
   const mockFollowers = [
-    {id: 3, name: '사용자3'},
-    {id: 4, name: '사용자4'},
+    {id: 3, name: '사용자3', isFollowing: false},
+    {id: 4, name: '사용자4', isFollowing: false},
   ];
 
   const [exhibitions, setExhibitions] = useState([]);
 
   return (
     <View style={[GlobalStyle.container]}>
-      <Header title={userInfo.userName} /> {/* userName 데이터 전달 */}
+      <Header title={userInfo.userName} />
       <Tabs2
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        following={userInfo.following} // 팔로잉 수 전달
-        follower={userInfo.follower} // 팔로워 수 전달
-        enjoyed={userInfo.enjoyed} // 관람 수 전달
+        following={userInfo.following}
+        follower={userInfo.follower}
+        enjoyed={userInfo.enjoyed}
       />
       <ScrollView>
-        {activeTab === '팔로잉' && <FollowList followList={mockFollowings} />}
-        {activeTab === '팔로워' && <FollowList followList={mockFollowers} />}
+        {activeTab === '팔로잉' && (
+          <FollowList followList={mockFollowings} activeTab={activeTab} />
+        )}
+        {activeTab === '팔로워' && (
+          <FollowList followList={mockFollowers} activeTab={activeTab} />
+        )}
         {activeTab === '관람' && (
           <View style={{paddingTop: 20}}>
             <ExhibitionList exhibitions={exhibitions} />
