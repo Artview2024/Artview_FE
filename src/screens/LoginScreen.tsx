@@ -52,11 +52,22 @@ export default function LoginScreen() {
           useTokenStore.getState().setRefreshToken(refreshToken);
 
           navigation.navigate('Tabs', {screen: 'Home'});
-        } catch (error) {
-          console.error('토큰 요청 실패:', error);
+        } catch (error: any) {
+          if (error.response) {
+            console.error('백엔드 오류 메시지 :', error.response.data);
+            console.error('상태 코드 :', error.response.status);
+          } else if (error.request) {
+            console.error('응답없음 :', error.request);
+          } else {
+            console.error('오류 발생:', error.message);
+          }
         }
       }
     }
+  };
+
+  const handleSkip = () => {
+    navigation.navigate('Tabs', {screen: 'Home'});
   };
 
   return (
@@ -134,6 +145,10 @@ export default function LoginScreen() {
         <Text style={styles.separator}>|</Text>
         <Text style={styles.footerLink}>비밀번호 재설정</Text>
       </View>
+
+      <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+        <Text style={styles.skipButtonText}>Skip</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -208,5 +223,19 @@ const styles = StyleSheet.create({
   },
   separator: {
     color: '#828282',
+  },
+  skipButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 100,
+    backgroundColor: 'black',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  skipButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

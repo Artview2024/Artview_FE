@@ -1,15 +1,28 @@
 import React from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Text from '../Text';
+import GlobalStyle from '../../styles/GlobalStyle';
 
 interface Tabs2Props {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  following: string;
+  follower: string;
+  enjoyed: string;
 }
 
-const Tabs2: React.FC<Tabs2Props> = ({activeTab, setActiveTab}) => (
+const Tabs2: React.FC<Tabs2Props> = ({
+  activeTab,
+  setActiveTab,
+  following,
+  follower,
+  enjoyed,
+}) => (
   <View style={styles.tabs}>
     <View style={styles.tabContainer}>
+      <Text style={[styles.countText, GlobalStyle.pointColor]}>
+        {following}
+      </Text>
       <TouchableOpacity onPress={() => setActiveTab('팔로잉')}>
         <Text
           style={
@@ -20,7 +33,9 @@ const Tabs2: React.FC<Tabs2Props> = ({activeTab, setActiveTab}) => (
       </TouchableOpacity>
       {activeTab === '팔로잉' && <View style={styles.activeTabLine} />}
     </View>
+
     <View style={styles.tabContainer}>
+      <Text style={[styles.countText, GlobalStyle.pointColor]}>{follower}</Text>
       <TouchableOpacity onPress={() => setActiveTab('팔로워')}>
         <Text
           style={
@@ -31,7 +46,9 @@ const Tabs2: React.FC<Tabs2Props> = ({activeTab, setActiveTab}) => (
       </TouchableOpacity>
       {activeTab === '팔로워' && <View style={styles.activeTabLine} />}
     </View>
+
     <View style={styles.tabContainer}>
+      <Text style={[styles.countText, GlobalStyle.pointColor]}>{enjoyed}</Text>
       <TouchableOpacity onPress={() => setActiveTab('관람')}>
         <Text
           style={activeTab === '관람' ? styles.tabTextActive : styles.tabText}>
@@ -49,13 +66,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: 18,
   },
-  tabContainer: {alignItems: 'center', flex: 1},
+  tabContainer: {
+    alignItems: 'center',
+    flex: 1,
+  },
   activeTabLine: {
     height: 2,
     backgroundColor: '#000',
     width: '100%',
     position: 'absolute',
     bottom: 0,
+  },
+  countText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
   tabTextActive: {
     fontSize: 16,
