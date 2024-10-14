@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useRoute, RouteProp, useNavigation} from '@react-navigation/native';
-import axios from 'axios';
+import customAxios from '../../services/customAxios';
 import {StackParamList, Record} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
@@ -29,12 +29,7 @@ export default function RecordDetailScreen() {
   useEffect(() => {
     const fetchRecordDetails = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/myReviews/${id}`, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ACCESS_TOKEN`,
-          },
-        });
+        const response = await customAxios.get(`/myReviews/${id}`);
         setRecord(response.data);
       } catch (error) {
         console.error('Error', error);

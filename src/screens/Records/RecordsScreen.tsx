@@ -6,12 +6,10 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-import axios from 'axios';
+import customAxios from '../../services/customAxios';
 import {StackParamList} from '../../navigator/StackParamList';
 import Records from '../../components/Records';
-import GlobalStyle from '../../styles/GlobalStyle';
 import {View, Text} from 'react-native';
-import {API_BASE_URL} from '@env';
 
 type Record = {
   id: number;
@@ -45,15 +43,7 @@ export default function RecordsScreen() {
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/myReviews/all/10001`,
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ACCESS_TOKEN`,
-            },
-          },
-        );
+        const response = await customAxios.get('/myReviews/all');
         console.log('Server Response:', response.data);
 
         const transformedRecords = response.data.map((item: any) => ({

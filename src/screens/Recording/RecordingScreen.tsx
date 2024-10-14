@@ -199,9 +199,9 @@ export default function RecordingScreen() {
         };
 
         if (isEditMode) {
-          await handlePatchSubmit(dataToSend, rating, 'ACCESS_TOKEN');
+          await handlePatchSubmit(dataToSend, rating);
         } else {
-          await handlePostSubmit(dataToSend, rating, 'ACCESS_TOKEN');
+          await handlePostSubmit(dataToSend, rating);
         }
         setModalVisible(false);
         navigation.navigate('Records');
