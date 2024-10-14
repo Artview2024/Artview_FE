@@ -6,28 +6,32 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {StackParamList} from '../../navigator/StackParamList';
 import Text from '../Text';
 
-type Exhibition = {
-  key: string;
-  title: string;
-  date: string;
-  gallery: string;
-  image: any;
-};
-
 type Props = {
-  data: Exhibition[];
-
+  data: {
+    key: string;
+    title: string;
+    date: string;
+    gallery: string;
+    image: any;
+  }[];
   title: string;
   small?: boolean;
 };
+
+type NavigationProp = StackNavigationProp<StackParamList, 'ExhibitionDetail'>;
 
 export default function FlatListExhibitions({
   data,
   small = false,
   title = '추천전시',
 }: Props) {
+  const navigation = useNavigation<NavigationProp>(); // NavigationProp 사용
+
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={styles.titleContainer}>
@@ -42,7 +46,9 @@ export default function FlatListExhibitions({
         data={data}
         showsHorizontalScrollIndicator={false}
         renderItem={({item}) => (
-          <View style={small ? styles.smallItem : styles.recommendedItem}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ExhibitionDetail')}
+            style={small ? styles.smallItem : styles.recommendedItem}>
             <Image
               source={item.image}
               style={small ? styles.smallImage : styles.recommendedImage}
@@ -50,7 +56,7 @@ export default function FlatListExhibitions({
             <Text style={styles.recommendedText}>{item.title}</Text>
             <Text style={styles.recommendedSubText}>📅 {item.date}</Text>
             <Text style={styles.recommendedSubText}>📍{item.gallery}</Text>
-          </View>
+          </TouchableOpacity>
         )}
         keyExtractor={item => item.key}
       />
@@ -59,10 +65,13 @@ export default function FlatListExhibitions({
 }
 
 const styles = StyleSheet.create({
+  sectionFlatList: {
+    marginBottom: 20,
+  },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    paddingVertical: 18,
+    paddingVertical: 20,
   },
   sectionTitle: {
     fontSize: 20,
@@ -73,10 +82,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#4E4E4E',
     paddingLeft: 10,
-  },
-  sectionFlatList: {
-    margin: 0,
-    marginBottom: 15,
   },
   recommendedItem: {
     width: 180,

@@ -5,7 +5,7 @@ import {useScrollToTop} from '@react-navigation/native';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import NotificationIcon from '../../assets/icons/notification-icon.svg';
 import GlobalStyle from '../../styles/GlobalStyle';
-import RecommendedExhibition from '../../components/Exhibitions/FlatListExhibitions';
+import FlatListExhibitions from '../../components/Exhibitions/FlatListExhibitions';
 
 const recommendedExhibitions = [
   {
@@ -54,16 +54,13 @@ export default function ExhibitionsScreen() {
         showsHorizontalScrollIndicator={false}
         style={{flex: 1}}
         ref={ref}>
-        <RecommendedExhibition
-          data={recommendedExhibitions}
-          title={'추천전시'}
-        />
-        <RecommendedExhibition
+        <FlatListExhibitions data={recommendedExhibitions} title={'추천전시'} />
+        <FlatListExhibitions
           data={recommendedExhibitions}
           small={true}
           title={'진행 중인 전시'}
         />
-        <RecommendedExhibition
+        <FlatListExhibitions
           data={recommendedExhibitions}
           small={true}
           title={'진행 예정 전시'}
