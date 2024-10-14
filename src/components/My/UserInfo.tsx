@@ -53,6 +53,11 @@ const UserInfo: React.FC<UserInfoProps> = ({
         </View>
       </TouchableOpacity>
     </View>
+    <TouchableOpacity
+      style={styles.editProfileButton}
+      onPress={() => navigation.navigate('MyEdit')}>
+      <Text style={styles.editProfileButtonText}>프로필 수정</Text>
+    </TouchableOpacity>
   </View>
 );
 
@@ -67,6 +72,17 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   statsText: {fontSize: 14, color: '#828282'},
+  editProfileButton: {
+    marginVertical: 15,
+    paddingVertical: 6,
+    paddingHorizontal: 15,
+    backgroundColor: '#EA1B83',
+    borderRadius: 5,
+  },
+  editProfileButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
 });
 
 export default UserInfo;
