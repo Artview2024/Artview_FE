@@ -45,4 +45,5 @@ export type StackParamList = {
   CommunityDetail: {communicationsId: number};
   MyScreen: undefined;
   MyFollowScreen: {activeTab: string};
+  ExhibitionDetail: undefined;
 };

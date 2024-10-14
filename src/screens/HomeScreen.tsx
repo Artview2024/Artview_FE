@@ -17,7 +17,7 @@ import CarouselParallax from '../components/Home/CarouselParallax';
 import {StackParamList} from '../navigator/StackParamList';
 import GlobalStyle from '../styles/GlobalStyle';
 import Footer from '../components/Footer';
-import RecommendedExhibition from '../components/Home/RecommendedExhibitions';
+import FlatListExhibitions from '../components/Exhibitions/FlatListExhibitions';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = PAGE_WIDTH * 0.9;
@@ -130,7 +130,12 @@ export default function HomeScreen() {
             <Image source={defaultImage} style={styles.defaultImage} />
           </View>
         )}
-        <RecommendedExhibition data={recommendedExhibitions} />
+        <View style={[GlobalStyle.container]}>
+          <FlatListExhibitions
+            data={recommendedExhibitions}
+            title={'추천전시'}
+          />
+        </View>
         <Footer></Footer>
       </ScrollView>
       <TouchableOpacity
