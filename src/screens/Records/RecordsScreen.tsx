@@ -9,7 +9,8 @@ import {
 import customAxios from '../../services/customAxios';
 import {StackParamList} from '../../navigator/StackParamList';
 import Records from '../../components/Records';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
+import Text from '../../components/Text';
 
 type Record = {
   id: number;
