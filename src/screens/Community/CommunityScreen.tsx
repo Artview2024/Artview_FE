@@ -44,7 +44,6 @@ const fetchPosts = async ({
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        Authorization: `Bearer ACCESS_TOKEN`,
       },
     },
   );

@@ -83,8 +83,8 @@ export default function CommunityDetailScreen({
         },
       );
       setPost(response.data);
-    } catch (error) {
-      console.error('게시물을 가져오는 데 실패했습니다.', error);
+    } catch (error: any) {
+      console.error('게시물을 가져오는 데 실패했습니다.', error.response.data);
     }
   };
 
@@ -100,8 +100,8 @@ export default function CommunityDetailScreen({
         },
       );
       setComments(response.data);
-    } catch (error) {
-      console.error('댓글을 가져오는 데 실패했습니다.', error);
+    } catch (error: any) {
+      console.error('댓글을 가져오는 데 실패했습니다.', error.response.data);
     }
   };
 
