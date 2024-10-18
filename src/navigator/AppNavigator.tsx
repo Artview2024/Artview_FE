@@ -11,6 +11,7 @@ import PostingScreen from '../screens/Posting/PostingScreen';
 import MyFollowScreen from '../screens/My/MyFollowScreen';
 import MyEditScreen from '../screens/My/MyEditScreen';
 import ExhibitionDetailScreen from '../screens/Exhibitions/ExhibitionDetailScreen';
+import ExhibitionsAllScreen from '../screens/Exhibitions/ExhibitionsAllScreen';
 import {StackParamList} from './StackParamList';
 import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
 import useAutoLogin from '../hooks/useAutoLogin';
@@ -79,6 +80,11 @@ export default function AppNavigator() {
       <Stack.Screen
         name="ExhibitionDetail"
         component={ExhibitionDetailScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ExhibitionsAll"
+        component={ExhibitionsAllScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

@@ -30,13 +30,14 @@ export default function FlatListExhibitions({
   small = false,
   title = '추천전시',
 }: Props) {
-  const navigation = useNavigation<NavigationProp>(); // NavigationProp 사용
+  const navigation = useNavigation<NavigationProp>();
 
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={styles.titleContainer}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ExhibitionsAll', {title})}>
           <Text style={styles.viewAllText}>전체보기 &gt;</Text>
         </TouchableOpacity>
       </View>
