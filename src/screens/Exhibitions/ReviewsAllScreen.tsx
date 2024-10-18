@@ -1,49 +1,41 @@
 import React from 'react';
-import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {ScrollView, View, StyleSheet, TouchableOpacity} from 'react-native';
 import Header from '../../components/My/Header';
-import ExhibitionInfo from '../../components/Exhibitions/ExhibitionInfo';
+import ExhibitionSimpleInfo from '../../components/Exhibitions/ExhibitionSimpleInfo';
 import ReviewCard from '../../components/Exhibitions/ReviewCard';
 import Text from '../../components/Text';
 import GlobalStyle from '../../styles/GlobalStyle';
-import {StackNavigationProp} from '@react-navigation/stack'; // StackNavigationProp 추가
-import {useNavigation} from '@react-navigation/native';
-import {StackParamList} from '../../navigator/StackParamList'; // StackParamList 추가
 
-// 네비게이션 타입 지정
-type ExhibitionDetailScreenNavigationProp = StackNavigationProp<
-  StackParamList,
-  'ExhibitionDetail'
->;
-
+// mock 리뷰 데이터
 const mockReviews = [
   {
-    reviewer: '김민주',
+    reviewer: '최나은',
     rating: 4.7,
     comment:
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum...',
+      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has something.',
   },
   {
     reviewer: '이진서',
     rating: 4.2,
     comment:
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum...',
+      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has ... 더보기',
+  },
+  {
+    reviewer: '최영은',
+    rating: 3.7,
+    comment: 'Lorem Ipsum is simply dummy text of the printing industry...',
   },
 ];
 
-export default function ExhibitionDetailScreen() {
-  const navigation = useNavigation<ExhibitionDetailScreenNavigationProp>(); // 네비게이션 타입 사용
-
+export default function ReviewsAllScreen() {
   return (
     <View style={GlobalStyle.container}>
       <ScrollView>
         <Header title={''} />
-        <ExhibitionInfo />
+        <ExhibitionSimpleInfo />
         <View style={{paddingVertical: 24}}>
           <View style={styles.titleContainer}>
             <Text style={styles.sectionTitle}>관람 후기</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ReviewsAll')}>
-              <Text style={styles.viewAllText}>전체보기 &gt;</Text>
-            </TouchableOpacity>
           </View>
           {mockReviews.map((review, index) => (
             <ReviewCard key={index} review={review} />
