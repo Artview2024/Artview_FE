@@ -47,5 +47,6 @@ export type StackParamList = {
   MyFollowScreen: {activeTab: string};
   ExhibitionDetail: undefined;
   ExhibitionsAll: {title: string};
+  ReviewsAll: undefined;
   MyEdit: undefined;
 };
