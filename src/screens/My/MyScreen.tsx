@@ -8,7 +8,6 @@ import UserInfo from '../../components/My/UserInfo';
 import Tabs from '../../components/My/Tabs';
 import PostingList from '../../components/My/PostingList';
 import ExhibitionList from '../../components/My/ExhibitionList';
-import InterestButton from '../../components/My/InterestButton';
 import MyInterests from '../../components/My/MyInterests';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackParamList} from '../../navigator/StackParamList';

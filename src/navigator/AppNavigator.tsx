@@ -16,6 +16,7 @@ import ReviewsAllScreen from '../screens/Exhibitions/ReviewsAllScreen';
 import {StackParamList} from './StackParamList';
 import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
 import useAutoLogin from '../hooks/useAutoLogin';
+import InterestSelectionScreen from '../screens/Interests/InterestsSelectionScreen';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -76,6 +77,11 @@ export default function AppNavigator() {
       <Stack.Screen
         name="MyEdit"
         component={MyEditScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="InterestSelection"
+        component={InterestSelectionScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen

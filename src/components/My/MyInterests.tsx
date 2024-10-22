@@ -1,19 +1,24 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import InterestButton from '../My/InterestButton';
 import Text from '../Text';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {StackParamList} from '../../navigator/StackParamList';
 
 interface MyInterestsProps {
   interests: string[];
 }
 
 const MyInterests: React.FC<MyInterestsProps> = ({interests}) => {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+      <TouchableOpacity
+        style={styles.headerContainer}
+        onPress={() => navigation.navigate('InterestSelection')}>
         <Text style={styles.headerText}>관심 분야</Text>
         <Text style={styles.headerText}>&gt;</Text>
-      </View>
+      </TouchableOpacity>
       <View style={styles.buttonsContainer}>
         {interests.map((interest: string, index: number) => (
           <InterestButton key={index} title={interest} />
