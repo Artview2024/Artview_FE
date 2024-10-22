@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import customAxios from '../../services/customAxios';
 import Text from '../../components/Text';
 import {useScrollToTop, useFocusEffect} from '@react-navigation/native';
@@ -8,6 +8,7 @@ import UserInfo from '../../components/My/UserInfo';
 import Tabs from '../../components/My/Tabs';
 import PostingList from '../../components/My/PostingList';
 import ExhibitionList from '../../components/My/ExhibitionList';
+import MyInterests from '../../components/My/MyInterests';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackParamList} from '../../navigator/StackParamList';
 
@@ -29,6 +30,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
   });
   const [postings, setPostings] = useState([]);
   const [exhibitions, setExhibitions] = useState([]);
+  const [interests, setInterests] = useState(['현대미술', '공예']); // 관심분야 추가
   const [loading, setLoading] = useState(true);
 
   useScrollToTop(ref);
@@ -126,6 +128,9 @@ export default function MyScreen({navigation}: MyScreenProps) {
           navigation={navigation}
         />
 
+        <MyInterests interests={interests} />
+
+        {/* 탭 */}
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === '게시물' ? (
           <PostingList postings={postings} />
