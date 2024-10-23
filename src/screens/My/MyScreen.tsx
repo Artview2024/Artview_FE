@@ -54,8 +54,8 @@ export default function MyScreen({navigation}: MyScreenProps) {
           userImageUrl: data.userImageUrl,
         });
         setLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch user info:', error);
+      } catch (error: any) {
+        console.error('Failed to fetch user info:', error.response.data);
         setLoading(false);
       }
     };
