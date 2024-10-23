@@ -11,8 +11,12 @@ import Header from '../../components/My/Header';
 import GlobalStyle from '../../styles/GlobalStyle';
 import Text from '../../components/Text';
 import customAxios from '../../services/customAxios';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {StackParamList} from '../../navigator/StackParamList';
 
 const MyEditScreen = () => {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
+
   const [userName, setUserName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
 
@@ -121,7 +125,9 @@ const MyEditScreen = () => {
             <Text>{interest}</Text>
           </View>
         ))}
-        <TouchableOpacity style={styles.interestBox}>
+        <TouchableOpacity
+          style={styles.interestBox}
+          onPress={() => navigation.navigate('InterestSelection')}>
           <Text>+</Text>
         </TouchableOpacity>
       </View>
