@@ -58,8 +58,8 @@ export default function RecordsScreen() {
         }));
 
         setMyRecords(transformedRecords);
-      } catch (error) {
-        console.error('Error:', error);
+      } catch (error: any) {
+        console.error('Error:', error.response.data);
         setMyRecords([]);
       }
     };

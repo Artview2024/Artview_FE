@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {
   View,
   ScrollView,
-  Text,
   StyleSheet,
   Image,
   FlatList,
@@ -15,7 +14,7 @@ import {StackParamList, Record} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
 import GlobalStyle from '../../styles/GlobalStyle';
-import {API_BASE_URL} from '@env';
+import Text from '../../components/Text';
 
 type RecordDetailScreenRouteProp = RouteProp<StackParamList, 'RecordDetail'>;
 
@@ -31,8 +30,8 @@ export default function RecordDetailScreen() {
       try {
         const response = await customAxios.get(`/myReviews/${id}`);
         setRecord(response.data);
-      } catch (error) {
-        console.error('Error', error);
+      } catch (error: any) {
+        console.error('Error', error.response.data);
       }
     };
 
