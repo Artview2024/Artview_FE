@@ -30,7 +30,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
   });
   const [postings, setPostings] = useState([]);
   const [exhibitions, setExhibitions] = useState([]);
-  const [interests, setInterests] = useState(['현대미술', '공예']); // 관심분야 추가
+  const [interests, setInterests] = useState(['현대미술', '공예']); 
   const [loading, setLoading] = useState(true);
 
   useScrollToTop(ref);

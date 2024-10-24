@@ -21,10 +21,7 @@ const MyEditScreen = () => {
 
   const [userName, setUserName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-
-  // Mock data
-  const [nickname, setNickname] = useState('메롱');
-  const [gender, setGender] = useState(''); // 성별 선택을 위해 초기값을 빈 문자열로 설정
+  const [gender, setGender] = useState('');
   const [birthday, setBirthday] = useState(new Date('1995-08-15'));
   const [interests, setInterests] = useState(['사진', '과학기술']);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -37,8 +34,8 @@ const MyEditScreen = () => {
         const data = response.data;
         setUserName(data.userName);
         setImageUrl(data.userImageUrl);
-      } catch (error) {
-        console.error('Failed to fetch user info:', error);
+      } catch (error: any) {
+        console.error('Failed to fetch user info:', error.response.data);
       }
     };
 
@@ -85,20 +82,10 @@ const MyEditScreen = () => {
 
       <Text style={styles.label}>닉네임</Text>
       <TextInput
-        value={nickname}
-        onChangeText={setNickname}
+        value={userName}
         style={[styles.inputBox, {color: '#000'}]}
         placeholder="닉네임을 입력해주세요"
         placeholderTextColor="#828282"
-      />
-
-      <Text style={styles.label}>이름</Text>
-      <TextInput
-        value={userName}
-        style={[styles.inputBox, {color: '#000'}]}
-        placeholder="이름을 입력해주세요"
-        placeholderTextColor="#828282"
-        editable={false}
       />
 
       <Text style={styles.label}>성별</Text>
