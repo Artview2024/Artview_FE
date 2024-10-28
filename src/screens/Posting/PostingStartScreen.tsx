@@ -4,12 +4,12 @@ import {
   NavigationProp,
   useIsFocused,
 } from '@react-navigation/native';
-import axios from 'axios';
+import customAxios from '../../services/customAxios';
 import {StackParamList} from '../../navigator/StackParamList';
 import Records from '../../components/Records';
 import {View, Text} from 'react-native';
 import GlobalStyle from '../../styles/GlobalStyle';
-import {API_BASE_URL} from '@env';
+import Header from '../../components/My/Header';
 
 type Record = {
   id: number;
@@ -24,20 +24,10 @@ export default function PostingStartScreen() {
   const [selectedRecord, setSelectedRecord] = useState<number | null>(null);
   const isFocused = useIsFocused();
 
-  // 내 기록을 API에서 가져오기
   useEffect(() => {
     const fetchRecords = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/myReviews/all/10001`,
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ACCESS_TOKEN`,
-            },
-          },
-        );
-
+        const response = await customAxios.get(`/myReviews/all`);
         const myRecords = response.data.map((item: any) => ({
           id: item.myReviewsId,
           name: item.exhibitionName,
@@ -46,8 +36,8 @@ export default function PostingStartScreen() {
         }));
         console.log('Server Response:', response.data);
         setRecords(myRecords);
-      } catch (error) {
-        console.error('오류:', error);
+      } catch (error: any) {
+        console.error('오류:', error.response.data);
         setRecords([]);
       }
     };
@@ -69,7 +59,8 @@ export default function PostingStartScreen() {
   }, [selectedRecord]);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={[GlobalStyle.container, {flex: 1}]}>
+      <Header title={''}></Header>
       {records.length > 0 ? (
         <Records
           exhibitions={records}
