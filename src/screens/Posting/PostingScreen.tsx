@@ -15,12 +15,11 @@ import {
   useRoute,
   RouteProp,
 } from '@react-navigation/native';
-import axios from 'axios';
+import customAxios from '../../services/customAxios';
 import {StackParamList} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import RatingIcon from 'react-native-vector-icons/FontAwesome';
 import GlobalStyle from '../../styles/GlobalStyle';
-import {API_BASE_URL} from '@env';
 
 type PostingScreenRouteProp = RouteProp<StackParamList, 'Posting'>;
 
@@ -36,14 +35,8 @@ export default function PostingScreen() {
     const fetchExhibitionDetails = async () => {
       if (recordId) {
         try {
-          const response = await axios.get(
-            `${API_BASE_URL}/communications/retrieve/${recordId}`,
-            {
-              headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ACCESS_TOKEN`,
-              },
-            },
+          const response = await customAxios.get(
+            `/communications/retrieve/${recordId}`,
           );
           console.log('GET 내용:', response.data);
           setExhibition(response.data);
@@ -112,15 +105,9 @@ export default function PostingScreen() {
 
         console.log('전송 data:', postData);
 
-        const response = await axios.post(
-          `${API_BASE_URL}/communications/save`,
+        const response = await customAxios.post(
+          '/communications/save',
           postData,
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: `Bearer ACCESS_TOKEN`,
-            },
-          },
         );
 
         if (response.status === 200) {
@@ -129,8 +116,8 @@ export default function PostingScreen() {
         } else {
           console.error('POST 실패:', response);
         }
-      } catch (error) {
-        console.error('POST 실패:', error);
+      } catch (error: any) {
+        console.error('POST 실패:', error.response.data);
       }
     }
   };
