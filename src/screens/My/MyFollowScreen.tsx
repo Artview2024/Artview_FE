@@ -1,5 +1,3 @@
-// MyFollowScreen.tsx
-
 import React, {useState, useEffect} from 'react';
 import {View, ScrollView} from 'react-native';
 import {useRoute, RouteProp} from '@react-navigation/native';
@@ -39,31 +37,31 @@ const MyFollowScreen = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const userInfoResponse = await customAxios.get('/user/myPage/userInfo');
-        const userInfoData = userInfoResponse.data;
-        const totalNumberResponse = await customAxios.get(
-          '/user/myPage/totalNumber',
-        );
-        const totalNumberData = totalNumberResponse.data;
-
-        setUserInfo({
-          following: totalNumberData.following.toString(),
-          follower: totalNumberData.follower.toString(),
-          numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
-          userName: userInfoData.userName,
-        });
-      } catch (error: any) {
-        console.error(
-          'Failed to fetch user info or total number:',
-          error.response?.data,
-        );
-      }
-    };
-
     fetchUserInfo();
   }, []);
+
+  const fetchUserInfo = async () => {
+    try {
+      const userInfoResponse = await customAxios.get('/user/myPage/userInfo');
+      const userInfoData = userInfoResponse.data;
+      const totalNumberResponse = await customAxios.get(
+        '/user/myPage/totalNumber',
+      );
+      const totalNumberData = totalNumberResponse.data;
+
+      setUserInfo({
+        following: totalNumberData.following.toString(),
+        follower: totalNumberData.follower.toString(),
+        numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
+        userName: userInfoData.userName,
+      });
+    } catch (error: any) {
+      console.error(
+        'Failed to fetch user info or total number:',
+        error.response?.data,
+      );
+    }
+  };
 
   const fetchFollowingList = async () => {
     try {
@@ -112,6 +110,15 @@ const MyFollowScreen = () => {
     }
   };
 
+  const updateFollowingCount = (isFollowing: boolean) => {
+    setUserInfo(prevInfo => ({
+      ...prevInfo,
+      following: isFollowing
+        ? (parseInt(prevInfo.following) + 1).toString()
+        : (parseInt(prevInfo.following) - 1).toString(),
+    }));
+  };
+
   return (
     <View style={[GlobalStyle.container]}>
       <Header title={userInfo.userName} />
@@ -124,10 +131,18 @@ const MyFollowScreen = () => {
       />
       <ScrollView>
         {activeTab === '팔로잉' && (
-          <FollowList followList={followings} activeTab={activeTab} />
+          <FollowList
+            followList={followings}
+            activeTab={activeTab}
+            updateFollowingCount={updateFollowingCount}
+          />
         )}
         {activeTab === '팔로워' && (
-          <FollowList followList={followers} activeTab={activeTab} />
+          <FollowList
+            followList={followers}
+            activeTab={activeTab}
+            updateFollowingCount={updateFollowingCount}
+          />
         )}
         {activeTab === '관람' && (
           <View style={{paddingTop: 20}}>
