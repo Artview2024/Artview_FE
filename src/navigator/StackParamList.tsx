@@ -50,4 +50,5 @@ export type StackParamList = {
   ExhibitionsAll: {title: string};
   ReviewsAll: undefined;
   MyEdit: undefined;
+  Search: undefined;
 };
