@@ -1,11 +1,13 @@
 import React, {useRef} from 'react';
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, TouchableOpacity} from 'react-native';
 import Text from '../../components/Text';
 import {useScrollToTop} from '@react-navigation/native';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import NotificationIcon from '../../assets/icons/notification-icon.svg';
 import GlobalStyle from '../../styles/GlobalStyle';
 import FlatListExhibitions from '../../components/Exhibitions/FlatListExhibitions';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {StackParamList} from '../../navigator/StackParamList';
 
 const recommendedExhibitions = [
   {
@@ -34,7 +36,7 @@ const recommendedExhibitions = [
 export default function ExhibitionsScreen() {
   const ref = useRef(null);
   useScrollToTop(ref);
-
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
   return (
     <View style={GlobalStyle.container}>
       <View
@@ -46,7 +48,9 @@ export default function ExhibitionsScreen() {
         <Text style={GlobalStyle.header}>전시</Text>
         <View
           style={{flexDirection: 'row', alignItems: 'center', paddingTop: 10}}>
-          <SearchIcon width={24} height={24} style={{marginRight: 10}} />
+          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <SearchIcon width={24} height={24} style={{marginRight: 10}} />
+          </TouchableOpacity>
           <NotificationIcon width={24} height={25} />
         </View>
       </View>

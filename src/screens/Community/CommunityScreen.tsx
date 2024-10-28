@@ -60,7 +60,6 @@ export default function CommunityScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
-  // ref 타입을 명시적으로 설정
   const ref = useRef<FlatListType<any>>(null);
   useScrollToTop(ref);
 
@@ -107,7 +106,9 @@ export default function CommunityScreen() {
         <Text style={GlobalStyle.header}>소통</Text>
         <View
           style={{flexDirection: 'row', alignItems: 'center', paddingTop: 10}}>
-          <SearchIcon width={24} height={24} style={{marginRight: 10}} />
+          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+            <SearchIcon width={24} height={24} style={{marginRight: 10}} />
+          </TouchableOpacity>
           <NotificationIcon width={24} height={25} />
         </View>
       </View>
