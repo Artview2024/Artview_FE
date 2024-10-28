@@ -5,6 +5,7 @@ import Text from '../../components/Text';
 interface FollowItem {
   id: number;
   name: string;
+  imageUrl: string;
   isFollowing: boolean;
 }
 
@@ -12,16 +13,13 @@ interface FollowListProps {
   followList: FollowItem[];
   activeTab: string;
 }
+
 const FollowList: React.FC<FollowListProps> = ({followList, activeTab}) => (
   <View style={{paddingTop: 5}}>
     {followList.map(item => (
       <View key={item.id} style={styles.listItem}>
         <View style={styles.userInfo}>
-          <Image
-            source={require('../../assets/images/user.png')}
-            style={styles.avatar}
-          />
-          {/* <Image source={{uri: item.imageUrl}} style={styles.avatar} /> */}
+          <Image source={{uri: item.imageUrl}} style={styles.avatar} />
           <Text style={styles.name}>{item.name}</Text>
         </View>
         {activeTab === '팔로워' && (
