@@ -33,36 +33,31 @@ export default function Records({
   showGallery = false,
 }: RecordsProps) {
   return (
-    <View>
-      <ScrollView>
-        <View style={styles.exhibitionList}>
-          {exhibitions.map(exhibition => (
-            <View key={exhibition.id} style={styles.exhibitionWrapper}>
-              <TouchableOpacity
-                onPress={() => onExhibitionSelect(exhibition.id)}>
-                <Image
-                  source={exhibition.image}
-                  style={[
-                    styles.exhibitionImage,
-                    selectedExhibition === exhibition.id &&
-                      styles.selectedExhibitionImage,
-                  ]}
-                />
-                <View style={{paddingTop: 7}}>
-                  <Text style={GlobalStyle.mainText}>{exhibition.name}</Text>
-                  <Text style={GlobalStyle.subText}>{exhibition.date}</Text>
-                  {showGallery && exhibition.gallery && (
-                    <Text style={GlobalStyle.subText}>
-                      {exhibition.gallery}
-                    </Text>
-                  )}
-                </View>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+    <ScrollView>
+      <View style={styles.exhibitionList}>
+        {exhibitions.map(exhibition => (
+          <View key={exhibition.id} style={styles.exhibitionWrapper}>
+            <TouchableOpacity onPress={() => onExhibitionSelect(exhibition.id)}>
+              <Image
+                source={exhibition.image}
+                style={[
+                  styles.exhibitionImage,
+                  selectedExhibition === exhibition.id &&
+                    styles.selectedExhibitionImage,
+                ]}
+              />
+              <View style={{paddingTop: 7}}>
+                <Text style={GlobalStyle.mainText}>{exhibition.name}</Text>
+                <Text style={GlobalStyle.subText}>{exhibition.date}</Text>
+                {showGallery && exhibition.gallery && (
+                  <Text style={GlobalStyle.subText}>{exhibition.gallery}</Text>
+                )}
+              </View>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
