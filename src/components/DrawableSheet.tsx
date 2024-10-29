@@ -104,10 +104,11 @@ const DrawableSheet = forwardRef(
       const newArtList = artList.filter(item => !selectedItems.has(item.id));
 
       // 현재 보고 있는 인덱스의 항목이 삭제된 경우 이전 인덱스로 이동
+      let newIndex = currentArtIndex;
       if (selectedItems.has(artList[currentArtIndex]?.id)) {
-        const newIndex = Math.max(0, currentArtIndex - 1);
-        setArtIndex(newIndex);
+        newIndex = Math.min(currentArtIndex, newArtList.length - 1);
       }
+      setArtIndex(newIndex);
 
       setArtList(newArtList);
       setSelectedItems(new Set());
@@ -125,7 +126,14 @@ const DrawableSheet = forwardRef(
             isChecked={selectedItems.has(item.id)}
             onPress={() => toggleSelectItem(item.id)}
           />
-          <Image source={{uri: item.image}} style={styles.image} />
+          {item.image ? (
+            <Image source={{uri: item.image}} style={styles.image} />
+          ) : (
+            <Image
+              source={require('../assets/images/thumbnail_basic.png')}
+              style={styles.image}
+            />
+          )}
           <View style={styles.textContainer}>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.artist}>{item.artist}</Text>
@@ -181,7 +189,6 @@ const DrawableSheet = forwardRef(
     );
   },
 );
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
