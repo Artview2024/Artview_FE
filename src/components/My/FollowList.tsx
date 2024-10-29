@@ -22,21 +22,25 @@ const FollowList: React.FC<FollowListProps> = ({
   updateFollowingCount,
 }) => (
   <View style={{paddingTop: 5}}>
-    {followList.map(item => (
-      <View key={item.id} style={styles.listItem}>
-        <View style={styles.userInfo}>
-          <Image source={{uri: item.imageUrl}} style={styles.avatar} />
-          <Text style={styles.name}>{item.name}</Text>
-        </View>
-        {activeTab === '팔로워' && (
+    {followList.length > 0 ? (
+      followList.map(item => (
+        <View key={item.id} style={styles.listItem}>
+          <View style={styles.userInfo}>
+            <Image source={{uri: item.imageUrl}} style={styles.avatar} />
+            <Text style={styles.name}>{item.name}</Text>
+          </View>
           <FollowButton
             userId={item.id}
             isFollowing={item.isFollowing}
             updateFollowingCount={updateFollowingCount}
           />
-        )}
-      </View>
-    ))}
+        </View>
+      ))
+    ) : (
+      <Text style={{textAlign: 'center', padding: 20}}>
+        팔로우 목록이 없습니다.
+      </Text>
+    )}
   </View>
 );
 
