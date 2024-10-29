@@ -19,32 +19,81 @@ const MyFollowScreen = () => {
   const [userInfo, setUserInfo] = useState({
     following: '0',
     follower: '0',
-    enjoyed: '0',
+    numberOfMyReviews: '0',
     userName: '',
   });
+  const [followings, setFollowings] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [exhibitions, setExhibitions] = useState([]);
+
+  useEffect(() => {
+    if (activeTab === '팔로잉') {
+      fetchFollowingList();
+    } else if (activeTab === '팔로워') {
+      fetchFollowerList();
+    } else if (activeTab === '관람') {
+      fetchExhibitions();
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     fetchUserInfo();
   }, []);
 
-  useEffect(() => {
-    if (activeTab === '관람') {
-      fetchExhibitions();
-    }
-  }, [activeTab]);
-
   const fetchUserInfo = async () => {
     try {
-      const response = await customAxios.get('/user/myPage/userInfo');
-      const data = response.data;
+      const userInfoResponse = await customAxios.get('/user/myPage/userInfo');
+      const userInfoData = userInfoResponse.data;
+      const totalNumberResponse = await customAxios.get(
+        '/user/myPage/totalNumber',
+      );
+      const totalNumberData = totalNumberResponse.data;
+
       setUserInfo({
-        following: data.followees.toString(),
-        follower: data.follower.toString(),
-        enjoyed: data.numberOfMyReviews.toString(),
-        userName: data.userName,
+        following: totalNumberData.following.toString(),
+        follower: totalNumberData.follower.toString(),
+        numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
+        userName: userInfoData.userName,
       });
-    } catch (error) {
-      console.error('Failed to fetch user info:', error);
+    } catch (error: any) {
+      console.error(
+        'Failed to fetch user info or total number:',
+        error.response?.data,
+      );
+    }
+  };
+
+  const fetchFollowingList = async () => {
+    try {
+      const response = await customAxios.get('/user/myPage/myFollowingList');
+      const data =
+        response.data?.map((item: any) => ({
+          id: item.userId,
+          name: item.userName,
+          imageUrl: item.userImageUrl,
+          isFollowing: item.isFollowing,
+        })) || [];
+      setFollowings(data);
+      console.log('Following list:', data);
+    } catch (error: any) {
+      console.error('Failed to fetch following list:', error.response?.data);
+    }
+  };
+
+  const fetchFollowerList = async () => {
+    try {
+      const response = await customAxios.get('/user/myPage/myFollowerList');
+      const data =
+        response.data?.map((item: any) => ({
+          id: item.userId,
+          name: item.userName,
+          imageUrl: item.userImageUrl,
+          isFollowing: item.isFollowing,
+        })) || [];
+      setFollowers(data);
+      console.log('Follower list:', data);
+    } catch (error: any) {
+      console.error('Failed to fetch follower list:', error.response?.data);
     }
   };
 
@@ -56,6 +105,7 @@ const MyFollowScreen = () => {
         id: item.id,
         title: item.title,
         date: item.date,
+        gallery: item.gallery,
         image: {uri: item.imageUrl},
       }));
       setExhibitions(formattedExhibitions);
@@ -64,17 +114,14 @@ const MyFollowScreen = () => {
     }
   };
 
-  const mockFollowings = [
-    {id: 1, name: '사용자1', isFollowing: true},
-    {id: 2, name: '사용자2', isFollowing: true},
-  ];
-
-  const mockFollowers = [
-    {id: 3, name: '사용자3', isFollowing: false},
-    {id: 4, name: '사용자4', isFollowing: false},
-  ];
-
-  const [exhibitions, setExhibitions] = useState([]);
+  const updateFollowingCount = (isFollowing: boolean) => {
+    setUserInfo(prevInfo => ({
+      ...prevInfo,
+      following: isFollowing
+        ? (parseInt(prevInfo.following) + 1).toString()
+        : (parseInt(prevInfo.following) - 1).toString(),
+    }));
+  };
 
   return (
     <View style={[GlobalStyle.container]}>
@@ -84,14 +131,15 @@ const MyFollowScreen = () => {
         setActiveTab={setActiveTab}
         following={userInfo.following}
         follower={userInfo.follower}
-        enjoyed={userInfo.enjoyed}
+        numberOfMyReviews={userInfo.numberOfMyReviews}
       />
       <ScrollView>
-        {activeTab === '팔로잉' && (
-          <FollowList followList={mockFollowings} activeTab={activeTab} />
-        )}
-        {activeTab === '팔로워' && (
-          <FollowList followList={mockFollowers} activeTab={activeTab} />
+        {(activeTab === '팔로잉' || activeTab === '팔로워') && (
+          <FollowList
+            followList={activeTab === '팔로잉' ? followings : followers}
+            activeTab={activeTab}
+            updateFollowingCount={updateFollowingCount}
+          />
         )}
         {activeTab === '관람' && (
           <View style={{paddingTop: 20}}>

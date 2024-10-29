@@ -7,13 +7,14 @@ import {
   StyleSheet,
 } from 'react-native';
 import Text from '../components/Text';
-import BackIcon from 'react-native-vector-icons/Ionicons';
+
 import GlobalStyle from '../styles/GlobalStyle';
 
 type Exhibition = {
   id: number;
   name: string;
   date: string;
+  gallery?: string;
   image: any;
 };
 
@@ -22,27 +23,18 @@ type RecordsProps = {
   selectedExhibition: number | null;
   onExhibitionSelect: (id: number) => void;
   backAction: () => void;
+  showGallery?: boolean;
 };
 
 export default function Records({
   exhibitions,
   selectedExhibition,
   onExhibitionSelect,
-  backAction,
+  showGallery = false,
 }: RecordsProps) {
   return (
-    <View style={[GlobalStyle.container]}>
+    <View>
       <ScrollView>
-        <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
-          <TouchableOpacity onPress={backAction}>
-            <BackIcon
-              name="chevron-back"
-              size={24}
-              color={'black'}
-              style={{paddingRight: 3, paddingTop: 18, paddingLeft: 0}}
-            />
-          </TouchableOpacity>
-        </View>
         <View style={styles.exhibitionList}>
           {exhibitions.map(exhibition => (
             <View key={exhibition.id} style={styles.exhibitionWrapper}>
@@ -59,6 +51,11 @@ export default function Records({
                 <View style={{paddingTop: 7}}>
                   <Text style={GlobalStyle.mainText}>{exhibition.name}</Text>
                   <Text style={GlobalStyle.subText}>{exhibition.date}</Text>
+                  {showGallery && exhibition.gallery && (
+                    <Text style={GlobalStyle.subText}>
+                      {exhibition.gallery}
+                    </Text>
+                  )}
                 </View>
               </TouchableOpacity>
             </View>
@@ -77,8 +74,7 @@ const styles = StyleSheet.create({
   },
   exhibitionWrapper: {
     width: '48%',
-    paddingTop: 10,
-    marginVertical: 10,
+    paddingBottom: 20,
   },
   exhibitionImage: {
     width: '100%',

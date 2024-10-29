@@ -1,39 +1,82 @@
 import React, {useState} from 'react';
 import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import customAxios from '../../services/customAxios';
 import Text from '../../components/Text';
 
 interface FollowItem {
   id: number;
   name: string;
+  imageUrl: string;
   isFollowing: boolean;
 }
 
 interface FollowListProps {
   followList: FollowItem[];
   activeTab: string;
+  updateFollowingCount: (isFollowing: boolean) => void;
 }
-const FollowList: React.FC<FollowListProps> = ({followList, activeTab}) => (
+
+const FollowList: React.FC<FollowListProps> = ({
+  followList,
+  activeTab,
+  updateFollowingCount,
+}) => (
   <View style={{paddingTop: 5}}>
-    {followList.map(item => (
-      <View key={item.id} style={styles.listItem}>
-        <View style={styles.userInfo}>
-          <Image
-            source={require('../../assets/images/user.png')}
-            style={styles.avatar}
+    {followList.length > 0 ? (
+      followList.map(item => (
+        <View key={item.id} style={styles.listItem}>
+          <View style={styles.userInfo}>
+            <Image source={{uri: item.imageUrl}} style={styles.avatar} />
+            <Text style={styles.name}>{item.name}</Text>
+          </View>
+          <FollowButton
+            userId={item.id}
+            isFollowing={item.isFollowing}
+            updateFollowingCount={updateFollowingCount}
           />
-          {/* <Image source={{uri: item.imageUrl}} style={styles.avatar} /> */}
-          <Text style={styles.name}>{item.name}</Text>
         </View>
-        {activeTab === '팔로워' && (
-          <FollowButton isFollowing={item.isFollowing} />
-        )}
-      </View>
-    ))}
+      ))
+    ) : (
+      <Text style={{textAlign: 'center', padding: 20}}>
+        팔로우 목록이 없습니다.
+      </Text>
+    )}
   </View>
 );
 
-const FollowButton = ({isFollowing}: {isFollowing: boolean}) => {
+const FollowButton = ({
+  userId,
+  isFollowing,
+  updateFollowingCount,
+}: {
+  userId: number;
+  isFollowing: boolean;
+  updateFollowingCount: (isFollowing: boolean) => void;
+}) => {
   const [following, setFollowing] = useState(isFollowing);
+
+  const toggleFollow = async () => {
+    try {
+      if (following) {
+        await customAxios.delete('/user/unfollow', {
+          data: {takeFollow: userId},
+        });
+        setFollowing(false);
+        updateFollowingCount(false);
+      } else {
+        await customAxios.put('/user/follow', {
+          takeFollow: userId,
+        });
+        setFollowing(true);
+        updateFollowingCount(true);
+      }
+    } catch (error: any) {
+      console.error(
+        following ? '언팔로우 실패:' : '팔로우 실패:',
+        error.response?.data.message || error.message,
+      );
+    }
+  };
 
   return (
     <TouchableOpacity
@@ -41,7 +84,7 @@ const FollowButton = ({isFollowing}: {isFollowing: boolean}) => {
         styles.followButton,
         following ? styles.following : styles.notFollowing,
       ]}
-      onPress={() => setFollowing(!following)}>
+      onPress={toggleFollow}>
       <Text style={following ? styles.followingText : styles.notFollowingText}>
         {following ? '팔로잉' : '팔로우'}
       </Text>

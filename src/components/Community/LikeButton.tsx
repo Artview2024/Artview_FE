@@ -1,8 +1,7 @@
 import React, {useState} from 'react';
 import {TouchableOpacity} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import axios from 'axios';
-import {API_BASE_URL} from '@env';
+import customAxios from '../../services/customAxios';
 
 interface LikeButtonProps {
   communicationsId: number;
@@ -13,7 +12,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({
   communicationsId,
   isHeartClicked,
 }) => {
-  // 좋아요 상태를 관리하는 로컬 상태 추가
   const [liked, setLiked] = useState(isHeartClicked);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -31,12 +29,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 
         console.log('POST 요청 바디:', requestBody);
 
-        await axios.post(`${API_BASE_URL}/communications/like`, requestBody, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ACCESS_TOKEN`, // 실제 토큰 값으로 교체
-          },
-        });
+        await customAxios.post('/communications/like', requestBody);
 
         setLiked(true); // 로컬 상태 업데이트
       } else {
@@ -48,13 +41,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({
 
         console.log('DELETE 요청 바디:', requestBody);
 
-        await axios.delete(`${API_BASE_URL}/communications/like`, {
-          headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ACCESS_TOKEN`, // 실제 토큰 값으로 교체
-          },
-          data: requestBody, // 바디에 데이터 전달
-        });
+        await customAxios.delete('/communications/like', {data: requestBody});
 
         setLiked(false); // 로컬 상태 업데이트
       }

@@ -8,6 +8,7 @@ import UserInfo from '../../components/My/UserInfo';
 import Tabs from '../../components/My/Tabs';
 import PostingList from '../../components/My/PostingList';
 import ExhibitionList from '../../components/My/ExhibitionList';
+import MyInterests from '../../components/My/MyInterests';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackParamList} from '../../navigator/StackParamList';
 
@@ -21,14 +22,15 @@ export default function MyScreen({navigation}: MyScreenProps) {
   const ref = useRef(null);
   const [activeTab, setActiveTab] = useState('게시물');
   const [userInfo, setUserInfo] = useState({
-    following: '',
-    follower: '',
-    enjoyed: '',
+    following: '0',
+    follower: '0',
+    numberOfMyReviews: '0',
     userName: '',
     userImageUrl: '',
   });
   const [postings, setPostings] = useState([]);
   const [exhibitions, setExhibitions] = useState([]);
+  const [interests, setInterests] = useState(['현대미술', '공예']);
   const [loading, setLoading] = useState(true);
 
   useScrollToTop(ref);
@@ -42,18 +44,26 @@ export default function MyScreen({navigation}: MyScreenProps) {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await customAxios.get('/user/myPage/userInfo');
-        const data = response.data;
+        const userInfoResponse = await customAxios.get('/user/myPage/userInfo');
+        const userInfoData = userInfoResponse.data;
+        const totalNumberResponse = await customAxios.get(
+          '/user/myPage/totalNumber',
+        );
+        const totalNumberData = totalNumberResponse.data;
+
         setUserInfo({
-          following: data.followees.toString(),
-          follower: data.follower.toString(),
-          enjoyed: data.numberOfMyReviews.toString(),
-          userName: data.userName,
-          userImageUrl: data.userImageUrl,
+          following: totalNumberData.following.toString(),
+          follower: totalNumberData.follower.toString(),
+          numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
+          userName: userInfoData.userName,
+          userImageUrl: userInfoData.userImageUrl,
         });
         setLoading(false);
-      } catch (error) {
-        console.error('Failed to fetch user info:', error);
+      } catch (error: any) {
+        console.error(
+          'Failed to fetch user info or total number:',
+          error.response?.data,
+        );
         setLoading(false);
       }
     };
@@ -86,11 +96,12 @@ export default function MyScreen({navigation}: MyScreenProps) {
           id: item.id,
           title: item.title,
           date: item.date,
+          gallery: item.gallery,
           image: {uri: item.imageUrl},
         }));
         setExhibitions(formattedExhibitions);
-      } catch (error) {
-        console.error('Failed to fetch Exhibitions:', error);
+      } catch (error: any) {
+        console.error('Failed to fetch exhibitions:', error.response.data);
       }
     };
 
@@ -120,12 +131,15 @@ export default function MyScreen({navigation}: MyScreenProps) {
         <UserInfo
           following={userInfo.following}
           follower={userInfo.follower}
-          enjoyed={userInfo.enjoyed}
+          enjoyed={userInfo.numberOfMyReviews}
           userName={userInfo.userName}
           userImageUrl={userInfo.userImageUrl}
           navigation={navigation}
         />
 
+        <MyInterests interests={interests} />
+
+        {/* 탭 */}
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === '게시물' ? (
           <PostingList postings={postings} />

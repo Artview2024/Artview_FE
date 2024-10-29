@@ -10,6 +10,8 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackParamList} from '../../navigator/StackParamList';
 import Text from '../Text';
+import Calendar from 'react-native-vector-icons/AntDesign';
+import LocationPin from 'react-native-vector-icons/EvilIcons';
 
 type Props = {
   data: {
@@ -30,13 +32,14 @@ export default function FlatListExhibitions({
   small = false,
   title = '추천전시',
 }: Props) {
-  const navigation = useNavigation<NavigationProp>(); // NavigationProp 사용
+  const navigation = useNavigation<NavigationProp>();
 
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <View style={styles.titleContainer}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ExhibitionsAll', {title})}>
           <Text style={styles.viewAllText}>전체보기 &gt;</Text>
         </TouchableOpacity>
       </View>
@@ -54,8 +57,16 @@ export default function FlatListExhibitions({
               style={small ? styles.smallImage : styles.recommendedImage}
             />
             <Text style={styles.recommendedText}>{item.title}</Text>
-            <Text style={styles.recommendedSubText}>📅 {item.date}</Text>
-            <Text style={styles.recommendedSubText}>📍{item.gallery}</Text>
+            <Text style={styles.recommendedSubText}>
+              <Calendar name="calendar" size={15} />
+              &nbsp;
+              {item.date}
+            </Text>
+            <Text style={styles.recommendedSubText}>
+              <LocationPin name="location" size={16} />
+              &nbsp;
+              {item.gallery}
+            </Text>
           </TouchableOpacity>
         )}
         keyExtractor={item => item.key}

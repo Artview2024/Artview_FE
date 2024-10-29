@@ -30,9 +30,8 @@ export default function RecordDetailScreen() {
       try {
         const response = await customAxios.get(`/myReviews/${id}`);
         setRecord(response.data);
-        console.log('Server Response:', response.data);
-      } catch (error) {
-        console.error('Error', error);
+      } catch (error: any) {
+        console.error('Error', error.response.data);
       }
     };
 

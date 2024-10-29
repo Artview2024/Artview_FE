@@ -9,8 +9,11 @@ import {
 import customAxios from '../../services/customAxios';
 import {StackParamList} from '../../navigator/StackParamList';
 import Records from '../../components/Records';
-import {View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
+import BackIcon from 'react-native-vector-icons/Ionicons';
 import Text from '../../components/Text';
+import GlobalStyle from '../../styles/GlobalStyle';
+import Header from '../../components/My/Header';
 
 type Record = {
   id: number;
@@ -55,8 +58,8 @@ export default function RecordsScreen() {
         }));
 
         setMyRecords(transformedRecords);
-      } catch (error) {
-        console.error('Error:', error);
+      } catch (error: any) {
+        console.error('Error:', error.response.data);
         setMyRecords([]);
       }
     };
@@ -89,7 +92,8 @@ export default function RecordsScreen() {
   }));
 
   return (
-    <View style={{flex: 1}}>
+    <View style={[GlobalStyle.container]}>
+      <Header title={''}></Header>
       {myRecords.length > 0 ? (
         <Records
           exhibitions={exhibitions}

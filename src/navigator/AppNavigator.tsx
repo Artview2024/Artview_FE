@@ -11,9 +11,13 @@ import PostingScreen from '../screens/Posting/PostingScreen';
 import MyFollowScreen from '../screens/My/MyFollowScreen';
 import MyEditScreen from '../screens/My/MyEditScreen';
 import ExhibitionDetailScreen from '../screens/Exhibitions/ExhibitionDetailScreen';
+import ExhibitionsAllScreen from '../screens/Exhibitions/ExhibitionsAllScreen';
+import ReviewsAllScreen from '../screens/Exhibitions/ReviewsAllScreen';
 import {StackParamList} from './StackParamList';
 import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
 import useAutoLogin from '../hooks/useAutoLogin';
+import InterestSelectionScreen from '../screens/Interests/InterestsSelectionScreen';
+import SearchScreen from '../screens/Search/SearchScreen';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -77,8 +81,28 @@ export default function AppNavigator() {
         options={{headerShown: false}}
       />
       <Stack.Screen
+        name="InterestSelection"
+        component={InterestSelectionScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
         name="ExhibitionDetail"
         component={ExhibitionDetailScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ExhibitionsAll"
+        component={ExhibitionsAllScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ReviewsAll"
+        component={ReviewsAllScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Search"
+        component={SearchScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
