@@ -2,6 +2,9 @@ import React from 'react';
 import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Text from '../../components/Text';
 import GlobalStyle from '../../styles/GlobalStyle';
+import Calendar from 'react-native-vector-icons/AntDesign';
+import LocationPin from 'react-native-vector-icons/EvilIcons';
+import Time from 'react-native-vector-icons/Ionicons';
 
 const ExhibitionInfo = () => {
   return (
@@ -12,9 +15,18 @@ const ExhibitionInfo = () => {
       />
       <View>
         <Text style={styles.title}>요시고 사진전</Text>
-        <Text style={styles.subInfo}>📅 2024.04.02~07.11</Text>
-        <Text style={styles.subInfo}>📍 갤러리 인테그랄</Text>
-        <Text style={styles.subInfo}>🕒 월, 화, 수, 목 10:00 - 17:30</Text>
+        <Text style={styles.subInfo}>
+          <Calendar name="calendar" size={15} />
+          &nbsp; 2024.04.02~07.11
+        </Text>
+        <Text style={styles.subInfo}>
+          <LocationPin name="location" size={15} />
+          &nbsp; 갤러리 인테그랄
+        </Text>
+        <Text style={styles.subInfo}>
+          <Time name="time-outline" size={15} />
+          &nbsp; 갤러리 인테그랄 월, 화, 수, 목 10:00 - 17:30
+        </Text>
       </View>
 
       <Text style={styles.description}>
@@ -25,7 +37,7 @@ const ExhibitionInfo = () => {
 
       <TouchableOpacity
         style={[GlobalStyle.fullButton, {backgroundColor: '#000'}]}>
-        <Text style={styles.buttonText}>웹사이트 방문</Text>
+        <Text style={styles.buttonText}>위치 확인하기</Text>
       </TouchableOpacity>
     </View>
   );
