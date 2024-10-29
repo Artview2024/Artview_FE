@@ -66,30 +66,34 @@ const MyFollowScreen = () => {
   const fetchFollowingList = async () => {
     try {
       const response = await customAxios.get('/user/myPage/myFollowingList');
-      const data = response.data.followInfoList.map((item: any) => ({
-        id: item.userId,
-        name: item.userName,
-        imageUrl: item.userImageUrl,
-        isFollowing: true,
-      }));
+      const data =
+        response.data?.map((item: any) => ({
+          id: item.userId,
+          name: item.userName,
+          imageUrl: item.userImageUrl,
+          isFollowing: item.isFollowing,
+        })) || [];
       setFollowings(data);
-    } catch (error) {
-      console.error('Failed to fetch following list:', error);
+      console.log('Following list:', data);
+    } catch (error: any) {
+      console.error('Failed to fetch following list:', error.response?.data);
     }
   };
 
   const fetchFollowerList = async () => {
     try {
       const response = await customAxios.get('/user/myPage/myFollowerList');
-      const data = response.data.followInfoList.map((item: any) => ({
-        id: item.userId,
-        name: item.userName,
-        imageUrl: item.userImageUrl,
-        isFollowing: false,
-      }));
+      const data =
+        response.data?.map((item: any) => ({
+          id: item.userId,
+          name: item.userName,
+          imageUrl: item.userImageUrl,
+          isFollowing: item.isFollowing,
+        })) || [];
       setFollowers(data);
-    } catch (error) {
-      console.error('Failed to fetch follower list:', error);
+      console.log('Follower list:', data);
+    } catch (error: any) {
+      console.error('Failed to fetch follower list:', error.response?.data);
     }
   };
 
@@ -130,16 +134,9 @@ const MyFollowScreen = () => {
         numberOfMyReviews={userInfo.numberOfMyReviews}
       />
       <ScrollView>
-        {activeTab === '팔로잉' && (
+        {(activeTab === '팔로잉' || activeTab === '팔로워') && (
           <FollowList
-            followList={followings}
-            activeTab={activeTab}
-            updateFollowingCount={updateFollowingCount}
-          />
-        )}
-        {activeTab === '팔로워' && (
-          <FollowList
-            followList={followers}
+            followList={activeTab === '팔로잉' ? followings : followers}
             activeTab={activeTab}
             updateFollowingCount={updateFollowingCount}
           />
