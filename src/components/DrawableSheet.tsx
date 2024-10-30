@@ -178,7 +178,7 @@ const DrawableSheet = forwardRef(
                 <DraggableFlatList
                   data={artList}
                   renderItem={renderItem}
-                  keyExtractor={item => item.id}
+                  keyExtractor={(item, index) => `${item.id}-${index}`}
                   onDragEnd={({data}) => setArtList(data)}
                 />
               </View>
