@@ -8,6 +8,7 @@ import GlobalStyle from '../../styles/GlobalStyle';
 import {StackNavigationProp} from '@react-navigation/stack'; // StackNavigationProp 추가
 import {useNavigation} from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList'; // StackParamList 추가
+import RatingBox from '../../components/Exhibitions/RatingBox';
 
 // 네비게이션 타입 지정
 type ExhibitionDetailScreenNavigationProp = StackNavigationProp<
@@ -38,11 +39,12 @@ export default function ExhibitionDetailScreen() {
       <ScrollView>
         <Header title={''} />
         <ExhibitionInfo />
+        <RatingBox rating={3.2} participants={3} />
         <View style={{paddingVertical: 24}}>
           <View style={styles.titleContainer}>
             <Text style={styles.sectionTitle}>관람 후기</Text>
             <TouchableOpacity onPress={() => navigation.navigate('ReviewsAll')}>
-              <Text style={styles.viewAllText}>전체보기 &gt;</Text>
+              <Text style={styles.viewAllText}>더보기 &gt;</Text>
             </TouchableOpacity>
           </View>
           {mockReviews.map((review, index) => (
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    paddingVertical: 18,
+    paddingBottom: 18,
   },
   sectionTitle: {
     fontSize: 20,

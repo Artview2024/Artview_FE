@@ -59,7 +59,7 @@ const fetchExhibitions = async ({
         },
       },
     );
-    console.log(`${title} Exhibitions Data:`, response.data); // 데이터 출력
+    console.log(`${title} Exhibitions Data:`, response.data);
     return response.data;
   } catch (error: any) {
     console.error(

@@ -40,7 +40,7 @@ export default function FlatListExhibitions({
         <Text style={styles.sectionTitle}>{title}</Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('ExhibitionsAll', {title})}>
-          <Text style={styles.viewAllText}>전체보기 &gt;</Text>
+          <Text style={styles.viewAllText}>더보기 &gt;</Text>
         </TouchableOpacity>
       </View>
       <FlatList

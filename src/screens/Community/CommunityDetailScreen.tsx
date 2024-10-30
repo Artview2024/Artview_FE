@@ -203,7 +203,7 @@ export default function CommunityDetailScreen({
             </View>
           </>
         ) : (
-          <Text>댓글이 없습니다.</Text>
+          <Text> </Text>
         )}
       </ScrollView>
 
