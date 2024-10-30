@@ -23,6 +23,7 @@ import FilterTabs from '../../components/Community/FilterTabs';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import NotificationIcon from '../../assets/icons/notification-icon.svg';
 import {StackParamList} from '../../navigator/StackParamList';
+import customAxios from '../../services/customAxios';
 
 type PageType = {
   detailCommunicationsContentResponseDtoList: any[];
@@ -38,21 +39,31 @@ const fetchPosts = async ({
 }) => {
   const apiCategory = category === '전체' ? 'all' : 'follow';
 
-  const response = await fetch(
-    `${API_BASE_URL}/communications/main/${apiCategory}/${pageParam}`,
-    {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    },
+  //   const response = await fetch(
+  //     `${API_BASE_URL}/communications/main/${apiCategory}/${pageParam}`,
+  //     {
+  //       method: 'GET',
+  //       headers: {
+  //         Accept: 'application/json',
+  //       },
+  //     },
+  //   );
+
+  //   if (!response.ok) {
+  //     throw new Error('Failed to fetch posts');
+  //   }
+
+  //   return response.json();
+  // };
+  const response = await customAxios.get(
+    `/communications/main/${apiCategory}/${pageParam}`,
   );
 
-  if (!response.ok) {
+  if (response.status !== 200) {
     throw new Error('Failed to fetch posts');
   }
 
-  return response.json();
+  return response.data;
 };
 
 export default function CommunityScreen() {
