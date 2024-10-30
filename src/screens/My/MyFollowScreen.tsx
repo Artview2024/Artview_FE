@@ -27,11 +27,17 @@ const MyFollowScreen = () => {
   const [exhibitions, setExhibitions] = useState([]);
 
   useEffect(() => {
+    // 초기 탭 설정
+    console.log('Initial Tab:', initialTab);
+    setActiveTab(initialTab);
+  }, [initialTab]);
+
+  useEffect(() => {
     if (activeTab === '팔로잉') {
       fetchFollowingList();
     } else if (activeTab === '팔로워') {
       fetchFollowerList();
-    } else if (activeTab === '관람') {
+    } else if (activeTab === '기록') {
       fetchExhibitions();
     }
   }, [activeTab]);
@@ -55,6 +61,7 @@ const MyFollowScreen = () => {
         numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
         userName: userInfoData.userName,
       });
+      console.log('User Info:', userInfoData);
     } catch (error: any) {
       console.error(
         'Failed to fetch user info or total number:',
@@ -99,7 +106,8 @@ const MyFollowScreen = () => {
 
   const fetchExhibitions = async () => {
     try {
-      const response = await customAxios.get('/user/myPage/communication');
+      console.log('Fetching exhibitions...');
+      const response = await customAxios.get('/user/myPage/myReview');
       const data = response.data;
       const formattedExhibitions = data.map((item: any) => ({
         id: item.id,
@@ -109,8 +117,11 @@ const MyFollowScreen = () => {
         image: {uri: item.imageUrl},
       }));
       setExhibitions(formattedExhibitions);
-    } catch (error) {
-      console.error('Failed to fetch Exhibitions:', error);
+      console.log('Exhibitions data:', formattedExhibitions);
+
+      console.log('Exhibitions state in MyFollowScreen:', exhibitions);
+    } catch (error: any) {
+      console.error('Failed to fetch exhibitions:', error.response?.data);
     }
   };
 
@@ -141,7 +152,7 @@ const MyFollowScreen = () => {
             updateFollowingCount={updateFollowingCount}
           />
         )}
-        {activeTab === '관람' && (
+        {activeTab === '기록' && (
           <View style={{paddingTop: 20}}>
             <ExhibitionList exhibitions={exhibitions} />
           </View>

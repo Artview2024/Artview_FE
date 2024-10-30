@@ -51,13 +51,13 @@ const Tabs2: React.FC<Tabs2Props> = ({
       <Text style={[styles.countText, GlobalStyle.pointColor]}>
         {numberOfMyReviews}
       </Text>
-      <TouchableOpacity onPress={() => setActiveTab('관람')}>
+      <TouchableOpacity onPress={() => setActiveTab('기록')}>
         <Text
-          style={activeTab === '관람' ? styles.tabTextActive : styles.tabText}>
-          관람
+          style={activeTab === '기록' ? styles.tabTextActive : styles.tabText}>
+          기록
         </Text>
       </TouchableOpacity>
-      {activeTab === '관람' && <View style={styles.activeTabLine} />}
+      {activeTab === '기록' && <View style={styles.activeTabLine} />}
     </View>
   </View>
 );
