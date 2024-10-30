@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
     borderColor: '#EA1B83',
     borderRadius: 8,
     padding: 16,
-    marginVertical: 16,
   },
   header: {
     flexDirection: 'row',
