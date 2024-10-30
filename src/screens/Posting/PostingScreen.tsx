@@ -30,6 +30,7 @@ export default function PostingScreen() {
   const [exhibition, setExhibition] = useState<any>(null);
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
   const [content, setContent] = useState<string>('');
+  const [images, setImages] = useState<[string, string][]>([]); // 이미지 리스트 상태
 
   useEffect(() => {
     const fetchExhibitionDetails = async () => {
@@ -38,10 +39,10 @@ export default function PostingScreen() {
           const response = await customAxios.get(
             `/communications/retrieve/${recordId}`,
           );
-          console.log('GET 내용:', response.data);
           setExhibition(response.data);
-        } catch (error) {
-          console.error('GET 에러:', error);
+          setImages(Object.entries(response.data.imageAndTitle)); // 이미지 초기화
+        } catch (error: any) {
+          console.error('GET 에러:', error.response.data);
         }
       } else {
         console.error('recordId 없음');
@@ -50,6 +51,10 @@ export default function PostingScreen() {
 
     fetchExhibitionDetails();
   }, [recordId]);
+
+  const handleRemoveImage = (url: string) => {
+    setImages(images.filter(([imageUrl]) => imageUrl !== url));
+  };
 
   if (!exhibition) {
     return (
@@ -85,9 +90,7 @@ export default function PostingScreen() {
   const handlePost = async () => {
     if (exhibition) {
       try {
-        const imageAndTitle = Object.entries(
-          exhibition.imageAndTitle as Record<string, string>,
-        ).reduce((acc, [url, title]) => {
+        const imageAndTitle = images.reduce((acc, [url, title]) => {
           acc[url] = title;
           return acc;
         }, {} as Record<string, string>);
@@ -125,7 +128,6 @@ export default function PostingScreen() {
   return (
     <View style={[GlobalStyle.container]}>
       <ScrollView>
-        {/* 헤더 */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <BackIcon
@@ -137,7 +139,6 @@ export default function PostingScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* 전시 정보 */}
         <View style={{paddingTop: 25}}>
           <View
             style={{
@@ -174,17 +175,21 @@ export default function PostingScreen() {
         <View style={{marginTop: 18}}>
           <FlatList
             horizontal
-            data={Object.entries(exhibition.imageAndTitle)}
+            data={images}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => (
               <View style={styles.imageWrapper}>
                 <Image source={{uri: item[0]}} style={styles.imageItem} />
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={() => handleRemoveImage(item[0])}>
+                  <Text style={styles.deleteButtonText}>&nbsp;X&nbsp;</Text>
+                </TouchableOpacity>
               </View>
             )}
           />
         </View>
 
-        {/* 글쓰기 입력 */}
         <View style={{marginTop: 28}}>
           <Text style={[{fontWeight: 'bold', marginBottom: 10, color: '#000'}]}>
             글쓰기
@@ -201,7 +206,6 @@ export default function PostingScreen() {
           />
         </View>
 
-        {/* 키워드 버튼 */}
         <View style={{marginTop: 28}}>
           <Text
             style={[
@@ -237,7 +241,6 @@ export default function PostingScreen() {
           </View>
         </View>
 
-        {/* 게시 버튼 */}
         <TouchableOpacity
           style={[
             GlobalStyle.activeButton,
@@ -267,6 +270,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#333',
     textAlign: 'center',
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: 30,
+    padding: 4,
+  },
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
   EmotionButton: {
     flexBasis: '22%',

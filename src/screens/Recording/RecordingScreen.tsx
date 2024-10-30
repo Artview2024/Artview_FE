@@ -206,7 +206,11 @@ export default function RecordingScreen() {
           await handlePostSubmit(dataToSend, rating);
         }
         setModalVisible(false);
-        navigation.navigate('Records');
+        if (isEditMode) {
+          navigation.navigate('Records');
+        } else {
+          navigation.navigate('Home');
+        }
       } catch (error) {
         console.error('Error:', error);
       }
