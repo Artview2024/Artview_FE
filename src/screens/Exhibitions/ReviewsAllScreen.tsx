@@ -5,6 +5,7 @@ import ExhibitionSimpleInfo from '../../components/Exhibitions/ExhibitionSimpleI
 import ReviewCard from '../../components/Exhibitions/ReviewCard';
 import Text from '../../components/Text';
 import GlobalStyle from '../../styles/GlobalStyle';
+import RatingBox from '../../components/Exhibitions/RatingBox';
 
 // mock 리뷰 데이터
 const mockReviews = [
@@ -33,6 +34,9 @@ export default function ReviewsAllScreen() {
       <ScrollView>
         <Header title={''} />
         <ExhibitionSimpleInfo />
+        <View style={{paddingTop: 24}}>
+          <RatingBox rating={3.2} participants={3} />
+        </View>
         <View style={{paddingVertical: 24}}>
           <View style={styles.titleContainer}>
             <Text style={styles.sectionTitle}>관람 후기</Text>
@@ -50,7 +54,6 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    paddingVertical: 18,
   },
   sectionTitle: {
     fontSize: 20,

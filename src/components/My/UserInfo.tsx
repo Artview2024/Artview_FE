@@ -48,7 +48,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
           navigation.navigate('MyFollowScreen', {activeTab: '관람'})
         }>
         <View style={{flexDirection: 'row'}}>
-          <Text style={styles.statsText}>관람수 </Text>
+          <Text style={styles.statsText}>기록수 </Text>
           <Text style={[styles.statsText, {color: '#EA1B83'}]}>{enjoyed}</Text>
         </View>
       </TouchableOpacity>

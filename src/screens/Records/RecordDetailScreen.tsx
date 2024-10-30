@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import {useRoute, RouteProp, useNavigation} from '@react-navigation/native';
 import customAxios from '../../services/customAxios';
+import Text from '../../components/Text';
 import {StackParamList, Record} from '../../navigator/StackParamList';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
 import GlobalStyle from '../../styles/GlobalStyle';
-import Text from '../../components/Text';
 
 type RecordDetailScreenRouteProp = RouteProp<StackParamList, 'RecordDetail'>;
 
@@ -41,7 +41,12 @@ export default function RecordDetailScreen() {
   const renderItem = ({
     item,
   }: {
-    item: {image: string; title: string; artist: string; memo: string};
+    item: {
+      image: string;
+      title: string;
+      artist: string;
+      memo: string;
+    };
   }) => (
     <View style={[{width: PAGE_WIDTH}]}>
       <Image source={{uri: item.image}} style={styles.imagePreview} />

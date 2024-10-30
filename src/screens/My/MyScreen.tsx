@@ -74,7 +74,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
   useEffect(() => {
     const fetchPostings = async () => {
       try {
-        const response = await customAxios.get('/user/myPage/myReview');
+        const response = await customAxios.get('/user/myPage/communication');
         const data = response.data;
         const formattedPostings = data.map((item: any) => ({
           id: item.id,
@@ -90,7 +90,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
 
     const fetchExhibitions = async () => {
       try {
-        const response = await customAxios.get('/user/myPage/communication');
+        const response = await customAxios.get('/user/myPage/myReview');
         const data = response.data;
         const formattedExhibitions = data.map((item: any) => ({
           id: item.id,
@@ -107,6 +107,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
 
     fetchPostings();
     fetchExhibitions();
+    console.log(exhibitions);
   }, []);
 
   if (loading) {

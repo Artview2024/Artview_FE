@@ -153,6 +153,9 @@ export default function RecordingScreen() {
 
   const handlePrevious = () => {
     if (artIndex > 0) {
+      const updatedArtList = updateArtImage(artIndex, imageUri, artList);
+      setArtList(updatedArtList);
+
       setArtIndex(artIndex - 1);
       scrollViewRef.current?.scrollTo({y: 0, animated: false});
     }
@@ -177,7 +180,6 @@ export default function RecordingScreen() {
       }
 
       setFinalData({
-        id: 10001, // 임시 ID
         name: exhibitionName,
         date: exhibitionDate,
         gallery: gallery,
@@ -204,7 +206,11 @@ export default function RecordingScreen() {
           await handlePostSubmit(dataToSend, rating);
         }
         setModalVisible(false);
-        navigation.navigate('Records');
+        if (isEditMode) {
+          navigation.navigate('Records');
+        } else {
+          navigation.navigate('Home');
+        }
       } catch (error) {
         console.error('Error:', error);
       }

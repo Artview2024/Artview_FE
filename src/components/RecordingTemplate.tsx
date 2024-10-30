@@ -94,21 +94,29 @@ const RecordingTemplate: React.FC<RecordingTemplateProps> = ({
         placeholder="작품명"
         value={title}
         onChangeText={setTitle}
+        placeholderTextColor={'black'}
       />
       <TextInput
         style={[GlobalStyle.inputBox, {marginBottom: 16, color: 'black'}]}
         placeholder="작가"
         value={artist}
         onChangeText={setArtist}
+        placeholderTextColor={'black'}
       />
       <TextInput
         style={[
           GlobalStyle.inputBox,
-          {marginBottom: 16, height: 130, color: 'black'},
+          {
+            marginBottom: 16,
+            height: 130,
+            textAlignVertical: 'top',
+            color: 'black',
+          },
         ]}
         placeholder="메모"
         value={memo}
         onChangeText={setMemo}
+        placeholderTextColor={'black'}
       />
     </View>
   );

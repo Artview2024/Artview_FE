@@ -60,7 +60,7 @@ export default function PostingStartScreen() {
 
   return (
     <View style={[GlobalStyle.container, {flex: 1}]}>
-      <Header title={''}></Header>
+      <Header title={'전시 선택'}></Header>
       {records.length > 0 ? (
         <Records
           exhibitions={records}
