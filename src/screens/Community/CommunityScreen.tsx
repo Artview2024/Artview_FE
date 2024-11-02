@@ -15,7 +15,6 @@ import {
 } from '@react-navigation/native';
 import {useInfiniteQuery} from '@tanstack/react-query';
 
-import {API_BASE_URL} from '@env';
 import GlobalStyle from '../../styles/GlobalStyle';
 import CommunityCard from '../../components/Community/CommunityCard';
 import FilterTabs from '../../components/Community/FilterTabs';
@@ -39,22 +38,6 @@ const fetchPosts = async ({
 }) => {
   const apiCategory = category === '전체' ? 'all' : 'follow';
 
-  //   const response = await fetch(
-  //     `${API_BASE_URL}/communications/main/${apiCategory}/${pageParam}`,
-  //     {
-  //       method: 'GET',
-  //       headers: {
-  //         Accept: 'application/json',
-  //       },
-  //     },
-  //   );
-
-  //   if (!response.ok) {
-  //     throw new Error('Failed to fetch posts');
-  //   }
-
-  //   return response.json();
-  // };
   const response = await customAxios.get(
     `/communications/main/${apiCategory}/${pageParam}`,
   );
