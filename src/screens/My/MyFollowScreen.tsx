@@ -27,7 +27,6 @@ const MyFollowScreen = () => {
   const [exhibitions, setExhibitions] = useState([]);
 
   useEffect(() => {
-    // 초기 탭 설정
     console.log('Initial Tab:', initialTab);
     setActiveTab(initialTab);
   }, [initialTab]);
@@ -61,7 +60,6 @@ const MyFollowScreen = () => {
         numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
         userName: userInfoData.userName,
       });
-      console.log('User Info:', userInfoData);
     } catch (error: any) {
       console.error(
         'Failed to fetch user info or total number:',
@@ -81,7 +79,6 @@ const MyFollowScreen = () => {
           isFollowing: item.isFollowing,
         })) || [];
       setFollowings(data);
-      console.log('Following list:', data);
     } catch (error: any) {
       console.error('Failed to fetch following list:', error.response?.data);
     }
@@ -98,7 +95,6 @@ const MyFollowScreen = () => {
           isFollowing: item.isFollowing,
         })) || [];
       setFollowers(data);
-      console.log('Follower list:', data);
     } catch (error: any) {
       console.error('Failed to fetch follower list:', error.response?.data);
     }
@@ -117,9 +113,6 @@ const MyFollowScreen = () => {
         image: {uri: item.imageUrl},
       }));
       setExhibitions(formattedExhibitions);
-      console.log('Exhibitions data:', formattedExhibitions);
-
-      console.log('Exhibitions state in MyFollowScreen:', exhibitions);
     } catch (error: any) {
       console.error('Failed to fetch exhibitions:', error.response?.data);
     }

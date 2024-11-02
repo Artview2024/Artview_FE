@@ -23,6 +23,7 @@ import SearchIcon from '../../assets/icons/search-icon.svg';
 import NotificationIcon from '../../assets/icons/notification-icon.svg';
 import {StackParamList} from '../../navigator/StackParamList';
 import customAxios from '../../services/customAxios';
+import useRefresh from '../../hooks/useRefresh';
 
 type PageType = {
   detailCommunicationsContentResponseDtoList: any[];
@@ -51,9 +52,7 @@ const fetchPosts = async ({
 
 export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState('전체');
-  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
-
   const ref = useRef<FlatListType<any>>(null);
   useScrollToTop(ref);
 
@@ -64,6 +63,8 @@ export default function CommunityScreen() {
       initialPageParam: 0,
       getNextPageParam: lastPage => lastPage.nextCursor,
     });
+
+  const {refreshing, onRefresh} = useRefresh(refetch);
 
   const posts =
     data?.pages.flatMap(
@@ -80,14 +81,8 @@ export default function CommunityScreen() {
     useCallback(() => {
       ref.current?.scrollToOffset({animated: true, offset: 0});
       refetch();
-    }, []),
+    }, [refetch]),
   );
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  };
 
   return (
     <View style={GlobalStyle.container}>
@@ -132,7 +127,7 @@ export default function CommunityScreen() {
         ListFooterComponent={() =>
           isFetchingNextPage ? <Text>Loading...</Text> : null
         }
-        ref={ref} // ref에 FlatList 연결
+        ref={ref}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

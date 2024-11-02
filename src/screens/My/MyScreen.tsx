@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState, useCallback} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView, RefreshControl} from 'react-native';
 import customAxios from '../../services/customAxios';
 import Text from '../../components/Text';
 import {useScrollToTop, useFocusEffect} from '@react-navigation/native';
@@ -11,6 +11,7 @@ import ExhibitionList from '../../components/My/ExhibitionList';
 import MyInterests from '../../components/My/MyInterests';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackParamList} from '../../navigator/StackParamList';
+import useRefresh from '../../hooks/useRefresh';
 
 type MyScreenNavigationProp = StackNavigationProp<StackParamList, 'MyScreen'>;
 
@@ -33,82 +34,92 @@ export default function MyScreen({navigation}: MyScreenProps) {
   const [interests, setInterests] = useState(['현대미술', '공예']);
   const [loading, setLoading] = useState(true);
 
+  const refetch = async () => {
+    setLoading(true);
+    await fetchAllData();
+    setLoading(false);
+  };
+
+  const {refreshing, onRefresh} = useRefresh(refetch);
+
   useScrollToTop(ref);
+
+  const fetchUserInfo = async () => {
+    try {
+      const userInfoResponse = await customAxios.get('/user/myPage/userInfo');
+      const userInfoData = userInfoResponse.data;
+      const totalNumberResponse = await customAxios.get(
+        '/user/myPage/totalNumber',
+      );
+      const totalNumberData = totalNumberResponse.data;
+
+      setUserInfo({
+        following: totalNumberData.following.toString(),
+        follower: totalNumberData.follower.toString(),
+        numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
+        userName: userInfoData.userName,
+        userImageUrl: userInfoData.userImageUrl,
+      });
+      setLoading(false);
+    } catch (error: any) {
+      console.error(
+        'Failed to fetch user info or total number:',
+        error.response?.data,
+      );
+      setLoading(false);
+    }
+  };
+
+  const fetchPostings = async () => {
+    try {
+      const response = await customAxios.get('/user/myPage/communication');
+      const data = response.data;
+      const formattedPostings = data.map((item: any) => ({
+        id: item.id,
+        name: item.title,
+        date: item.date,
+        image: {uri: item.imageUrl},
+      }));
+      setPostings(formattedPostings);
+    } catch (error: any) {
+      console.error('Failed to fetch postings:', error.response.data);
+    }
+  };
+
+  const fetchExhibitions = async () => {
+    try {
+      const response = await customAxios.get('/user/myPage/myReview');
+      const data = response.data;
+      const formattedExhibitions = data.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        date: item.date,
+        gallery: item.gallery,
+        image: {uri: item.imageUrl},
+      }));
+      setExhibitions(formattedExhibitions);
+    } catch (error: any) {
+      console.error('Failed to fetch exhibitions:', error.response.data);
+    }
+  };
+
+  const fetchAllData = async () => {
+    setLoading(true);
+    await fetchUserInfo();
+    await fetchPostings();
+    await fetchExhibitions();
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      setActiveTab('게시물');
+      fetchAllData();
     }, []),
   );
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const userInfoResponse = await customAxios.get('/user/myPage/userInfo');
-        const userInfoData = userInfoResponse.data;
-        const totalNumberResponse = await customAxios.get(
-          '/user/myPage/totalNumber',
-        );
-        const totalNumberData = totalNumberResponse.data;
-
-        setUserInfo({
-          following: totalNumberData.following.toString(),
-          follower: totalNumberData.follower.toString(),
-          numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
-          userName: userInfoData.userName,
-          userImageUrl: userInfoData.userImageUrl,
-        });
-        setLoading(false);
-      } catch (error: any) {
-        console.error(
-          'Failed to fetch user info or total number:',
-          error.response?.data,
-        );
-        setLoading(false);
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
-
-  useEffect(() => {
-    const fetchPostings = async () => {
-      try {
-        const response = await customAxios.get('/user/myPage/communication');
-        const data = response.data;
-        const formattedPostings = data.map((item: any) => ({
-          id: item.id,
-          name: item.title,
-          date: item.date,
-          image: {uri: item.imageUrl},
-        }));
-        setPostings(formattedPostings);
-      } catch (error) {
-        console.error('Failed to fetch postings:', error);
-      }
-    };
-
-    const fetchExhibitions = async () => {
-      try {
-        const response = await customAxios.get('/user/myPage/myReview');
-        const data = response.data;
-        const formattedExhibitions = data.map((item: any) => ({
-          id: item.id,
-          title: item.title,
-          date: item.date,
-          gallery: item.gallery,
-          image: {uri: item.imageUrl},
-        }));
-        setExhibitions(formattedExhibitions);
-      } catch (error: any) {
-        console.error('Failed to fetch exhibitions:', error.response.data);
-      }
-    };
-
-    fetchPostings();
-    fetchExhibitions();
-    console.log(exhibitions);
-  }, []);
 
   if (loading) {
     return (
@@ -120,7 +131,11 @@ export default function MyScreen({navigation}: MyScreenProps) {
 
   return (
     <View style={[GlobalStyle.container]}>
-      <ScrollView ref={ref}>
+      <ScrollView
+        ref={ref}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <View
           style={{
             flexDirection: 'row',
@@ -140,7 +155,6 @@ export default function MyScreen({navigation}: MyScreenProps) {
 
         <MyInterests interests={interests} />
 
-        {/* 탭 */}
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === '게시물' ? (
           <PostingList postings={postings} />

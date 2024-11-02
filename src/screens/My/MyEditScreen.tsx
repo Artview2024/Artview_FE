@@ -88,26 +88,6 @@ const MyEditScreen = () => {
         placeholderTextColor="#828282"
       />
 
-      <Text style={styles.label}>성별</Text>
-      <View style={[styles.inputBox, {paddingLeft: 0}]}>
-        <Picker
-          selectedValue={gender}
-          onValueChange={value => setGender(value)}
-          style={styles.picker}>
-          <Picker.Item label="성별을 선택해주세요" value="" />
-          <Picker.Item label="여성" value="여성" />
-          <Picker.Item label="남성" value="남성" />
-          <Picker.Item label="선택 안 함" value="선택 안 함" />
-        </Picker>
-      </View>
-
-      <Text style={styles.label}>생년월일</Text>
-      <TouchableOpacity
-        onPress={() => setShowDatePicker(true)}
-        style={[styles.inputBox, {justifyContent: 'center'}]}>
-        <Text>{birthday.toISOString().split('T')[0]}</Text>
-      </TouchableOpacity>
-
       {showDatePicker && (
         <DatePicker
           modal
