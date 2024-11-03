@@ -43,6 +43,7 @@ export type StackParamList = {
   RecordDetail: {record: Record};
   Community: {newPost?: any};
   CommunityDetail: {communicationsId: number};
+  OtherUser: {writerId?: number};
   MyScreen: undefined;
   MyFollowScreen: {activeTab: string};
   MyEdit: {userInterest?: any};

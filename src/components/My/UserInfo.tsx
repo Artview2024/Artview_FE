@@ -3,12 +3,12 @@ import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import Text from '../Text';
 
 interface UserInfoProps {
-  following: string;
-  follower: string;
-  enjoyed: string;
+  following: string | number;
+  follower: string | number;
+  enjoyed: string | number;
   userName: string;
   userImageUrl: string;
-  navigation: any;
+  navigation?: any;
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({

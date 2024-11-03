@@ -17,7 +17,6 @@ const MyInterests: React.FC<MyInterestsProps> = ({interests}) => {
         style={styles.headerContainer}
         onPress={() => navigation.navigate('InterestSelection')}>
         <Text style={styles.headerText}>관심 분야</Text>
-        <Text style={styles.headerText}>&gt;</Text>
       </TouchableOpacity>
       <View style={styles.buttonsContainer}>
         {interests.map((interest: string, index: number) => (
