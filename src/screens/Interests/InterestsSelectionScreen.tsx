@@ -1,9 +1,13 @@
+// InterestSelectionScreen.tsx
+
 import React, {useState} from 'react';
 import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import Header from '../../components/My/Header';
 import Text from '../../components/Text';
-import InterestCategoryButton from '../../components/Interests/InterestCategoryButton'; // 새로 만든 컴포넌트 가져오기
+import InterestCategoryButton from '../../components/Interests/InterestCategoryButton';
 import GlobalStyle from '../../styles/GlobalStyle';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {StackParamList} from '../../navigator/StackParamList';
 
 const mockCategories = [
   {title: '현대미술', imageUrl: 'https://example.com/image1.jpg'},
@@ -17,17 +21,24 @@ const mockCategories = [
   {title: '특별 전시', imageUrl: 'https://example.com/image1.jpg'},
 ];
 
-const InterestSelectionScreen = () => {
+const InterestSelectionScreen: React.FC = () => {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
+  // 카테고리 선택 로직
   const handleCategoryPress = (category: string) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories(
         selectedCategories.filter(item => item !== category),
       );
-    } else {
+    } else if (selectedCategories.length < 3) {
       setSelectedCategories([...selectedCategories, category]);
     }
+  };
+
+  // 선택 완료 시 MyEditScreen으로 선택된 카테고리 데이터 전달
+  const handleSubmit = () => {
+    navigation.navigate('MyEdit', {userInterest: selectedCategories});
   };
 
   return (
@@ -39,8 +50,8 @@ const InterestSelectionScreen = () => {
           관심 있는{'\n'}전시회 카테고리를 선택해주세요
         </Text>
         <Text style={styles.subtitle}>
-          2개 이상 선택해주세요{'\n'}선택하신 카테고리는 마이페이지에서 확인
-          가능합니다
+          최대 3개까지 선택 가능합니다.{'\n'}선택하신 카테고리는 마이페이지에서
+          확인 가능합니다
         </Text>
 
         <View style={styles.categoriesContainer}>
@@ -56,7 +67,7 @@ const InterestSelectionScreen = () => {
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.submitButton}>
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>선택 완료</Text>
       </TouchableOpacity>
     </View>

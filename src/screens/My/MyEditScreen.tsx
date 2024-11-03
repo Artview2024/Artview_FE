@@ -12,21 +12,31 @@ import Header from '../../components/My/Header';
 import GlobalStyle from '../../styles/GlobalStyle';
 import Text from '../../components/Text';
 import customAxios from '../../services/customAxios';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {
+  NavigationProp,
+  useNavigation,
+  useRoute,
+  RouteProp,
+} from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
 import FormData from 'form-data';
 
+interface RouteParams {
+  userInterest?: string[];
+}
+
 const MyEditScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const route = useRoute<RouteProp<StackParamList, 'MyEdit'>>();
 
-  // State for initial user info
+  const {userInterest = []} = route.params || {};
+
   const [initialUserName, setInitialUserName] = useState<string>('');
   const [initialInterests, setInitialInterests] = useState<string[]>([]);
   const [initialImageUri, setInitialImageUri] = useState<string>('');
 
-  // State for updated user info
   const [userName, setUserName] = useState<string>('');
   const [interests, setInterests] = useState<string[]>([]);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
@@ -35,7 +45,7 @@ const MyEditScreen: React.FC = () => {
     useImagePicker();
   const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
 
-  // Fetch user information
+  // 유저 정보 가져오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -55,6 +65,12 @@ const MyEditScreen: React.FC = () => {
 
     fetchUserInfo();
   }, []);
+
+  useEffect(() => {
+    if (userInterest.length > 0) {
+      setInterests(userInterest);
+    }
+  }, [userInterest]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(

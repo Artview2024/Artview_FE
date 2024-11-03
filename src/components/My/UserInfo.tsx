@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   },
   statsText: {fontSize: 14, color: '#828282'},
   editProfileButton: {
-    marginVertical: 15,
+    marginVertical: 10,
     paddingVertical: 6,
     paddingHorizontal: 15,
     backgroundColor: '#EA1B83',

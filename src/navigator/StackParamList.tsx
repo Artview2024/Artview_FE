@@ -45,10 +45,10 @@ export type StackParamList = {
   CommunityDetail: {communicationsId: number};
   MyScreen: undefined;
   MyFollowScreen: {activeTab: string};
+  MyEdit: {userInterest?: any};
   InterestSelection: undefined;
   ExhibitionDetail: undefined;
   ExhibitionsAll: {title: string};
   ReviewsAll: undefined;
-  MyEdit: undefined;
   Search: undefined;
 };
