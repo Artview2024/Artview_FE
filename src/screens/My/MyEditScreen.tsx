@@ -16,27 +16,40 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
+import FormData from 'form-data';
 
-const MyEditScreen = () => {
+const MyEditScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
-  const [userName, setUserName] = useState('');
-  const [interests, setInterests] = useState(['사진', '과학기술']);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  // State for initial user info
+  const [initialUserName, setInitialUserName] = useState<string>('');
+  const [initialInterests, setInitialInterests] = useState<string[]>([]);
+  const [initialImageUri, setInitialImageUri] = useState<string>('');
+
+  // State for updated user info
+  const [userName, setUserName] = useState<string>('');
+  const [interests, setInterests] = useState<string[]>([]);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
 
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
     useImagePicker();
   const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
 
+  // Fetch user information
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const response = await customAxios.get('/user/myPage/userInfo');
         const data = response.data;
+        setInitialUserName(data.userName);
+        setInitialInterests(data.usersInterest || []);
+        setInitialImageUri(data.userImageUrl);
+
         setUserName(data.userName);
+        setInterests(data.usersInterest || []);
         setImageUri(data.userImageUrl);
       } catch (error: any) {
-        console.error('Failed to fetch user info:', error.response.data);
+        console.error('유저 정보 가져오기 실패:', error.response?.data);
       }
     };
 
@@ -64,18 +77,9 @@ const MyEditScreen = () => {
       '사진 변경',
       '어떻게 사진을 변경하시겠습니까?',
       [
-        {
-          text: '카메라로 촬영',
-          onPress: requestCameraPermission,
-        },
-        {
-          text: '갤러리에서 선택',
-          onPress: handleSelectImage,
-        },
-        {
-          text: '취소',
-          style: 'cancel',
-        },
+        {text: '카메라로 촬영', onPress: requestCameraPermission},
+        {text: '갤러리에서 선택', onPress: handleSelectImage},
+        {text: '취소', style: 'cancel'},
       ],
       {cancelable: true},
     );
@@ -83,16 +87,47 @@ const MyEditScreen = () => {
 
   const handleSubmit = async () => {
     try {
-      const updatedData: any = {};
-      if (userName) updatedData.userName = userName;
-      if (imageUri) updatedData.userImageUrl = imageUri;
-      if (interests.length > 0) updatedData.usersInterest = interests;
+      let updatedData: Record<string, any> = {};
 
-      await customAxios.patch('/user/myPage/modify', updatedData);
+      if (userName !== initialUserName) {
+        updatedData.userName = userName;
+      }
+      if (JSON.stringify(interests) !== JSON.stringify(initialInterests)) {
+        updatedData.usersInterest = interests;
+      }
+      if (imageUri !== initialImageUri) {
+        if (imageUri.startsWith('file://')) {
+          updatedData = new FormData();
+          updatedData.append('userName', userName);
+          updatedData.append('usersInterest', JSON.stringify(interests));
+          updatedData.append('userImageUrl', {
+            uri: imageUri,
+            type: 'image/jpeg',
+            name: 'profile_image.jpeg',
+          } as any);
+        } else {
+          updatedData.userImageUrl = imageUri;
+        }
+      }
+
+      if (Object.keys(updatedData).length === 0) {
+        Alert.alert('변경 사항이 없습니다.');
+        return;
+      }
+
+      await customAxios.patch('/user/modify/myPage', updatedData, {
+        headers: {
+          'Content-Type': imageUri.startsWith('file://')
+            ? 'multipart/form-data'
+            : 'application/json',
+        },
+      });
+
       Alert.alert('성공', '프로필이 성공적으로 수정되었습니다.');
-      navigation.goBack();
+      navigation.navigate('MyScreen');
+      console.log(updatedData);
     } catch (error: any) {
-      console.error(error.response?.data);
+      console.error('프로필 수정 실패:', error.response?.data);
       Alert.alert('오류', '프로필 수정에 실패했습니다.');
     }
   };
@@ -103,9 +138,14 @@ const MyEditScreen = () => {
 
       <View style={styles.profileContainer}>
         <Image
-          source={{uri: imageUri || 'https://example.com/default-image.jpg'}}
+          source={
+            imageUri && imageUri.startsWith('http')
+              ? {uri: imageUri}
+              : require('../../assets/images/user.png')
+          }
           style={styles.profileImage}
         />
+
         <TouchableOpacity onPress={handleImageChange}>
           <Text style={styles.changeImageText}>프로필 사진 변경</Text>
         </TouchableOpacity>
@@ -173,7 +213,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 11,
     paddingLeft: 10,
-    fontWeight: 'regular',
+    fontWeight: '400',
   },
   interestsContainer: {
     flexDirection: 'row',

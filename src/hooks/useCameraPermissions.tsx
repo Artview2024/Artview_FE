@@ -5,26 +5,19 @@ export const useCameraPermission = (handleTakePhoto: () => void) => {
     const cameraGranted = await PermissionsAndroid.check(
       PermissionsAndroid.PERMISSIONS.CAMERA,
     );
-    const storageGranted = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-    );
-    return cameraGranted && storageGranted;
+    return cameraGranted;
   };
 
   const requestCameraPermission = async () => {
     const hasPermission = await checkCameraPermissions();
     if (!hasPermission) {
       try {
-        const granted = await PermissionsAndroid.requestMultiple([
+        const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.CAMERA,
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        ]);
-        if (
-          granted['android.permission.CAMERA'] ===
-            PermissionsAndroid.RESULTS.GRANTED &&
-          granted['android.permission.WRITE_EXTERNAL_STORAGE'] ===
-            PermissionsAndroid.RESULTS.GRANTED
-        ) {
+        );
+        console.log('Camera permission request result:', granted);
+
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           handleTakePhoto();
         } else {
           Alert.alert(
@@ -33,7 +26,7 @@ export const useCameraPermission = (handleTakePhoto: () => void) => {
           );
         }
       } catch (err) {
-        console.warn(err);
+        console.warn('Permission request error:', err);
       }
     } else {
       handleTakePhoto();

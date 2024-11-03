@@ -7,8 +7,6 @@ import ExhibitionList from '../../components/My/ExhibitionList';
 import Records from '../../components/Records';
 import {StackParamList} from '../../navigator/StackParamList';
 import {useInfiniteQuery} from '@tanstack/react-query';
-import {API_BASE_URL} from '@env';
-import axios from 'axios';
 import customAxios from '../../services/customAxios';
 
 type ExhibitionsScreenRouteProp = RouteProp<StackParamList, 'ExhibitionsAll'>;
@@ -51,15 +49,11 @@ const fetchExhibitions = async ({
     title === '진행 중인 전시' ? '/exhibition/ongoing' : '/exhibition/upcoming';
 
   try {
-    const response = await axios.get(
-      `${API_BASE_URL}${endpoint}/${pageParam}`,
-      {
-        headers: {
-          Accept: 'application/json',
-        },
+    const response = await customAxios.get(`${endpoint}/${pageParam}`, {
+      headers: {
+        Accept: 'application/json',
       },
-    );
-    console.log(`${title} Exhibitions Data:`, response.data);
+    });
     return response.data;
   } catch (error: any) {
     console.error(
@@ -89,14 +83,19 @@ export default function ExhibitionsAllScreen() {
 
   const exhibitions =
     data?.pages.flatMap(page =>
-      page.exhibitionInfos.map((item: any) => ({
-        id: item.exhibitionId,
-        title: item.title,
-        name: item.title,
-        date: `${item.startDate}~${item.finishDate}`,
-        gallery: item.location,
-        image: {uri: item.mainImageUrl},
-      })),
+      page.exhibitionInfos.map((item: any) => {
+        const startDate = item.startDate.split(' ')[0];
+        const finishDate = item.finishDate.split(' ')[0];
+
+        return {
+          id: item.exhibitionId,
+          title: item.title,
+          name: item.title,
+          date: `${startDate}~${finishDate}`,
+          gallery: item.location,
+          image: {uri: item.mainImageUrl},
+        };
+      }),
     ) || [];
 
   const handleExhibitionSelect = (id: number) => {
@@ -117,7 +116,7 @@ export default function ExhibitionsAllScreen() {
       ) : (
         <FlatList
           data={exhibitions}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           renderItem={({item}) => <ExhibitionList exhibitions={[item]} />}
           onEndReached={() => {
             if (hasNextPage) {

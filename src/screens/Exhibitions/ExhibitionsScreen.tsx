@@ -9,8 +9,6 @@ import FlatListExhibitions from '../../components/Exhibitions/FlatListExhibition
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
 import customAxios from '../../services/customAxios';
-import axios from 'axios';
-import {API_BASE_URL} from '@env';
 
 const recommendedExhibitions = [
   {
@@ -46,12 +44,12 @@ export default function ExhibitionsScreen() {
 
   useEffect(() => {
     fetchOngoingExhibitions();
-    fetchUpcomingExhibitions();
+    //fetchUpcomingExhibitions();
   }, []);
 
   const fetchOngoingExhibitions = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/exhibition/ongoing/0`);
+      const response = await customAxios.get(`/exhibition/ongoing/0`);
       const data = response.data.exhibitionInfos.map((item: any) => ({
         key: item.exhibitionId.toString(),
         title: item.title,
@@ -72,7 +70,7 @@ export default function ExhibitionsScreen() {
 
   const fetchUpcomingExhibitions = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/exhibition/upcoming/0`);
+      const response = await customAxios.get(`/exhibition/upcoming/0`);
       const data = response.data.exhibitionInfos.map((item: any) => ({
         key: item.exhibitionId.toString(),
         title: item.title,
@@ -118,11 +116,11 @@ export default function ExhibitionsScreen() {
           small={true}
           title={'진행 중인 전시'}
         />
-        <FlatListExhibitions
+        {/* <FlatListExhibitions
           data={upcomingExhibitions}
           small={true}
           title={'진행 예정 전시'}
-        />
+        /> */}
       </ScrollView>
     </View>
   );
