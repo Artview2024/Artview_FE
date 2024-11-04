@@ -2,37 +2,43 @@ import React, {useEffect, useRef, useState, useCallback} from 'react';
 import {View, StyleSheet, ScrollView, RefreshControl} from 'react-native';
 import customAxios from '../../services/customAxios';
 import Text from '../../components/Text';
-import {useScrollToTop, useFocusEffect} from '@react-navigation/native';
+import {
+  useScrollToTop,
+  useFocusEffect,
+  useRoute,
+} from '@react-navigation/native';
 import GlobalStyle from '../../styles/GlobalStyle';
 import UserInfo from '../../components/My/UserInfo';
 import Tabs from '../../components/My/Tabs';
 import PostingList from '../../components/My/PostingList';
 import ExhibitionList from '../../components/My/ExhibitionList';
-import MyInterests from '../../components/My/MyInterests';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {StackParamList} from '../../navigator/StackParamList';
+import {RouteProp} from '@react-navigation/native';
 import useRefresh from '../../hooks/useRefresh';
+import MyInterests from '../../components/My/MyInterests';
+import Header from '../../components/My/Header';
 
-type MyScreenNavigationProp = StackNavigationProp<StackParamList, 'MyScreen'>;
+type OtherUserProfileRouteProp = RouteProp<StackParamList, 'OtherUser'>;
 
-interface MyScreenProps {
-  navigation: MyScreenNavigationProp;
-}
+const OtherUserScreen: React.FC = () => {
+  const route = useRoute<OtherUserProfileRouteProp>();
+  const {writerId} = route.params;
 
-export default function MyScreen({navigation}: MyScreenProps) {
   const ref = useRef(null);
   const [activeTab, setActiveTab] = useState('게시물');
   const [userInfo, setUserInfo] = useState({
-    following: '0',
-    follower: '0',
-    numberOfMyReviews: '0',
+    userId: writerId,
     userName: '',
     userImageUrl: '',
+    following: 0,
+    follower: 0,
+    numberOfMyReviews: 0,
   });
   const [postings, setPostings] = useState([]);
   const [exhibitions, setExhibitions] = useState([]);
-  const [interests, setInterests] = useState(['현대미술', '공예']);
+  const [interests, setInterests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const refetch = async () => {
     setLoading(true);
@@ -46,33 +52,30 @@ export default function MyScreen({navigation}: MyScreenProps) {
 
   const fetchUserInfo = async () => {
     try {
-      const userInfoResponse = await customAxios.get('/user/myPage/userInfo');
-      const userInfoData = userInfoResponse.data;
-      const totalNumberResponse = await customAxios.get(
-        '/user/myPage/totalNumber',
+      const userResponse = await customAxios.get(`/user/userInfo/${writerId}`);
+      const totalResponse = await customAxios.get(
+        `/user/totalNumber/${writerId}`,
       );
-      const totalNumberData = totalNumberResponse.data;
 
       setUserInfo({
-        following: totalNumberData.following.toString(),
-        follower: totalNumberData.follower.toString(),
-        numberOfMyReviews: totalNumberData.numberOfMyReviews.toString(),
-        userName: userInfoData.userName,
-        userImageUrl: userInfoData.userImageUrl,
+        ...userResponse.data,
+        following: totalResponse.data.following.toString(),
+        follower: totalResponse.data.follower.toString(),
+        numberOfMyReviews: totalResponse.data.numberOfMyReviews.toString(),
       });
-      setLoading(false);
-    } catch (error: any) {
-      console.error(
-        'Failed to fetch user info or total number:',
-        error.response?.data,
+
+      const followResponse = await customAxios.get(
+        `/user/checkFollow/${writerId}`,
       );
-      setLoading(false);
+      setIsFollowing(followResponse.data);
+    } catch (error: any) {
+      console.error('Failed to fetch user data:', error.response?.data);
     }
   };
 
   const fetchPostings = async () => {
     try {
-      const response = await customAxios.get('/user/myPage/communication');
+      const response = await customAxios.get(`/user/communication/${writerId}`);
       const data = response.data;
       const formattedPostings = data.map((item: any) => ({
         id: item.id,
@@ -82,13 +85,13 @@ export default function MyScreen({navigation}: MyScreenProps) {
       }));
       setPostings(formattedPostings);
     } catch (error: any) {
-      console.error('Failed to fetch postings:', error.response.data);
+      console.error('Failed to fetch postings:', error.response?.data);
     }
   };
 
   const fetchExhibitions = async () => {
     try {
-      const response = await customAxios.get('/user/myPage/myReview');
+      const response = await customAxios.get(`/user/myReview/${writerId}`);
       const data = response.data;
       const formattedExhibitions = data.map((item: any) => ({
         id: item.id,
@@ -99,7 +102,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
       }));
       setExhibitions(formattedExhibitions);
     } catch (error: any) {
-      console.error('Failed to fetch exhibitions:', error.response.data);
+      console.error('Failed to fetch exhibitions:', error.response?.data);
     }
   };
 
@@ -113,7 +116,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
 
   useEffect(() => {
     fetchAllData();
-  }, []);
+  }, [writerId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -141,20 +144,21 @@ export default function MyScreen({navigation}: MyScreenProps) {
             flexDirection: 'row',
             alignItems: 'flex-start',
             justifyContent: 'space-between',
-          }}>
-          <Text style={GlobalStyle.header}>마이</Text>
-        </View>
+          }}></View>
+        <Header title={''} />
         <UserInfo
+          userId={writerId ?? 0}
           following={userInfo.following}
           follower={userInfo.follower}
           enjoyed={userInfo.numberOfMyReviews}
           userName={userInfo.userName}
           userImageUrl={userInfo.userImageUrl}
-          navigation={navigation}
+          isOtherUser={true}
+          isFollowing={isFollowing}
+          updateFollowingCount={newFollowing => setIsFollowing(newFollowing)}
         />
 
         <MyInterests interests={interests} />
-
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === '게시물' ? (
           <PostingList postings={postings} />
@@ -164,6 +168,28 @@ export default function MyScreen({navigation}: MyScreenProps) {
       </ScrollView>
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  stats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+  },
+});
+
+export default OtherUserScreen;

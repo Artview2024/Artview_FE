@@ -27,8 +27,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({
           isUserClickLick: true, // 좋아요 등록
         };
 
-        console.log('POST 요청 바디:', requestBody);
-
         await customAxios.post('/communications/like', requestBody);
 
         setLiked(true); // 로컬 상태 업데이트
@@ -39,15 +37,12 @@ const LikeButton: React.FC<LikeButtonProps> = ({
           isUserClickLick: false, // 좋아요 취소
         };
 
-        console.log('DELETE 요청 바디:', requestBody);
-
         await customAxios.delete('/communications/like', {data: requestBody});
 
         setLiked(false); // 로컬 상태 업데이트
       }
     } catch (error: any) {
       if (error.response) {
-        console.error('Error Message:', error.response.data.message);
         console.error('Error Details:', error.response.data);
       } else {
         console.error('좋아요 처리에 실패했습니다.', error.message);

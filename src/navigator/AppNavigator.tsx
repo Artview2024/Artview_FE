@@ -8,6 +8,7 @@ import RecordsScreen from '../screens/Records/RecordsScreen';
 import RecordDetailScreen from '../screens/Records/RecordDetailScreen';
 import PostingStartScreen from '../screens/Posting/PostingStartScreen';
 import PostingScreen from '../screens/Posting/PostingScreen';
+import MyScreen from '../screens/My/MyScreen';
 import MyFollowScreen from '../screens/My/MyFollowScreen';
 import MyEditScreen from '../screens/My/MyEditScreen';
 import ExhibitionDetailScreen from '../screens/Exhibitions/ExhibitionDetailScreen';
@@ -18,6 +19,7 @@ import CommunityDetailScreen from '../screens/Community/CommunityDetailScreen';
 import useAutoLogin from '../hooks/useAutoLogin';
 import InterestSelectionScreen from '../screens/Interests/InterestsSelectionScreen';
 import SearchScreen from '../screens/Search/SearchScreen';
+import OtherUserScreen from '../screens/Community/OtherUserScreen';
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -68,6 +70,16 @@ export default function AppNavigator() {
       <Stack.Screen
         name="CommunityDetail"
         component={CommunityDetailScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="OtherUser"
+        component={OtherUserScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="MyScreen"
+        component={MyScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen

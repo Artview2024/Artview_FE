@@ -6,41 +6,71 @@ import {
   Image,
   StyleSheet,
   Keyboard,
+  Alert,
 } from 'react-native';
 import Header from '../../components/My/Header';
 import GlobalStyle from '../../styles/GlobalStyle';
 import Text from '../../components/Text';
 import customAxios from '../../services/customAxios';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {
+  NavigationProp,
+  useNavigation,
+  useRoute,
+  RouteProp,
+} from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
-import DatePicker from 'react-native-date-picker';
-import {Picker} from '@react-native-picker/picker';
+import {useImagePicker} from '../../hooks/useImagePicker';
+import {useCameraPermission} from '../../hooks/useCameraPermissions';
+import FormData from 'form-data';
 
-const MyEditScreen = () => {
+interface RouteParams {
+  userInterest?: string[];
+}
+
+const MyEditScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const route = useRoute<RouteProp<StackParamList, 'MyEdit'>>();
 
-  const [userName, setUserName] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [gender, setGender] = useState('');
-  const [birthday, setBirthday] = useState(new Date('1995-08-15'));
-  const [interests, setInterests] = useState(['사진', '과학기술']);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const {userInterest = []} = route.params || {};
 
+  const [initialUserName, setInitialUserName] = useState<string>('');
+  const [initialInterests, setInitialInterests] = useState<string[]>([]);
+  const [initialImageUri, setInitialImageUri] = useState<string>('');
+
+  const [userName, setUserName] = useState<string>('');
+  const [interests, setInterests] = useState<string[]>([]);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
+
+  const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
+    useImagePicker();
+  const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
+
+  // 유저 정보 가져오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const response = await customAxios.get('/user/myPage/userInfo');
         const data = response.data;
+        setInitialUserName(data.userName);
+        setInitialInterests(data.usersInterest || []);
+        setInitialImageUri(data.userImageUrl);
+
         setUserName(data.userName);
-        setImageUrl(data.userImageUrl);
+        setInterests(data.usersInterest || []);
+        setImageUri(data.userImageUrl);
       } catch (error: any) {
-        console.error('Failed to fetch user info:', error.response.data);
+        console.error('유저 정보 가져오기 실패:', error.response?.data);
       }
     };
 
     fetchUserInfo();
   }, []);
+
+  useEffect(() => {
+    if (userInterest.length > 0) {
+      setInterests(userInterest);
+    }
+  }, [userInterest]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -58,75 +88,96 @@ const MyEditScreen = () => {
     };
   }, []);
 
-  const handleConfirmDate = (selectedDate: Date) => {
-    setBirthday(selectedDate);
-    setShowDatePicker(false);
+  const handleImageChange = () => {
+    Alert.alert(
+      '사진 변경',
+      '어떻게 사진을 변경하시겠습니까?',
+      [
+        {text: '카메라로 촬영', onPress: requestCameraPermission},
+        {text: '갤러리에서 선택', onPress: handleSelectImage},
+        {text: '취소', style: 'cancel'},
+      ],
+      {cancelable: true},
+    );
+  };
+
+  const handleSubmit = async () => {
+    try {
+      let updatedData: Record<string, any> = {};
+
+      if (userName !== initialUserName) {
+        updatedData.userName = userName;
+      }
+      if (JSON.stringify(interests) !== JSON.stringify(initialInterests)) {
+        updatedData.usersInterest = interests;
+      }
+      if (imageUri !== initialImageUri) {
+        if (imageUri.startsWith('file://')) {
+          updatedData = new FormData();
+          updatedData.append('userName', userName);
+          updatedData.append('usersInterest', JSON.stringify(interests));
+          updatedData.append('userImageUrl', {
+            uri: imageUri,
+            type: 'image/jpeg',
+            name: 'profile_image.jpeg',
+          } as any);
+        } else {
+          updatedData.userImageUrl = imageUri;
+        }
+      }
+
+      if (Object.keys(updatedData).length === 0) {
+        Alert.alert('변경 사항이 없습니다.');
+        return;
+      }
+
+      await customAxios.patch('/user/modify/myPage', updatedData, {
+        headers: {
+          'Content-Type': imageUri.startsWith('file://')
+            ? 'multipart/form-data'
+            : 'application/json',
+        },
+      });
+
+      Alert.alert('성공', '프로필이 성공적으로 수정되었습니다.');
+      navigation.navigate('MyScreen');
+      console.log(updatedData);
+    } catch (error: any) {
+      console.error('프로필 수정 실패:', error.response?.data);
+      Alert.alert('오류', '프로필 수정에 실패했습니다.');
+    }
   };
 
   return (
     <View style={[GlobalStyle.container]}>
-      <Header title={'프로필 수정'} />
+      <Header title="프로필 수정" />
 
-      <View style={{alignItems: 'center', marginVertical: 20}}>
+      <View style={styles.profileContainer}>
         <Image
-          source={{uri: imageUrl}}
-          style={{width: 80, height: 80, borderRadius: 40}}
+          source={
+            imageUri && imageUri.startsWith('http')
+              ? {uri: imageUri}
+              : require('../../assets/images/user.png')
+          }
+          style={styles.profileImage}
         />
-        <Text style={{fontSize: 20, fontWeight: 'bold', marginTop: 10}}>
-          {userName}
-        </Text>
-        <TouchableOpacity>
-          <Text style={{color: '#EA1B83', marginTop: 5}}>프로필 사진 변경</Text>
+
+        <TouchableOpacity onPress={handleImageChange}>
+          <Text style={styles.changeImageText}>프로필 사진 변경</Text>
         </TouchableOpacity>
       </View>
 
       <Text style={styles.label}>닉네임</Text>
       <TextInput
         value={userName}
+        onChangeText={setUserName}
         style={[styles.inputBox, {color: '#000'}]}
         placeholder="닉네임을 입력해주세요"
         placeholderTextColor="#828282"
       />
 
-      <Text style={styles.label}>성별</Text>
-      <View style={[styles.inputBox, {paddingLeft: 0}]}>
-        <Picker
-          selectedValue={gender}
-          onValueChange={value => setGender(value)}
-          style={styles.picker}>
-          <Picker.Item label="성별을 선택해주세요" value="" />
-          <Picker.Item label="여성" value="여성" />
-          <Picker.Item label="남성" value="남성" />
-          <Picker.Item label="선택 안 함" value="선택 안 함" />
-        </Picker>
-      </View>
-
-      <Text style={styles.label}>생년월일</Text>
-      <TouchableOpacity
-        onPress={() => setShowDatePicker(true)}
-        style={[styles.inputBox, {justifyContent: 'center'}]}>
-        <Text>{birthday.toISOString().split('T')[0]}</Text>
-      </TouchableOpacity>
-
-      {showDatePicker && (
-        <DatePicker
-          modal
-          mode="date"
-          open={showDatePicker}
-          date={birthday}
-          onConfirm={handleConfirmDate}
-          onCancel={() => setShowDatePicker(false)}
-        />
-      )}
-
       <Text style={[styles.label, {marginBottom: 0}]}>관심 분야</Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          marginTop: 15,
-          paddingLeft: 8,
-        }}>
+      <View style={styles.interestsContainer}>
         {interests.map((interest, index) => (
           <View key={index} style={styles.interestBox}>
             <Text>{interest}</Text>
@@ -140,16 +191,30 @@ const MyEditScreen = () => {
       </View>
 
       {!isKeyboardVisible && (
-        <TouchableOpacity
-          style={[styles.confirmButton, {backgroundColor: '#000'}]}>
-          <Text style={GlobalStyle.buttonText}>확인</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.confirmButton} onPress={handleSubmit}>
+            <Text style={GlobalStyle.buttonText}>확인</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  profileContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  changeImageText: {
+    color: '#EA1B83',
+    marginTop: 5,
+  },
   inputBox: {
     borderRadius: 15,
     borderWidth: 1,
@@ -160,15 +225,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 10,
   },
-  picker: {
-    color: '#000',
-    fontSize: 15,
-  },
   label: {
     fontSize: 16,
     marginBottom: 11,
     paddingLeft: 10,
-    fontWeight: 'regular',
+    fontWeight: '400',
+  },
+  interestsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 15,
+    paddingLeft: 8,
   },
   interestBox: {
     backgroundColor: '#E0E0E0',
@@ -178,14 +245,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 10,
   },
-  confirmButton: {
+  buttonContainer: {
     position: 'absolute',
     bottom: 15,
     left: 20,
     right: 20,
+  },
+  confirmButton: {
     paddingVertical: 15,
     borderRadius: 15,
     alignItems: 'center',
+    backgroundColor: '#000',
   },
 });
 

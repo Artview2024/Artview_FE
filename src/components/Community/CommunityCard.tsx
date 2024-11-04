@@ -1,14 +1,24 @@
 import React from 'react';
-import {View, Image, Dimensions, StyleSheet} from 'react-native';
+import {
+  View,
+  Image,
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import GlobalStyle from '../../styles/GlobalStyle';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LikeButton from './LikeButton';
 import Text from '../../components/Text';
+import {useNavigation, NavigationProp} from '@react-navigation/native';
+import {StackParamList} from '../../navigator/StackParamList';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
 
 const CommunityCard = ({Posts}: {Posts: any}) => {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
+
   if (!Posts || !Posts.ImageAndTitle) {
     return (
       <View style={{paddingBottom: 30}}>
@@ -36,18 +46,28 @@ const CommunityCard = ({Posts}: {Posts: any}) => {
   return (
     <View style={{paddingBottom: 30}}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Image
-          source={
-            Posts.writerImage
-              ? {uri: Posts.writerImage}
-              : require('../../assets/images/user.png')
-          }
-          style={{width: 35, height: 35, borderRadius: 20, marginRight: 10}}
-        />
-        <Text
-          style={[GlobalStyle.CommunityCardUser, {flexShrink: 1, flexGrow: 1}]}>
-          {Posts.writerName}
-        </Text>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('OtherUser', {writerId: Posts.writerId})
+          }>
+          <Image
+            source={
+              Posts.writerImage
+                ? {uri: Posts.writerImage}
+                : require('../../assets/images/user.png')
+            }
+            style={{width: 35, height: 35, borderRadius: 20, marginRight: 10}}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('OtherUser', {writerId: Posts.writerId})
+          }>
+          <Text style={[GlobalStyle.CommunityCardUser]}>
+            {Posts.writerName}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {imageAndTitle.length > 0 ? (

@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
-import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
-import customAxios from '../../services/customAxios';
+import React from 'react';
+import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import FollowButton from './FollowButton';
 import Text from '../../components/Text';
+import {useNavigation, NavigationProp} from '@react-navigation/native';
+import {StackParamList} from '../../navigator/StackParamList';
 
 interface FollowItem {
   id: number;
@@ -18,77 +20,37 @@ interface FollowListProps {
 
 const FollowList: React.FC<FollowListProps> = ({
   followList,
-  activeTab,
   updateFollowingCount,
-}) => (
-  <View style={{paddingTop: 5}}>
-    {followList.length > 0 ? (
-      followList.map(item => (
-        <View key={item.id} style={styles.listItem}>
-          <View style={styles.userInfo}>
-            <Image source={{uri: item.imageUrl}} style={styles.avatar} />
-            <Text style={styles.name}>{item.name}</Text>
-          </View>
-          <FollowButton
-            userId={item.id}
-            isFollowing={item.isFollowing}
-            updateFollowingCount={updateFollowingCount}
-          />
-        </View>
-      ))
-    ) : (
-      <Text style={{textAlign: 'center', padding: 20}}>
-        팔로우 목록이 없습니다.
-      </Text>
-    )}
-  </View>
-);
-
-const FollowButton = ({
-  userId,
-  isFollowing,
-  updateFollowingCount,
-}: {
-  userId: number;
-  isFollowing: boolean;
-  updateFollowingCount: (isFollowing: boolean) => void;
 }) => {
-  const [following, setFollowing] = useState(isFollowing);
-
-  const toggleFollow = async () => {
-    try {
-      if (following) {
-        await customAxios.delete('/user/unfollow', {
-          data: {takeFollow: userId},
-        });
-        setFollowing(false);
-        updateFollowingCount(false);
-      } else {
-        await customAxios.put('/user/follow', {
-          takeFollow: userId,
-        });
-        setFollowing(true);
-        updateFollowingCount(true);
-      }
-    } catch (error: any) {
-      console.error(
-        following ? '언팔로우 실패:' : '팔로우 실패:',
-        error.response?.data.message || error.message,
-      );
-    }
-  };
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.followButton,
-        following ? styles.following : styles.notFollowing,
-      ]}
-      onPress={toggleFollow}>
-      <Text style={following ? styles.followingText : styles.notFollowingText}>
-        {following ? '팔로잉' : '팔로우'}
-      </Text>
-    </TouchableOpacity>
+    <View style={{paddingTop: 5}}>
+      {followList.length > 0 ? (
+        followList.map(item => (
+          <View key={item.id} style={styles.listItem}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('OtherUser', {writerId: item.id})
+              }>
+              <View style={styles.userInfo}>
+                <Image source={{uri: item.imageUrl}} style={styles.avatar} />
+                <Text style={styles.name}>{item.name}</Text>
+              </View>
+            </TouchableOpacity>
+            <FollowButton
+              userId={item.id}
+              isFollowing={item.isFollowing}
+              updateFollowingCount={updateFollowingCount}
+            />
+          </View>
+        ))
+      ) : (
+        <Text style={{textAlign: 'center', padding: 20}}>
+          팔로우 목록이 없습니다.
+        </Text>
+      )}
+    </View>
   );
 };
 
@@ -115,27 +77,6 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     color: 'black',
-  },
-  followButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    borderWidth: 1,
-  },
-  following: {
-    backgroundColor: '#fff',
-    borderColor: '#4E4E4E',
-  },
-  notFollowing: {
-    backgroundColor: '#4E4E4E',
-    borderColor: '#4E4E4E',
-  },
-  followingText: {
-    color: '#4E4E4E',
-    fontWeight: 'bold',
-  },
-  notFollowingText: {
-    color: '#fff',
   },
 });
 
