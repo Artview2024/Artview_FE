@@ -9,8 +9,7 @@ import {
 import customAxios from '../../services/customAxios';
 import {StackParamList} from '../../navigator/StackParamList';
 import Records from '../../components/Records';
-import {TouchableOpacity, View} from 'react-native';
-import BackIcon from 'react-native-vector-icons/Ionicons';
+import {View} from 'react-native';
 import Text from '../../components/Text';
 import GlobalStyle from '../../styles/GlobalStyle';
 import Header from '../../components/My/Header';
@@ -30,13 +29,6 @@ type Record = {
   }>;
 };
 
-type Exhibition = {
-  id: number;
-  name: string;
-  date: string;
-  image: {uri: string};
-};
-
 export default function RecordsScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const route = useRoute<RouteProp<StackParamList, 'Records'>>();
@@ -48,7 +40,6 @@ export default function RecordsScreen() {
     const fetchRecords = async () => {
       try {
         const response = await customAxios.get('/myReviews/all');
-        console.log('Server Response:', response.data);
 
         const transformedRecords = response.data.map((item: any) => ({
           id: item.myReviewsId,
@@ -64,19 +55,16 @@ export default function RecordsScreen() {
       }
     };
 
-    fetchRecords();
+    if (isFocused) {
+      fetchRecords();
+    }
   }, [isFocused]);
 
   const handleRecordSelect = (id: number) => {
     setSelectedRecord(id);
-  };
-
-  const handleStartViewing = () => {
-    if (selectedRecord !== null) {
-      const record = myRecords.find(record => record.id === selectedRecord);
-      if (record) {
-        navigation.navigate('RecordDetail', {record});
-      }
+    const record = myRecords.find(record => record.id === id);
+    if (record) {
+      navigation.navigate('RecordDetail', {record});
     }
   };
 
@@ -84,24 +72,19 @@ export default function RecordsScreen() {
     navigation.navigate('Home');
   };
 
-  const exhibitions: Exhibition[] = myRecords.map(record => ({
-    id: record.id,
-    name: record.name,
-    date: record.date,
-    image: {uri: record.mainImage},
-  }));
-
   return (
     <View style={[GlobalStyle.container]}>
-      <Header title={''}></Header>
+      <Header title="" onBackPress={handleBackAction} />
       {myRecords.length > 0 ? (
         <Records
-          exhibitions={exhibitions}
+          exhibitions={myRecords.map(record => ({
+            id: record.id,
+            name: record.name,
+            date: record.date,
+            image: {uri: record.mainImage},
+          }))}
           selectedExhibition={selectedRecord}
-          onExhibitionSelect={id => {
-            handleRecordSelect(id);
-            handleStartViewing();
-          }}
+          onExhibitionSelect={handleRecordSelect}
           backAction={handleBackAction}
         />
       ) : (

@@ -4,13 +4,19 @@ import Text from '../Text';
 import {useNavigation} from '@react-navigation/native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 
-const Header = ({title}: {title: string}) => {
+const Header = ({
+  title,
+  onBackPress,
+}: {
+  title: string;
+  onBackPress?: () => void;
+}) => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.headerContainer}>
       <TouchableOpacity
-        onPress={() => navigation.goBack()}
+        onPress={() => (onBackPress ? onBackPress() : navigation.goBack())}
         style={styles.backButton}>
         <BackIcon name="chevron-back" size={24} color={'black'} />
       </TouchableOpacity>
