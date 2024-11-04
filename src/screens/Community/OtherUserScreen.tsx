@@ -16,6 +16,7 @@ import {StackParamList} from '../../navigator/StackParamList';
 import {RouteProp} from '@react-navigation/native';
 import useRefresh from '../../hooks/useRefresh';
 import MyInterests from '../../components/My/MyInterests';
+import Header from '../../components/My/Header';
 
 type OtherUserProfileRouteProp = RouteProp<StackParamList, 'OtherUser'>;
 
@@ -37,6 +38,7 @@ const OtherUserScreen: React.FC = () => {
   const [exhibitions, setExhibitions] = useState([]);
   const [interests, setInterests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const refetch = async () => {
     setLoading(true);
@@ -61,6 +63,11 @@ const OtherUserScreen: React.FC = () => {
         follower: totalResponse.data.follower.toString(),
         numberOfMyReviews: totalResponse.data.numberOfMyReviews.toString(),
       });
+
+      const followResponse = await customAxios.get(
+        `/user/checkFollow/${writerId}`,
+      );
+      setIsFollowing(followResponse.data);
     } catch (error: any) {
       console.error('Failed to fetch user data:', error.response?.data);
     }
@@ -137,16 +144,20 @@ const OtherUserScreen: React.FC = () => {
             flexDirection: 'row',
             alignItems: 'flex-start',
             justifyContent: 'space-between',
-          }}>
-          <Text style={{paddingTop: 10}}></Text>
-        </View>
+          }}></View>
+        <Header title={''} />
         <UserInfo
+          userId={writerId ?? 0}
           following={userInfo.following}
           follower={userInfo.follower}
           enjoyed={userInfo.numberOfMyReviews}
           userName={userInfo.userName}
           userImageUrl={userInfo.userImageUrl}
+          isOtherUser={true}
+          isFollowing={isFollowing}
+          updateFollowingCount={newFollowing => setIsFollowing(newFollowing)}
         />
+
         <MyInterests interests={interests} />
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === '게시물' ? (
