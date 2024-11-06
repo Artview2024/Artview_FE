@@ -135,11 +135,11 @@ export default function RecordingScreen() {
   const checkPhotoBeforeAction = (action: () => void) => {
     if (!imageUri) {
       setOnCloseAction(() => {
-        action(); // 모달이 닫힌 후 실행할 액션 설정
+        action();
       });
-      setPhotoWarningVisible(true); // 모달 열기
+      setPhotoWarningVisible(true);
     } else {
-      action(); // 이미지가 있는 경우 바로 실행
+      action();
     }
   };
 
@@ -159,13 +159,12 @@ export default function RecordingScreen() {
       checkPhotoBeforeAction(() => {
         const updatedArtList = updateArtImage(artIndex, imageUri, artList);
         setArtList(updatedArtList);
-        setArtIndex(artIndex - 1); // 이전 인덱스로 이동
+        setArtIndex(artIndex - 1);
         scrollViewRef.current?.scrollTo({y: 0, animated: false});
       });
     }
   };
 
-  // 기록 종료에서 사용하는 handleEndTour는 그대로 유지
   const handleEndTour = () => {
     const updatedArtList = updateArtImage(artIndex, imageUri, artList);
     setArtList(updatedArtList);

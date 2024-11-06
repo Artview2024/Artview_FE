@@ -25,10 +25,12 @@ export type StackParamList = {
     exhibitionDate: string;
     gallery: string;
     artList: Array<{
+      id: string;
       image: string | null;
       title: string | null;
       artist: string | null;
       memo: string | null;
+      isMainImage?: boolean; // 추가: isMainImage 속성
     }>;
     artIndex?: number;
     isEditMode: boolean;
