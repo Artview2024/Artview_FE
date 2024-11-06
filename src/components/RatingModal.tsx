@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
-    marginBottom: 40,
+    marginBottom: 30,
     textAlign: 'center',
   },
   starsContainer: {
@@ -104,13 +104,13 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     backgroundColor: '#000',
-    paddingVertical: 5,
+    paddingVertical: 10,
     paddingHorizontal: 27,
-    borderRadius: 15,
+    borderRadius: 20,
   },
   submitButtonText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 14,
   },
 });
 

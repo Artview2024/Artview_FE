@@ -49,36 +49,12 @@ const DrawableSheet = forwardRef(
 
     useImperativeHandle(ref, () => ({
       handleOpenBottomSheet() {
-        // 현재 작성 중인 내용을 artList에 반영
-        const newArt: ArtItem = {
-          id: Math.random().toString(),
-          image: '',
-          title: '',
-          artist: '',
-          memo: '',
-        };
-
+        setIsBottomSheetOpen(true);
+      },
+      handleCloseBottomSheet() {
+        setIsBottomSheetOpen(false);
         const updatedArtList = [...artList];
-        if (currentArtIndex < updatedArtList.length) {
-          updatedArtList[currentArtIndex] = newArt;
-        } else {
-          updatedArtList.push(newArt);
-        }
-
         setArtList(updatedArtList);
-        setIsBottomSheetOpen(true);
-      },
-      handleCloseBottomSheet() {
-        setIsBottomSheetOpen(false);
-      },
-    }));
-
-    useImperativeHandle(ref, () => ({
-      handleOpenBottomSheet() {
-        setIsBottomSheetOpen(true);
-      },
-      handleCloseBottomSheet() {
-        setIsBottomSheetOpen(false);
       },
     }));
 
@@ -189,6 +165,7 @@ const DrawableSheet = forwardRef(
     );
   },
 );
+
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,

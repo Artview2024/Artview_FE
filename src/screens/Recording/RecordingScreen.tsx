@@ -1,5 +1,11 @@
 import React, {useRef, useState, useEffect} from 'react';
-import {View, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  View,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from 'react-native';
 import Text from '../../components/Text';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import MenuIcon from 'react-native-vector-icons/Feather';
@@ -12,14 +18,13 @@ import {
 } from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
 import RatingModal from '../../components/RatingModal';
+import PhotoWarningModal from '../../components/Recording/PhotoWarningModal';
 import DrawableSheet from '../../components/DrawableSheet';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
 import {updateArtImage} from '../../hooks/updateArtImages';
 import {useFormState} from '../../hooks/useFormState';
-import {StyleSheet} from 'react-native';
 import RecordingTemplate from '../../components/RecordingTemplate';
-import {Image} from 'react-native';
 import {handlePatchSubmit, handlePostSubmit} from '../../hooks/submitReview';
 
 type ArtItem = {
@@ -36,7 +41,6 @@ export default function RecordingScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const route = useRoute<RecordingScreenRouteProp>();
 
-  // 라우트에서 필요한 파라미터 추출
   const {
     exhibitionName,
     exhibitionDate,
@@ -47,11 +51,9 @@ export default function RecordingScreen() {
     myReviewsId,
   } = route.params;
 
-  // 이미지 선택 및 카메라 촬영을 처리하는 커스텀 훅 사용
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
     useImagePicker();
 
-  // 제목, 아티스트, 메모 등의 폼 상태를 관리하는 커스텀 훅 사용
   const {
     title,
     setTitle,
@@ -68,18 +70,17 @@ export default function RecordingScreen() {
     resetForm,
   } = useFormState(initialArtList);
 
-  // 카메라 권한을 요청하는 커스텀 훅 사용
   const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
 
-  // ScrollView 및 DrawableSheet에 대한 참조 생성
   const scrollViewRef = useRef<ScrollView>(null);
   const drawableSheetRef = useRef<any>(null);
 
-  // 모달 및 데이터 관련 상태 관리
   const [modalVisible, setModalVisible] = useState(false);
+  const [photoWarningVisible, setPhotoWarningVisible] = useState(false);
+  const [onCloseAction, setOnCloseAction] = useState<(() => void) | undefined>(
+    undefined,
+  );
   const [finalData, setFinalData] = useState<any>(null);
-
-  // 메인 이미지 인덱스를 관리하는 상태
   const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
 
   useEffect(() => {
@@ -96,29 +97,24 @@ export default function RecordingScreen() {
   }, [artIndex]);
 
   useEffect(() => {
-    // 수정 모드일 때만 실행되는 useEffect
     if (isEditMode && mainImage && initialArtList.length > 0) {
       const mainImageIndex = initialArtList.findIndex(
         art => art.image === mainImage,
       );
       if (mainImageIndex !== -1) {
-        setMainImageIndex(mainImageIndex); // 수정 모드일 때 기존의 대표사진을 설정
+        setMainImageIndex(mainImageIndex);
       }
     }
   }, [isEditMode, mainImage, initialArtList]);
 
   const handleOpenDrawableSheet = () => {
     if (drawableSheetRef.current) {
-      // 현재 작성 중인 아트 항목을 저장
       const updatedArtList = updateArtImage(artIndex, imageUri, artList);
       setArtList(updatedArtList);
-
-      // DrawableSheet 열기
       drawableSheetRef.current.handleOpenBottomSheet();
     }
   };
 
-  // 체크박스 상태 변경 시 이전 아트의 데이터를 불러오는 기능
   const handleCheckBoxChange = (newValue: boolean) => {
     setToggleCheckBox(newValue);
     if (newValue && artIndex > 0) {
@@ -132,63 +128,74 @@ export default function RecordingScreen() {
     }
   };
 
-  // 메인 이미지를 설정하는 기능
   const handleSetMainImage = (index: number) => {
     setMainImageIndex(prevIndex => (prevIndex === index ? null : index));
   };
 
+  const checkPhotoBeforeAction = (action: () => void) => {
+    if (!imageUri) {
+      setOnCloseAction(() => {
+        action();
+      });
+      setPhotoWarningVisible(true);
+    } else {
+      action();
+    }
+  };
+
   const handleNext = () => {
-    if (title || artist || memo || imageUri) {
-      // 아트 항목 업데이트
+    checkPhotoBeforeAction(() => {
       const updatedArtList = updateArtImage(artIndex, imageUri, artList);
       setArtList(updatedArtList);
-
-      // 다음 아트 항목으로 이동
       setArtIndex(artIndex + 1);
       resetForm();
       setToggleCheckBox(false);
       scrollViewRef.current?.scrollTo({y: 0, animated: false});
-    }
+    });
   };
 
   const handlePrevious = () => {
     if (artIndex > 0) {
-      const updatedArtList = updateArtImage(artIndex, imageUri, artList);
-      setArtList(updatedArtList);
-
-      setArtIndex(artIndex - 1);
-      scrollViewRef.current?.scrollTo({y: 0, animated: false});
+      checkPhotoBeforeAction(() => {
+        const updatedArtList = updateArtImage(artIndex, imageUri, artList);
+        setArtList(updatedArtList);
+        setArtIndex(artIndex - 1);
+        scrollViewRef.current?.scrollTo({y: 0, animated: false});
+      });
     }
   };
 
-  // 기록 종료 시 최종 데이터를 설정하고 모달
   const handleEndTour = () => {
-    if (title || artist || memo || imageUri) {
-      const updatedArtList = updateArtImage(artIndex, imageUri, artList);
-      setArtList(updatedArtList);
+    const updatedArtList = updateArtImage(artIndex, imageUri, artList);
+    setArtList(updatedArtList);
 
-      let mainImageUri = '';
-      if (updatedArtList.length > 0) {
-        if (mainImageIndex !== null && mainImageIndex < updatedArtList.length) {
-          mainImageUri = updatedArtList[mainImageIndex].image || '';
-        } else {
-          const resolvedAsset = Image.resolveAssetSource(
-            require('../../assets/images/thumbnail_basic.png'),
-          );
-          mainImageUri = resolvedAsset.uri;
-        }
-      }
-
-      setFinalData({
-        name: exhibitionName,
-        date: exhibitionDate,
-        gallery: gallery,
-        rating: '',
-        artList: updatedArtList,
-        mainImage: mainImageUri,
-      });
-      setModalVisible(true);
+    const artWithoutImage = updatedArtList.some(art => !art.image);
+    if (artWithoutImage) {
+      setPhotoWarningVisible(true);
+      return;
     }
+
+    let mainImageUri = '';
+    if (updatedArtList.length > 0) {
+      if (mainImageIndex !== null && mainImageIndex < updatedArtList.length) {
+        mainImageUri = updatedArtList[mainImageIndex].image || '';
+      } else {
+        const resolvedAsset = Image.resolveAssetSource(
+          require('../../assets/images/thumbnail_basic.png'),
+        );
+        mainImageUri = resolvedAsset.uri;
+      }
+    }
+
+    setFinalData({
+      name: exhibitionName,
+      date: exhibitionDate,
+      gallery: gallery,
+      rating: '',
+      artList: updatedArtList,
+      mainImage: mainImageUri,
+    });
+    setModalVisible(true);
   };
 
   const handleRatingSubmit = async (rating: number) => {
@@ -284,6 +291,13 @@ export default function RecordingScreen() {
         onClose={() => setModalVisible(false)}
         onSubmit={handleRatingSubmit}
       />
+      <PhotoWarningModal
+        visible={photoWarningVisible}
+        onClose={() => setPhotoWarningVisible(false)}
+        onCloseAction={onCloseAction}
+        setOnCloseAction={setOnCloseAction}
+      />
+
       <DrawableSheet
         ref={drawableSheetRef}
         artList={artList}
