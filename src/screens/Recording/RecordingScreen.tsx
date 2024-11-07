@@ -201,11 +201,22 @@ export default function RecordingScreen() {
   const handleRatingSubmit = async (rating: number) => {
     if (finalData) {
       try {
+        const artListForServer = finalData.artList.map(
+          ({id, memo, ...rest}: ArtItem) => ({
+            ...rest,
+            content: memo,
+          }),
+        );
+
         const dataToSend = {
           ...finalData,
-          myReviewsId,
           mainImage: finalData.artList[mainImageIndex || 0]?.image,
+          rating: rating.toString(),
+          exhibitionId: 1,
+          artList: artListForServer,
         };
+
+        console.log('Data to send:', dataToSend);
 
         if (isEditMode) {
           await handlePatchSubmit(dataToSend, rating);
@@ -218,8 +229,8 @@ export default function RecordingScreen() {
         } else {
           navigation.navigate('Home');
         }
-      } catch (error) {
-        console.error('Error:', error);
+      } catch (error: any) {
+        console.error('Error:', error.response?.data || error);
       }
     }
   };
