@@ -48,7 +48,7 @@ export default function RecordingScreen() {
     artList: initialArtList,
     mainImage,
     isEditMode = false,
-    myReviewsId,
+    exhibitionId,
   } = route.params;
 
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
@@ -80,8 +80,8 @@ export default function RecordingScreen() {
   const [onCloseAction, setOnCloseAction] = useState<(() => void) | undefined>(
     undefined,
   );
-  const [finalData, setFinalData] = useState<any>(null);
   const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
+  const [finalData, setFinalData] = useState<any>(null);
 
   useEffect(() => {
     if (artIndex < artList.length) {
@@ -192,8 +192,9 @@ export default function RecordingScreen() {
       date: exhibitionDate,
       gallery: gallery,
       rating: '',
-      artList: updatedArtList,
       mainImage: mainImageUri,
+      artList: updatedArtList,
+      exhibitionId: exhibitionId || 1,
     });
     setModalVisible(true);
   };
@@ -201,25 +202,24 @@ export default function RecordingScreen() {
   const handleRatingSubmit = async (rating: number) => {
     if (finalData) {
       try {
-        const dataToSend = {
-          ...finalData,
-          myReviewsId,
-          mainImage: finalData.artList[mainImageIndex || 0]?.image,
-        };
+        const updatedFinalData = {...finalData, rating: rating.toString()};
+        console.log(updatedFinalData);
 
         if (isEditMode) {
-          await handlePatchSubmit(dataToSend, rating);
+          await handlePatchSubmit(updatedFinalData, rating);
         } else {
-          await handlePostSubmit(dataToSend, rating);
+          await handlePostSubmit(updatedFinalData, rating);
         }
+
         setModalVisible(false);
+
         if (isEditMode) {
           navigation.navigate('Records');
         } else {
           navigation.navigate('Home');
         }
-      } catch (error) {
-        console.error('Error:', error);
+      } catch (error: any) {
+        console.error('Error:', error.response?.data || error);
       }
     }
   };
@@ -232,7 +232,7 @@ export default function RecordingScreen() {
             <BackIcon
               name="chevron-back"
               size={24}
-              color={'black'}
+              color="black"
               style={{paddingRight: 3, paddingTop: 18}}
             />
           </TouchableOpacity>
@@ -245,12 +245,11 @@ export default function RecordingScreen() {
             <MenuIcon
               name="menu"
               size={24}
-              color={'black'}
+              color="black"
               style={{paddingRight: 3, paddingTop: 18}}
             />
           </TouchableOpacity>
         </View>
-
         <Text style={{paddingTop: 7, paddingBottom: 13, color: 'black'}}>
           {exhibitionDate} | {gallery}
         </Text>
@@ -297,7 +296,6 @@ export default function RecordingScreen() {
         onCloseAction={onCloseAction}
         setOnCloseAction={setOnCloseAction}
       />
-
       <DrawableSheet
         ref={drawableSheetRef}
         artList={artList}

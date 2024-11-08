@@ -30,11 +30,11 @@ export type StackParamList = {
       title: string | null;
       artist: string | null;
       memo: string | null;
-      isMainImage?: boolean; // 추가: isMainImage 속성
+      isMainImage?: boolean;
     }>;
     artIndex?: number;
     isEditMode: boolean;
-    myReviewsId?: number;
+    exhibitionId?: number | null;
     mainImage?: string | null;
   };
   RecordingStart: undefined;
@@ -47,7 +47,7 @@ export type StackParamList = {
   CommunityDetail: {communicationsId: number};
   OtherUser: {writerId?: number};
   MyScreen: undefined;
-  MyFollowScreen: {activeTab: string};
+  MyFollowScreen: {activeTab: string; userId?: number; isOtherUser?: boolean};
   MyEdit: {userInterest?: any};
   InterestSelection: undefined;
   ExhibitionDetail: undefined;
