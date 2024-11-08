@@ -7,6 +7,7 @@ type Review = {
   reviewer: string;
   rating: number;
   comment: string;
+  userImageUrl: string;
 };
 
 const ReviewCard = ({review}: {review: Review}) => {
@@ -16,7 +17,7 @@ const ReviewCard = ({review}: {review: Review}) => {
         <View style={styles.header}>
           <View style={styles.leftSection}>
             <Image
-              source={require('../../assets/images/user.png')}
+              source={{uri: review.userImageUrl}}
               style={styles.profileImage}
             />
             <Text style={styles.reviewerName}>{review.reviewer}</Text>

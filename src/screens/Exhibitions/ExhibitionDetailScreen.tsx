@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Header from '../../components/My/Header';
 import ExhibitionInfo from '../../components/Exhibitions/ExhibitionInfo';
+import ExhibitionSimpleInfo from '../../components/Exhibitions/ExhibitionSimpleInfo';
 import ReviewCard from '../../components/Exhibitions/ReviewCard';
 import Text from '../../components/Text';
 import GlobalStyle from '../../styles/GlobalStyle';
@@ -18,38 +19,29 @@ type ExhibitionDetailScreenNavigationProp = StackNavigationProp<
 
 type ExhibitionDetailRouteProp = RouteProp<StackParamList, 'ExhibitionDetail'>;
 
-const mockReviews = [
-  {
-    reviewer: '김민주',
-    rating: 4.7,
-    comment:
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum...',
-  },
-  {
-    reviewer: '이진서',
-    rating: 4.2,
-    comment:
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum...',
-  },
-];
-
 export default function ExhibitionDetailScreen() {
   const navigation = useNavigation<ExhibitionDetailScreenNavigationProp>();
   const route = useRoute<ExhibitionDetailRouteProp>();
   const exhibitionId = route.params?.exhibitionId;
 
   const [exhibitionData, setExhibitionData] = useState<any>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchExhibitionData = async () => {
       try {
-        const response = await customAxios.get(
+        const infoResponse = await customAxios.get(
           `/exhibition/detail/info/${exhibitionId}`,
         );
-        setExhibitionData(response.data);
+        setExhibitionData(infoResponse.data);
+
+        const reviewResponse = await customAxios.get(
+          `/exhibition/detail/review/${exhibitionId}`,
+        );
+        setReviews(reviewResponse.data);
       } catch (error: any) {
-        console.error('Failed to fetch exhibition info:', error.response?.data);
+        console.error('Error:', error.response?.data);
       } finally {
         setLoading(false);
       }
@@ -75,13 +67,30 @@ export default function ExhibitionDetailScreen() {
         <View style={{paddingVertical: 24}}>
           <View style={styles.titleContainer}>
             <Text style={styles.sectionTitle}>관람 후기</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ReviewsAll')}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ReviewsAll', {exhibitionId})}>
               <Text style={styles.viewAllText}>더보기 &gt;</Text>
             </TouchableOpacity>
           </View>
-          {mockReviews.map((review, index) => (
-            <ReviewCard key={index} review={review} />
-          ))}
+          {reviews.length === 0 ? (
+            <View style={styles.noReviewsContainer}>
+              <Text style={styles.noReviewsText}>
+                아직 등록된 후기가 없습니다.
+              </Text>
+            </View>
+          ) : (
+            reviews.slice(0, 3).map((review, index) => (
+              <ReviewCard
+                key={index}
+                review={{
+                  reviewer: review.userName,
+                  rating: parseFloat(review.rate),
+                  comment: review.content,
+                  userImageUrl: review.userImageUrl,
+                }}
+              />
+            ))
+          )}
         </View>
       </ScrollView>
     </View>
@@ -103,5 +112,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#4E4E4E',
     paddingLeft: 10,
+  },
+  noReviewsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 100,
+  },
+  noReviewsText: {
+    fontSize: 16,
+    color: '#666',
   },
 });
