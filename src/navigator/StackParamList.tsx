@@ -52,6 +52,6 @@ export type StackParamList = {
   InterestSelection: undefined;
   ExhibitionDetail: {exhibitionId: number};
   ExhibitionsAll: {title: string};
-  ReviewsAll: undefined;
+  ReviewsAll: {exhibitionId: number};
   Search: undefined;
 };

@@ -8,7 +8,7 @@ import Time from 'react-native-vector-icons/Ionicons';
 
 const ExhibitionInfo = ({exhibitionData}: {exhibitionData: any}) => {
   if (!exhibitionData || !exhibitionData.exhibitionInfo) {
-    return <Text>Exhibition information is not available</Text>;
+    return <Text>전시 정보가 없습니다.</Text>;
   }
 
   const {
@@ -54,13 +54,11 @@ const ExhibitionInfo = ({exhibitionData}: {exhibitionData: any}) => {
         )}
       </View>
 
-      <Text style={styles.description}>
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry...
-      </Text>
-
       <TouchableOpacity
-        style={[GlobalStyle.fullButton, {backgroundColor: '#000'}]}
+        style={[
+          GlobalStyle.fullButton,
+          {backgroundColor: '#000', marginTop: 20},
+        ]}
         onPress={openLocationLink}>
         <Text style={styles.buttonText}>위치 확인하기</Text>
       </TouchableOpacity>
@@ -71,7 +69,7 @@ const ExhibitionInfo = ({exhibitionData}: {exhibitionData: any}) => {
 const styles = StyleSheet.create({
   poster: {
     width: '100%',
-    height: 200,
+    aspectRatio: 3 / 4,
     resizeMode: 'cover',
     marginBottom: 16,
   },
