@@ -1,20 +1,22 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Header from '../../components/My/Header';
 import ExhibitionInfo from '../../components/Exhibitions/ExhibitionInfo';
 import ReviewCard from '../../components/Exhibitions/ReviewCard';
 import Text from '../../components/Text';
 import GlobalStyle from '../../styles/GlobalStyle';
-import {StackNavigationProp} from '@react-navigation/stack'; // StackNavigationProp 추가
-import {useNavigation} from '@react-navigation/native';
-import {StackParamList} from '../../navigator/StackParamList'; // StackParamList 추가
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {StackParamList} from '../../navigator/StackParamList';
 import RatingBox from '../../components/Exhibitions/RatingBox';
+import customAxios from '../../services/customAxios';
 
-// 네비게이션 타입 지정
 type ExhibitionDetailScreenNavigationProp = StackNavigationProp<
   StackParamList,
   'ExhibitionDetail'
 >;
+
+type ExhibitionDetailRouteProp = RouteProp<StackParamList, 'ExhibitionDetail'>;
 
 const mockReviews = [
   {
@@ -32,13 +34,43 @@ const mockReviews = [
 ];
 
 export default function ExhibitionDetailScreen() {
-  const navigation = useNavigation<ExhibitionDetailScreenNavigationProp>(); // 네비게이션 타입 사용
+  const navigation = useNavigation<ExhibitionDetailScreenNavigationProp>();
+  const route = useRoute<ExhibitionDetailRouteProp>();
+  const exhibitionId = route.params?.exhibitionId;
+
+  const [exhibitionData, setExhibitionData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchExhibitionData = async () => {
+      try {
+        const response = await customAxios.get(
+          `/exhibition/detail/info/${exhibitionId}`,
+        );
+        setExhibitionData(response.data);
+      } catch (error: any) {
+        console.error('Failed to fetch exhibition info:', error.response?.data);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExhibitionData();
+  }, [exhibitionId]);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (!exhibitionData) {
+    return <Text>Exhibition data not available</Text>;
+  }
 
   return (
     <View style={GlobalStyle.container}>
       <ScrollView>
         <Header title={''} />
-        <ExhibitionInfo />
+        <ExhibitionInfo exhibitionData={exhibitionData} />
         <RatingBox rating={3.2} participants={3} />
         <View style={{paddingVertical: 24}}>
           <View style={styles.titleContainer}>
