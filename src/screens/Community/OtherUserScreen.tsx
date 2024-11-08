@@ -6,6 +6,7 @@ import {
   useScrollToTop,
   useFocusEffect,
   useRoute,
+  useNavigation,
 } from '@react-navigation/native';
 import GlobalStyle from '../../styles/GlobalStyle';
 import UserInfo from '../../components/My/UserInfo';
@@ -22,6 +23,7 @@ type OtherUserProfileRouteProp = RouteProp<StackParamList, 'OtherUser'>;
 
 const OtherUserScreen: React.FC = () => {
   const route = useRoute<OtherUserProfileRouteProp>();
+  const navigation = useNavigation();
   const {writerId} = route.params;
 
   const ref = useRef(null);
@@ -30,9 +32,9 @@ const OtherUserScreen: React.FC = () => {
     userId: writerId,
     userName: '',
     userImageUrl: '',
-    following: 0,
-    follower: 0,
-    numberOfMyReviews: 0,
+    following: '0',
+    follower: '0',
+    numberOfMyReviews: '0',
   });
   const [postings, setPostings] = useState([]);
   const [exhibitions, setExhibitions] = useState([]);
@@ -58,7 +60,9 @@ const OtherUserScreen: React.FC = () => {
       );
 
       setUserInfo({
-        ...userResponse.data,
+        userId: writerId,
+        userName: userResponse.data.userName,
+        userImageUrl: userResponse.data.userImageUrl,
         following: totalResponse.data.following.toString(),
         follower: totalResponse.data.follower.toString(),
         numberOfMyReviews: totalResponse.data.numberOfMyReviews.toString(),
@@ -67,7 +71,7 @@ const OtherUserScreen: React.FC = () => {
       const followResponse = await customAxios.get(
         `/user/checkFollow/${writerId}`,
       );
-      setIsFollowing(followResponse.data);
+      setIsFollowing(followResponse.data ?? false);
     } catch (error: any) {
       console.error('Failed to fetch user data:', error.response?.data);
     }
@@ -107,11 +111,16 @@ const OtherUserScreen: React.FC = () => {
   };
 
   const fetchAllData = async () => {
-    setLoading(true);
-    await fetchUserInfo();
-    await fetchPostings();
-    await fetchExhibitions();
-    setLoading(false);
+    try {
+      setLoading(true);
+      await fetchUserInfo();
+      await fetchPostings();
+      await fetchExhibitions();
+    } catch (error) {
+      console.error('Failed to fetch all data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -139,15 +148,9 @@ const OtherUserScreen: React.FC = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'flex-start',
-            justifyContent: 'space-between',
-          }}></View>
         <Header title={''} />
         <UserInfo
-          userId={writerId ?? 0}
+          userId={writerId}
           following={userInfo.following}
           follower={userInfo.follower}
           enjoyed={userInfo.numberOfMyReviews}
@@ -156,8 +159,8 @@ const OtherUserScreen: React.FC = () => {
           isOtherUser={true}
           isFollowing={isFollowing}
           updateFollowingCount={newFollowing => setIsFollowing(newFollowing)}
+          navigation={navigation}
         />
-
         <MyInterests interests={interests} />
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
         {activeTab === '게시물' ? (
@@ -169,27 +172,5 @@ const OtherUserScreen: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  stats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
-  },
-});
 
 export default OtherUserScreen;

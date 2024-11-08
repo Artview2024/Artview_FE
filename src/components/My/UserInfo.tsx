@@ -2,10 +2,9 @@ import React from 'react';
 import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import FollowButton from './FollowButton';
 import Text from '../Text';
-import {useDerivedValue} from 'react-native-reanimated';
 
 interface UserInfoProps {
-  userId: number;
+  userId?: number;
   following: string | number;
   follower: string | number;
   enjoyed: string | number;
@@ -24,8 +23,8 @@ const UserInfo: React.FC<UserInfoProps> = ({
   enjoyed,
   userName,
   userImageUrl,
-  isOtherUser = false,
-  isFollowing = false,
+  isOtherUser,
+  isFollowing,
   updateFollowingCount = () => {},
   navigation,
 }) => (
@@ -35,7 +34,11 @@ const UserInfo: React.FC<UserInfoProps> = ({
     <View style={styles.profileStats}>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('MyFollowScreen', {activeTab: '팔로잉'})
+          navigation.navigate('MyFollowScreen', {
+            activeTab: '팔로잉',
+            isOtherUser,
+            userId,
+          })
         }>
         <View style={{flexDirection: 'row'}}>
           <Text style={styles.statsText}>팔로잉 </Text>
@@ -46,7 +49,11 @@ const UserInfo: React.FC<UserInfoProps> = ({
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('MyFollowScreen', {activeTab: '팔로워'})
+          navigation.navigate('MyFollowScreen', {
+            activeTab: '팔로워',
+            isOtherUser,
+            userId,
+          })
         }>
         <View style={{flexDirection: 'row'}}>
           <Text style={styles.statsText}>팔로워 </Text>
@@ -55,7 +62,11 @@ const UserInfo: React.FC<UserInfoProps> = ({
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() =>
-          navigation.navigate('MyFollowScreen', {activeTab: '관람'})
+          navigation.navigate('MyFollowScreen', {
+            activeTab: '기록',
+            isOtherUser,
+            userId,
+          })
         }>
         <View style={{flexDirection: 'row'}}>
           <Text style={styles.statsText}>기록수 </Text>
@@ -63,10 +74,10 @@ const UserInfo: React.FC<UserInfoProps> = ({
         </View>
       </TouchableOpacity>
     </View>
-    {isOtherUser ? (
+    {isOtherUser && userId !== undefined ? (
       <FollowButton
         userId={userId}
-        isFollowing={isFollowing}
+        isFollowing={isFollowing ?? false}
         updateFollowingCount={updateFollowingCount}
       />
     ) : (
