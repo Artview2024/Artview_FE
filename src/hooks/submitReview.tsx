@@ -3,7 +3,6 @@ import customAxios from '../services/customAxios';
 import mime from 'react-native-mime-types';
 
 type ArtItem = {
-  id: string;
   image: string;
   title: string;
   artist: string;
@@ -12,8 +11,7 @@ type ArtItem = {
 };
 
 type FinalData = {
-  id: string;
-  myReviewsId?: string;
+  exhibitionId: number;
   name: string;
   date: string;
   gallery: string;
@@ -27,14 +25,15 @@ export const handlePatchSubmit = async (
   finalData: FinalData,
   rating: number,
 ) => {
-  const updatedFinalData = {
-    ...finalData,
-    rating: rating.toString(),
-  };
+  const updatedFinalData = {...finalData, rating: rating.toString()};
 
   const formData = new FormData();
-  formData.append('id', updatedFinalData.id);
-  formData.append('myReviewsId', updatedFinalData.myReviewsId || '');
+  formData.append(
+    'exhibitionId',
+    updatedFinalData.exhibitionId
+      ? String(Number(updatedFinalData.exhibitionId))
+      : '',
+  );
   formData.append('name', updatedFinalData.name || '');
   formData.append('date', updatedFinalData.date || '');
   formData.append('gallery', updatedFinalData.gallery || '');
@@ -44,7 +43,6 @@ export const handlePatchSubmit = async (
     formData.append(`artList[${index}].title`, art.title || '');
     formData.append(`artList[${index}].artist`, art.artist || '');
     formData.append(`artList[${index}].contents`, art.memo || '');
-
     if (art.image && art.image.startsWith('file://')) {
       const addImageFile = {
         uri: art.image,
@@ -53,7 +51,7 @@ export const handlePatchSubmit = async (
           mime.lookup(art.image) || 'jpeg',
         )}`,
       };
-      formData.append(`artList[${index}].addImage`, addImageFile);
+      formData.append(`artList[${index}].image`, addImageFile);
     } else if (art.image) {
       formData.append(`artList[${index}].image`, art.image);
     }
@@ -102,13 +100,15 @@ export const handlePostSubmit = async (
   finalData: FinalData,
   rating: number,
 ) => {
-  const updatedFinalData = {
-    ...finalData,
-    rating: rating.toString(),
-  };
+  const updatedFinalData = {...finalData, rating: rating.toString()};
 
   const formData = new FormData();
-  formData.append('id', updatedFinalData.id || '10001');
+  formData.append(
+    'exhibitionId',
+    updatedFinalData.exhibitionId
+      ? String(Number(updatedFinalData.exhibitionId))
+      : null,
+  );
   formData.append('name', updatedFinalData.name || '');
   formData.append('date', updatedFinalData.date || '');
   formData.append('gallery', updatedFinalData.gallery || '');
@@ -117,7 +117,7 @@ export const handlePostSubmit = async (
   updatedFinalData.artList.forEach((art: ArtItem, index: number) => {
     formData.append(`artList[${index}].title`, art.title || '');
     formData.append(`artList[${index}].artist`, art.artist || '');
-    formData.append(`artList[${index}].content`, art.memo || '');
+    formData.append(`artList[${index}].contents`, art.memo || '');
 
     if (art.image) {
       const imageFile = {

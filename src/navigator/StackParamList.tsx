@@ -34,7 +34,7 @@ export type StackParamList = {
     }>;
     artIndex?: number;
     isEditMode: boolean;
-    myReviewsId?: number;
+    exhibitionId?: number | null;
     mainImage?: string | null;
   };
   RecordingStart: undefined;
