@@ -104,6 +104,7 @@ export default function PostingScreen() {
           imageAndTitle: imageAndTitle,
           content: content,
           keyword: selectedKeywords,
+          exhibitionId: 1,
         };
 
         console.log('전송 data:', postData);

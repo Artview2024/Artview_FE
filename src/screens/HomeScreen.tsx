@@ -41,7 +41,6 @@ const carouselData: CarouselItem[] = [
     gallery: '서울 미술관',
     image: require('../assets/images/artList3.jpg'),
   },
-  // 더미 데이터 추가...
 ];
 
 export default function HomeScreen() {
@@ -55,7 +54,6 @@ export default function HomeScreen() {
     setBackgroundIndex(index);
   };
 
-  // API 호출 함수 추가
   useEffect(() => {
     fetchOngoingExhibitions();
   }, []);
@@ -71,6 +69,7 @@ export default function HomeScreen() {
         }`,
         gallery: item.location,
         image: {uri: item.mainImageUrl},
+        exhibitionId: item.exhibitionId,
       }));
       setOngoingExhibitions(data);
     } catch (error: any) {
@@ -125,6 +124,11 @@ export default function HomeScreen() {
           <FlatListExhibitions
             data={ongoingExhibitions}
             title={'진행 중인 전시'}
+            onPress={item =>
+              navigation.navigate('ExhibitionDetail', {
+                exhibitionId: item.exhibitionId,
+              })
+            }
           />
         </View>
         <Footer />
