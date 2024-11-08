@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Image,
@@ -18,11 +18,12 @@ import {StackParamList} from '../navigator/StackParamList';
 import GlobalStyle from '../styles/GlobalStyle';
 import Footer from '../components/Footer';
 import FlatListExhibitions from '../components/Exhibitions/FlatListExhibitions';
+import customAxios from '../services/customAxios';
 
 const PAGE_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = PAGE_WIDTH * 0.9;
 
-const defaultImage = require('../assets/images/main.png'); //디자인.. 문의 후 수정 필요
+const defaultImage = require('../assets/images/main.png');
 
 type CarouselItem = {
   key: string;
@@ -40,54 +41,44 @@ const carouselData: CarouselItem[] = [
     gallery: '서울 미술관',
     image: require('../assets/images/artList3.jpg'),
   },
-  {
-    key: '2',
-    title: '인상주의의 출현',
-    date: '2023.12.18',
-    gallery: '서울 미술관',
-    image: require('../assets/images/carousel4.jpg'),
-  },
-  {
-    key: '3',
-    title: 'SF 2021:판타지 오디세이',
-    date: '2023.12.18',
-    gallery: '서울시립북서울미술관',
-    image: require('../assets/images/carousel7.jpg'),
-  },
-];
-
-const recommendedExhibitions = [
-  {
-    key: '1',
-    title: 'SERIOUS',
-    date: '2024.05.14~05.30',
-    gallery: '성남 갤러리홀',
-    image: require('../assets/images/recommend1.png'),
-  },
-  {
-    key: '2',
-    title: '웨딩전',
-    date: '2024.05.04~07.30',
-    gallery: '갤러리',
-    image: require('../assets/images/recommend2.png'),
-  },
-  {
-    key: '3',
-    title: '웨딩전',
-    date: '2024.05.04~07.30',
-    gallery: '갤러리',
-    image: require('../assets/images/carousel1.png'),
-  },
+  // 더미 데이터 추가...
 ];
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [backgroundIndex, setBackgroundIndex] = useState(0);
+  const [ongoingExhibitions, setOngoingExhibitions] = useState([]);
   const ref = useRef(null);
   useScrollToTop(ref);
 
   const handleIndexChange = (index: number) => {
     setBackgroundIndex(index);
+  };
+
+  // API 호출 함수 추가
+  useEffect(() => {
+    fetchOngoingExhibitions();
+  }, []);
+
+  const fetchOngoingExhibitions = async () => {
+    try {
+      const response = await customAxios.get(`/exhibition/ongoing/0`);
+      const data = response.data.exhibitionInfos.map((item: any) => ({
+        key: item.exhibitionId.toString(),
+        title: item.title,
+        date: `${item.startDate.split(' ')[0]} ~ ${
+          item.finishDate.split(' ')[0]
+        }`,
+        gallery: item.location,
+        image: {uri: item.mainImageUrl},
+      }));
+      setOngoingExhibitions(data);
+    } catch (error: any) {
+      console.error(
+        'Failed to fetch ongoing exhibitions:',
+        error.response?.data,
+      );
+    }
   };
 
   return (
@@ -132,11 +123,11 @@ export default function HomeScreen() {
         )}
         <View style={[GlobalStyle.container]}>
           <FlatListExhibitions
-            data={recommendedExhibitions}
-            title={'추천전시'}
+            data={ongoingExhibitions}
+            title={'진행 중인 전시'}
           />
         </View>
-        <Footer></Footer>
+        <Footer />
       </ScrollView>
       <TouchableOpacity
         style={GlobalStyle.floatingButton}
@@ -163,11 +154,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     paddingHorizontal: 20,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    paddingVertical: 18,
   },
   sectionTitle: {
     fontSize: 20,

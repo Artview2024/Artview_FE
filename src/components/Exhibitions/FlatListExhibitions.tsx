@@ -13,16 +13,20 @@ import Text from '../Text';
 import Calendar from 'react-native-vector-icons/AntDesign';
 import LocationPin from 'react-native-vector-icons/EvilIcons';
 
+type ExhibitionItem = {
+  key: string;
+  title: string;
+  date: string;
+  gallery: string;
+  image: any;
+  exhibitionId: number;
+};
+
 type Props = {
-  data: {
-    key: string;
-    title: string;
-    date: string;
-    gallery: string;
-    image: any;
-  }[];
+  data: ExhibitionItem[];
   title: string;
   small?: boolean;
+  onPress: (item: ExhibitionItem) => void;
 };
 
 type NavigationProp = StackNavigationProp<StackParamList, 'ExhibitionDetail'>;
@@ -30,7 +34,8 @@ type NavigationProp = StackNavigationProp<StackParamList, 'ExhibitionDetail'>;
 export default function FlatListExhibitions({
   data,
   small = false,
-  title = '추천전시',
+  title = '진행 중인 전시',
+  onPress,
 }: Props) {
   const navigation = useNavigation<NavigationProp>();
 
@@ -50,7 +55,7 @@ export default function FlatListExhibitions({
         showsHorizontalScrollIndicator={false}
         renderItem={({item}) => (
           <TouchableOpacity
-            onPress={() => navigation.navigate('ExhibitionDetail')}
+            onPress={() => onPress(item)}
             style={small ? styles.smallItem : styles.recommendedItem}>
             <Image
               source={item.image}
