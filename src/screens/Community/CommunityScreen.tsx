@@ -1,4 +1,4 @@
-import React, {useState, useRef, useCallback} from 'react';
+import React, {useState, useRef, useCallback, useEffect} from 'react';
 import {
   FlatList,
   View,
@@ -14,11 +14,10 @@ import {
   useFocusEffect,
 } from '@react-navigation/native';
 import {useInfiniteQuery} from '@tanstack/react-query';
-
 import GlobalStyle from '../../styles/GlobalStyle';
 import CommunityCard from '../../components/Community/CommunityCard';
 import FilterTabs from '../../components/Community/FilterTabs';
-
+import RecommendedUsers from '../../components/Community/RecommendedUsers';
 import SearchIcon from '../../assets/icons/search-icon.svg';
 import NotificationIcon from '../../assets/icons/notification-icon.svg';
 import {StackParamList} from '../../navigator/StackParamList';
@@ -38,20 +37,26 @@ const fetchPosts = async ({
   category: string;
 }) => {
   const apiCategory = category === '전체' ? 'all' : 'follow';
-
   const response = await customAxios.get(
     `/communications/main/${apiCategory}/${pageParam}`,
   );
-
   if (response.status !== 200) {
     throw new Error('Failed to fetch posts');
   }
+  return response.data;
+};
 
+const fetchRecommendedUsers = async () => {
+  const response = await customAxios.get('/user/recommend/follower');
+  if (response.status !== 200) {
+    throw new Error('Failed to fetch recommended users');
+  }
   return response.data;
 };
 
 export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState('전체');
+  const [recommendedUsers, setRecommendedUsers] = useState<any[]>([]);
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const ref = useRef<FlatListType<any>>(null);
   useScrollToTop(ref);
@@ -71,6 +76,23 @@ export default function CommunityScreen() {
       (page: PageType) => page.detailCommunicationsContentResponseDtoList,
     ) || [];
 
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const users = await fetchRecommendedUsers();
+        console.log('Recommended Users:', users);
+        setRecommendedUsers(users);
+      } catch (error: any) {
+        console.error(
+          'Failed to fetch recommended users:',
+          error.response?.data,
+        );
+      }
+    };
+
+    getUsers();
+  }, []);
+
   const handleTabSelect = (tab: string) => {
     setActiveTab(tab);
     ref.current?.scrollToOffset({animated: true, offset: 0});
@@ -82,6 +104,37 @@ export default function CommunityScreen() {
       ref.current?.scrollToOffset({animated: true, offset: 0});
       refetch();
     }, [refetch]),
+  );
+
+  const renderPost = useCallback(
+    ({item, index}: {item: any; index: number}) => {
+      if (index === 1 && recommendedUsers.length > 0 && posts.length > 1) {
+        return (
+          <>
+            <RecommendedUsers users={recommendedUsers} />
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('CommunityDetail', {
+                  communicationsId: item.communicationsId,
+                })
+              }>
+              <CommunityCard Posts={item} />
+            </TouchableOpacity>
+          </>
+        );
+      }
+      return (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('CommunityDetail', {
+              communicationsId: item.communicationsId,
+            })
+          }>
+          <CommunityCard Posts={item} />
+        </TouchableOpacity>
+      );
+    },
+    [recommendedUsers, navigation, posts.length],
   );
 
   return (
@@ -108,16 +161,7 @@ export default function CommunityScreen() {
         style={{paddingBottom: 27}}
         data={posts}
         keyExtractor={item => item.communicationsId.toString()}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('CommunityDetail', {
-                communicationsId: item.communicationsId,
-              })
-            }>
-            <CommunityCard Posts={item} />
-          </TouchableOpacity>
-        )}
+        renderItem={renderPost}
         onEndReached={() => {
           if (hasNextPage) {
             fetchNextPage();

@@ -20,7 +20,7 @@ export type StackParamList = {
   Tabs: {
     screen: string;
   };
-  Records: {exhibitionId: number | null};
+  Records: undefined;
   Recording: {
     exhibitionName: string;
     exhibitionDate: string;
