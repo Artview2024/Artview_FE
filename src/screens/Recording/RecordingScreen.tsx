@@ -214,7 +214,7 @@ export default function RecordingScreen() {
         setModalVisible(false);
 
         if (isEditMode) {
-          navigation.navigate('Records');
+          navigation.navigate('Records', {exhibitionId: exhibitionId || null});
         } else {
           navigation.navigate('Home');
         }

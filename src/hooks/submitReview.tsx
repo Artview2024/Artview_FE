@@ -30,9 +30,7 @@ export const handlePatchSubmit = async (
   const formData = new FormData();
   formData.append(
     'exhibitionId',
-    updatedFinalData.exhibitionId
-      ? String(Number(updatedFinalData.exhibitionId))
-      : '',
+    String(updatedFinalData.exhibitionId), // exhibitionId를 String으로 변환하여 추가
   );
   formData.append('name', updatedFinalData.name || '');
   formData.append('date', updatedFinalData.date || '');
@@ -43,6 +41,7 @@ export const handlePatchSubmit = async (
     formData.append(`artList[${index}].title`, art.title || '');
     formData.append(`artList[${index}].artist`, art.artist || '');
     formData.append(`artList[${index}].contents`, art.memo || '');
+
     if (art.image && art.image.startsWith('file://')) {
       const addImageFile = {
         uri: art.image,
@@ -103,12 +102,7 @@ export const handlePostSubmit = async (
   const updatedFinalData = {...finalData, rating: rating.toString()};
 
   const formData = new FormData();
-  formData.append(
-    'exhibitionId',
-    updatedFinalData.exhibitionId
-      ? String(Number(updatedFinalData.exhibitionId))
-      : null,
-  );
+  formData.append('exhibitionId', String(updatedFinalData.exhibitionId));
   formData.append('name', updatedFinalData.name || '');
   formData.append('date', updatedFinalData.date || '');
   formData.append('gallery', updatedFinalData.gallery || '');
