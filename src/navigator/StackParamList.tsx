@@ -1,4 +1,5 @@
 export type Record = {
+  exhibitionId: number | null;
   id: number;
   name: string;
   date: string;
@@ -42,7 +43,7 @@ export type StackParamList = {
     recordId: number;
   };
   PostingStart: undefined;
-  RecordDetail: {record: Record};
+  RecordDetail: {record: Record; exhibitionId: number | null};
   Community: {newPost?: any};
   CommunityDetail: {communicationsId: number};
   OtherUser: {writerId?: number};
