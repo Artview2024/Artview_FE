@@ -3,6 +3,7 @@ import customAxios from '../services/customAxios';
 import mime from 'react-native-mime-types';
 
 type ArtItem = {
+  id: string;
   image: string;
   title: string;
   artist: string;
@@ -11,13 +12,14 @@ type ArtItem = {
 };
 
 type FinalData = {
-  exhibitionId: number;
+  myReviewsId?: string;
   name: string;
   date: string;
   gallery: string;
   rating: string;
   mainImage: string;
   artList: ArtItem[];
+  exhibitionId: string;
 };
 
 // PATCH 요청
@@ -25,13 +27,14 @@ export const handlePatchSubmit = async (
   finalData: FinalData,
   rating: number,
 ) => {
-  const updatedFinalData = {...finalData, rating: rating.toString()};
+  const updatedFinalData = {
+    ...finalData,
+    rating: rating.toString(),
+  };
 
   const formData = new FormData();
-  formData.append(
-    'exhibitionId',
-    String(updatedFinalData.exhibitionId), // exhibitionId를 String으로 변환하여 추가
-  );
+  formData.append('exhibitionId', String(updatedFinalData.exhibitionId));
+  formData.append('myReviewsId', updatedFinalData.myReviewsId || '');
   formData.append('name', updatedFinalData.name || '');
   formData.append('date', updatedFinalData.date || '');
   formData.append('gallery', updatedFinalData.gallery || '');
@@ -50,7 +53,7 @@ export const handlePatchSubmit = async (
           mime.lookup(art.image) || 'jpeg',
         )}`,
       };
-      formData.append(`artList[${index}].image`, addImageFile);
+      formData.append(`artList[${index}].addImage`, addImageFile);
     } else if (art.image) {
       formData.append(`artList[${index}].image`, art.image);
     }
@@ -99,7 +102,10 @@ export const handlePostSubmit = async (
   finalData: FinalData,
   rating: number,
 ) => {
-  const updatedFinalData = {...finalData, rating: rating.toString()};
+  const updatedFinalData = {
+    ...finalData,
+    rating: rating.toString(),
+  };
 
   const formData = new FormData();
   formData.append('exhibitionId', String(updatedFinalData.exhibitionId));
@@ -111,7 +117,7 @@ export const handlePostSubmit = async (
   updatedFinalData.artList.forEach((art: ArtItem, index: number) => {
     formData.append(`artList[${index}].title`, art.title || '');
     formData.append(`artList[${index}].artist`, art.artist || '');
-    formData.append(`artList[${index}].contents`, art.memo || '');
+    formData.append(`artList[${index}].content`, art.memo || '');
 
     if (art.image) {
       const imageFile = {
@@ -127,25 +133,26 @@ export const handlePostSubmit = async (
     }
   });
 
+  if (!updatedFinalData.mainImage && updatedFinalData.artList.length > 0) {
+    updatedFinalData.mainImage = updatedFinalData.artList[0].image;
+  }
+
   if (updatedFinalData.mainImage) {
-    const mainImageFile = {
-      uri: updatedFinalData.mainImage.startsWith('file://')
-        ? updatedFinalData.mainImage
-        : `file://${updatedFinalData.mainImage}`,
-      type: mime.lookup(updatedFinalData.mainImage) || 'image/jpeg',
-      name: 'mainImage.jpeg',
-    };
-    formData.append('mainImage', mainImageFile);
-  } else {
-    const resolvedAsset = Image.resolveAssetSource(
-      require('../assets/images/thumbnail_basic.png'),
-    );
-    const defaultImageFile = {
-      uri: resolvedAsset.uri,
-      type: mime.lookup('png') || 'image/png',
-      name: 'mainImage.png',
-    };
-    formData.append('mainImage', defaultImageFile);
+    if (
+      updatedFinalData.mainImage.startsWith('http') ||
+      updatedFinalData.mainImage.startsWith('https')
+    ) {
+      formData.append('mainImage', updatedFinalData.mainImage);
+    } else {
+      const mainImageFile = {
+        uri: updatedFinalData.mainImage.startsWith('file://')
+          ? updatedFinalData.mainImage
+          : `file://${updatedFinalData.mainImage}`,
+        type: mime.lookup(updatedFinalData.mainImage) || 'image/jpeg',
+        name: 'mainImage.jpeg',
+      };
+      formData.append('mainImage', mainImageFile);
+    }
   }
 
   try {
@@ -156,7 +163,15 @@ export const handlePostSubmit = async (
     });
     return response.data;
   } catch (error: any) {
-    console.error('Error:', error.response?.data || error);
+    if (error.response) {
+      console.error('Response error data:', error.response.data);
+      console.error('Response error status:', error.response.status);
+      console.error('Response error headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('Request error:', error.request);
+    } else {
+      console.error('Error message:', error.message);
+    }
     throw error;
   }
 };
