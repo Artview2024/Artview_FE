@@ -49,6 +49,7 @@ export default function RecordingScreen() {
     mainImage,
     isEditMode = false,
     exhibitionId,
+    myReviewsId = '',
   } = route.params;
 
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
@@ -169,37 +170,43 @@ export default function RecordingScreen() {
     const updatedArtList = updateArtImage(artIndex, imageUri, artList);
     setArtList(updatedArtList);
 
+    if (updatedArtList.length === 0) {
+      setPhotoWarningVisible(true);
+      return;
+    }
+
     const artWithoutImage = updatedArtList.some(art => !art.image);
     if (artWithoutImage) {
       setPhotoWarningVisible(true);
       return;
     }
 
-    let mainImageUri = '';
-    if (updatedArtList.length > 0) {
-      if (mainImageIndex !== null && mainImageIndex < updatedArtList.length) {
-        mainImageUri = updatedArtList[mainImageIndex].image || '';
-      } else {
-        const resolvedAsset = Image.resolveAssetSource(
-          require('../../assets/images/thumbnail_basic.png'),
-        );
-        mainImageUri = resolvedAsset.uri;
-      }
+    // mainImage 설정: 사용자가 설정하지 않았을 경우 첫 번째 artList 이미지 사용
+    let mainImageUri = mainImage;
+    if (!mainImage && updatedArtList.length > 0) {
+      mainImageUri = updatedArtList[0].image;
     }
 
+    const myReviewsId = route.params.myReviewsId || '';
+
     setFinalData({
+      myReviewsId,
       name: exhibitionName,
       date: exhibitionDate,
       gallery: gallery,
       rating: '',
-      mainImage: mainImageUri,
+      mainImage: mainImageUri || '',
       artList: updatedArtList,
-      exhibitionId: exhibitionId || 1,
+      exhibitionId: String(exhibitionId),
     });
     setModalVisible(true);
   };
 
   const handleRatingSubmit = async (rating: number) => {
+    if (artList.length === 0) {
+      setPhotoWarningVisible(true);
+      return;
+    }
     if (finalData) {
       try {
         const updatedFinalData = {...finalData, rating: rating.toString()};

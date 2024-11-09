@@ -24,12 +24,15 @@ export default function RecordingStartScreen() {
   };
 
   const handleStartRecording = async () => {
+    const exhibitionId = '2'; // 일단 기본값
+
     navigation.navigate('Recording', {
       exhibitionName: exhibition,
       exhibitionDate: formatDate(date),
       gallery: location,
       artList: [],
       isEditMode: false,
+      exhibitionId,
     });
   };
 
