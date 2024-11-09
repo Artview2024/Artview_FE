@@ -88,6 +88,7 @@ export default function RecordDetailScreen() {
         isEditMode: true,
         artIndex: 0,
         myReviewsId: record.id,
+        exhibitionId: record.exhibitionId || null,
       });
     }
   };

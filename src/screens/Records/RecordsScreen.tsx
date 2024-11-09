@@ -15,6 +15,7 @@ import GlobalStyle from '../../styles/GlobalStyle';
 import Header from '../../components/My/Header';
 
 type Record = {
+  exhibitionId: number | null;
   id: number;
   name: string;
   date: string;
@@ -46,6 +47,7 @@ export default function RecordsScreen() {
           name: item.exhibitionName,
           date: item.visitedDate,
           mainImage: item.imageUrl,
+          exhibitionId: item.exhibitionId,
         }));
 
         setMyRecords(transformedRecords);
@@ -63,8 +65,16 @@ export default function RecordsScreen() {
   const handleRecordSelect = (id: number) => {
     setSelectedRecord(id);
     const record = myRecords.find(record => record.id === id);
+
     if (record) {
-      navigation.navigate('RecordDetail', {record});
+      navigation.navigate('RecordDetail', {
+        record: {
+          ...record,
+          id: record.id || 0,
+          exhibitionId: record.exhibitionId || null,
+        },
+        exhibitionId: record.exhibitionId || null,
+      });
     }
   };
 
