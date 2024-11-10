@@ -1,6 +1,7 @@
 import {Image} from 'react-native';
 import customAxios from '../services/customAxios';
 import mime from 'react-native-mime-types';
+import ImageResizer from 'react-native-image-resizer';
 
 type ArtItem = {
   id: string;
@@ -22,6 +23,42 @@ type FinalData = {
   exhibitionId: string;
 };
 
+export const compressImage = async (imageUri: string) => {
+  try {
+    const resizedImage = await ImageResizer.createResizedImage(
+      imageUri,
+      600,
+      800,
+      'JPEG',
+      80,
+    );
+
+    return resizedImage.uri;
+  } catch (error) {
+    console.error('Image compression error:', error);
+    return imageUri;
+  }
+};
+
+export const prepareFormData = async (artList: ArtItem[]) => {
+  const formData = new FormData();
+
+  for (const [index, art] of artList.entries()) {
+    if (art.image && art.image.startsWith('file://')) {
+      const compressedImageUri = await compressImage(art.image);
+      const imageFile = {
+        uri: compressedImageUri,
+        type: mime.lookup(compressedImageUri) || 'image/jpeg',
+        name: `art_${index}_image.${mime.extension(
+          mime.lookup(compressedImageUri) || 'jpeg',
+        )}`,
+      };
+      formData.append(`artList[${index}].image`, imageFile);
+    }
+  }
+  return formData;
+};
+
 // PATCH 요청
 export const handlePatchSubmit = async (
   finalData: FinalData,
@@ -32,7 +69,7 @@ export const handlePatchSubmit = async (
     rating: rating.toString(),
   };
 
-  const formData = new FormData();
+  const formData = await prepareFormData(updatedFinalData.artList);
   formData.append('exhibitionId', String(updatedFinalData.exhibitionId));
   formData.append('myReviewsId', updatedFinalData.myReviewsId || '');
   formData.append('name', updatedFinalData.name || '');
@@ -107,7 +144,7 @@ export const handlePostSubmit = async (
     rating: rating.toString(),
   };
 
-  const formData = new FormData();
+  const formData = await prepareFormData(updatedFinalData.artList);
   formData.append('exhibitionId', String(updatedFinalData.exhibitionId));
   formData.append('name', updatedFinalData.name || '');
   formData.append('date', updatedFinalData.date || '');

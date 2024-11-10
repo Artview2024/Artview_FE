@@ -21,13 +21,18 @@ interface CarouselItem {
 interface CarouselProps {
   data: CarouselItem[];
   onIndexChange: (index: number) => void;
+  onPress: (exhibitionId: number) => void;
 }
 
 const PAGE_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = PAGE_WIDTH * 0.99;
 const ITEM_SPACING = (PAGE_WIDTH - ITEM_WIDTH) / 2;
 
-const CarouselParallax: React.FC<CarouselProps> = ({data, onIndexChange}) => {
+const CarouselParallax: React.FC<CarouselProps> = ({
+  data,
+  onIndexChange,
+  onPress,
+}) => {
   const progress = useSharedValue<number>(0);
 
   const handleProgressChange = (
@@ -47,7 +52,7 @@ const CarouselParallax: React.FC<CarouselProps> = ({data, onIndexChange}) => {
         height={ITEM_WIDTH * (4 / 3)}
         data={data}
         renderItem={({item}: {item: CarouselItem}) => (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => onPress(parseInt(item.key, 10))}>
             <View>
               <Image source={item.image} style={styles.carouselImage} />
               <View style={styles.carouselTextContainer}>

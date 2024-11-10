@@ -31,7 +31,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
   });
   const [postings, setPostings] = useState([]);
   const [exhibitions, setExhibitions] = useState([]);
-  const [interests, setInterests] = useState(['현대미술', '공예']);
+  const [interests, setInterests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const refetch = async () => {
@@ -82,7 +82,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
       }));
       setPostings(formattedPostings);
     } catch (error: any) {
-      console.error('Failed to fetch postings:', error.response.data);
+      console.error('Failed to fetch postings:', error.response?.data);
     }
   };
 
@@ -99,7 +99,17 @@ export default function MyScreen({navigation}: MyScreenProps) {
       }));
       setExhibitions(formattedExhibitions);
     } catch (error: any) {
-      console.error('Failed to fetch exhibitions:', error.response.data);
+      console.error('Failed to fetch exhibitions:', error.response?.data);
+    }
+  };
+
+  const fetchInterests = async () => {
+    try {
+      const response = await customAxios.get('/user/myPage/interest');
+      setInterests(response.data);
+      console.log(response.data);
+    } catch (error: any) {
+      console.error('Failed to fetch interests:', error.response?.data);
     }
   };
 
@@ -108,6 +118,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
     await fetchUserInfo();
     await fetchPostings();
     await fetchExhibitions();
+    await fetchInterests();
     setLoading(false);
   };
 

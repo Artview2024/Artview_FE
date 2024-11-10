@@ -1,6 +1,4 @@
-// InterestSelectionScreen.tsx
-
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import Header from '../../components/My/Header';
 import Text from '../../components/Text';
@@ -8,6 +6,7 @@ import InterestCategoryButton from '../../components/Interests/InterestCategoryB
 import GlobalStyle from '../../styles/GlobalStyle';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
+import customAxios from '../../services/customAxios';
 
 const mockCategories = [
   {title: '현대미술', imageUrl: 'https://example.com/image1.jpg'},
@@ -24,6 +23,20 @@ const mockCategories = [
 const InterestSelectionScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  // 관심 분야 가져오기
+  useEffect(() => {
+    const fetchUserInterests = async () => {
+      try {
+        const response = await customAxios.get('/user/myPage/interest');
+        setSelectedCategories(response.data); // API에서 가져온 관심 분야 설정
+      } catch (error: any) {
+        console.error('Failed to fetch user interests:', error.response?.data);
+      }
+    };
+
+    fetchUserInterests();
+  }, []);
 
   // 카테고리 선택 로직
   const handleCategoryPress = (category: string) => {
