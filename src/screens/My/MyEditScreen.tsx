@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Keyboard,
   Alert,
 } from 'react-native';
 import Header from '../../components/My/Header';
@@ -21,6 +20,7 @@ import {
 import {StackParamList} from '../../navigator/StackParamList';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
+import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
 import FormData from 'form-data';
 
 interface RouteParams {
@@ -32,6 +32,7 @@ const MyEditScreen: React.FC = () => {
   const route = useRoute<RouteProp<StackParamList, 'MyEdit'>>();
 
   const {userInterest = []} = route.params || {};
+  const isKeyboardVisible = useKeyboardVisibility(); // 커스텀 훅 사용
 
   const [initialUserName, setInitialUserName] = useState<string>('');
   const [initialInterests, setInitialInterests] = useState<string[]>([]);
@@ -39,7 +40,6 @@ const MyEditScreen: React.FC = () => {
 
   const [userName, setUserName] = useState<string>('');
   const [interests, setInterests] = useState<string[]>([]);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
 
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
     useImagePicker();
@@ -81,22 +81,6 @@ const MyEditScreen: React.FC = () => {
       setInterests(userInterest);
     }
   }, [userInterest]);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => setIsKeyboardVisible(true),
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => setIsKeyboardVisible(false),
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
 
   const handleImageChange = () => {
     Alert.alert(

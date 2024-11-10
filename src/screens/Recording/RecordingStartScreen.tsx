@@ -1,11 +1,17 @@
 import React, {useState} from 'react';
-import {View, TouchableOpacity, TextInput} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+} from 'react-native';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../../styles/GlobalStyle';
 import {StackParamList} from '../../navigator/StackParamList';
 import Text from '../../components/Text';
+import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
 
 export default function RecordingStartScreen() {
   const [exhibition, setExhibition] = useState('');
@@ -16,6 +22,7 @@ export default function RecordingStartScreen() {
   const isFormFilled = exhibition && location && dateSelected;
 
   const navigation = useNavigation<NavigationProp<StackParamList>>();
+  const isKeyboardVisible = useKeyboardVisibility(); // 훅 사용
 
   const formatDate = (date: Date) => {
     return dateSelected
@@ -37,7 +44,7 @@ export default function RecordingStartScreen() {
   };
 
   return (
-    <View style={GlobalStyle.container}>
+    <KeyboardAvoidingView style={GlobalStyle.container} behavior="height">
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <BackIcon
           name="chevron-back"
@@ -87,15 +94,19 @@ export default function RecordingStartScreen() {
           setDateOpen(false);
         }}
       />
-      <TouchableOpacity
-        style={[
-          GlobalStyle.button,
-          isFormFilled ? GlobalStyle.activeButton : GlobalStyle.inactiveButton,
-        ]}
-        disabled={!isFormFilled}
-        onPress={handleStartRecording}>
-        <Text style={[GlobalStyle.buttonText]}>기록 시작</Text>
-      </TouchableOpacity>
-    </View>
+      {!isKeyboardVisible && (
+        <TouchableOpacity
+          style={[
+            GlobalStyle.button,
+            isFormFilled
+              ? GlobalStyle.activeButton
+              : GlobalStyle.inactiveButton,
+          ]}
+          disabled={!isFormFilled}
+          onPress={handleStartRecording}>
+          <Text style={[GlobalStyle.buttonText]}>기록 시작</Text>
+        </TouchableOpacity>
+      )}
+    </KeyboardAvoidingView>
   );
 }

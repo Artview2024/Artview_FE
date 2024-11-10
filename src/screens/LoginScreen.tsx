@@ -114,11 +114,7 @@ export default function LoginScreen() {
       <TouchableOpacity
         style={styles.kakaoButton}
         onPress={() => setWebViewVisible(true)}>
-        <KakaoLogin
-          width="100%"
-          height="100%"
-          preserveAspectRatio="xMidYMid slice"
-        />
+        <KakaoLogin width="100%" height="100%" preserveAspectRatio="none" />
       </TouchableOpacity>
 
       {/* WebView 모달 */}
@@ -198,6 +194,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
     marginBottom: 10,
+    overflow: 'hidden',
   },
   loginButton: {
     backgroundColor: 'black',
