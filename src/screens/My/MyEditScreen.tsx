@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Keyboard,
   Alert,
 } from 'react-native';
 import Header from '../../components/My/Header';
@@ -40,7 +39,7 @@ const MyEditScreen: React.FC = () => {
 
   const [userName, setUserName] = useState<string>('');
   const [interests, setInterests] = useState<string[]>([]);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
+  const isKeyboardVisible = useKeyboardVisibility();
 
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
     useImagePicker();
@@ -67,12 +66,9 @@ const MyEditScreen: React.FC = () => {
     const fetchUserInterests = async () => {
       try {
         const response = await customAxios.get('/user/myPage/interest');
-
         const rawInterests = response.data;
         const parsedInterests = JSON.parse(rawInterests);
-
         setInterests(parsedInterests);
-        console.log('Parsed interests:', parsedInterests);
       } catch (error: any) {
         console.error('관심 분야 가져오기 실패:', error.response?.data);
       }
@@ -87,21 +83,6 @@ const MyEditScreen: React.FC = () => {
       setInterests(userInterest);
     }
   }, [userInterest]);
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => setIsKeyboardVisible(true),
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => setIsKeyboardVisible(false),
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
 
   const handleImageChange = () => {
     Alert.alert(
@@ -174,7 +155,7 @@ const MyEditScreen: React.FC = () => {
       <View style={styles.profileContainer}>
         <Image
           source={
-            imageUri ? {uri: imageUri} : require('../../assets/images/user.png') // 이미지 URI가 없으면 기본 이미지 사용
+            imageUri ? {uri: imageUri} : require('../../assets/images/user.png')
           }
           style={styles.profileImage}
         />
