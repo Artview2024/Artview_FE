@@ -45,7 +45,7 @@ const MyEditScreen: React.FC = () => {
     useImagePicker();
   const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
 
-  // 유저 정보 가져오기
+  // 유저 정보 및 관심 분야 가져오기
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -63,7 +63,17 @@ const MyEditScreen: React.FC = () => {
       }
     };
 
+    const fetchUserInterests = async () => {
+      try {
+        const response = await customAxios.get('/user/myPage/interest');
+        setInterests(response.data);
+      } catch (error: any) {
+        console.error('관심 분야 가져오기 실패:', error.response?.data);
+      }
+    };
+
     fetchUserInfo();
+    fetchUserInterests();
   }, []);
 
   useEffect(() => {
