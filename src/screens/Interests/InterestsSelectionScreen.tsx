@@ -4,9 +4,18 @@ import Header from '../../components/My/Header';
 import Text from '../../components/Text';
 import InterestCategoryButton from '../../components/Interests/InterestCategoryButton';
 import GlobalStyle from '../../styles/GlobalStyle';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {
+  NavigationProp,
+  useNavigation,
+  useRoute,
+  RouteProp,
+} from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
 import customAxios from '../../services/customAxios';
+
+interface RouteParams {
+  userInterest?: string[];
+}
 
 const mockCategories = [
   {title: '현대미술', imageUrl: 'https://example.com/image1.jpg'},
@@ -22,16 +31,31 @@ const mockCategories = [
 
 const InterestSelectionScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const route = useRoute<RouteProp<StackParamList, 'InterestSelection'>>();
+  const {userInterest = []} = route.params || {}; // MyEditScreen에서 전달된 userInterest
 
-  // 관심 분야 가져오기
+  const [selectedCategories, setSelectedCategories] =
+    useState<string[]>(userInterest);
+
   useEffect(() => {
     const fetchUserInterests = async () => {
       try {
         const response = await customAxios.get('/user/myPage/interest');
-        setSelectedCategories(response.data); // API에서 가져온 관심 분야 설정
+        const rawInterests = response.data;
+        const parsedInterests = JSON.parse(rawInterests);
+
+        // 서버에서 가져온 관심 분야를 상태에 추가 (이미 존재하지 않는 경우에만)
+        setSelectedCategories(prevCategories => {
+          const updatedCategories = [...prevCategories];
+          parsedInterests.forEach((interest: string) => {
+            if (!updatedCategories.includes(interest)) {
+              updatedCategories.push(interest);
+            }
+          });
+          return updatedCategories;
+        });
       } catch (error: any) {
-        console.error('Failed to fetch user interests:', error.response?.data);
+        console.error('관심 분야 가져오기 실패:', error.response?.data);
       }
     };
 
@@ -56,8 +80,7 @@ const InterestSelectionScreen: React.FC = () => {
 
   return (
     <View style={GlobalStyle.container}>
-      <Header title={''} />
-
+      <Header title="관심 분야 선택" />
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <Text style={styles.title}>
           관심 있는{'\n'}전시회 카테고리를 선택해주세요
@@ -79,7 +102,6 @@ const InterestSelectionScreen: React.FC = () => {
           ))}
         </View>
       </ScrollView>
-
       <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitButtonText}>선택 완료</Text>
       </TouchableOpacity>

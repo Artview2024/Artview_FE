@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Keyboard,
   Alert,
 } from 'react-native';
 import Header from '../../components/My/Header';
@@ -20,8 +21,8 @@ import {
 import {StackParamList} from '../../navigator/StackParamList';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
-import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
 import FormData from 'form-data';
+import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
 
 interface RouteParams {
   userInterest?: string[];
@@ -32,7 +33,6 @@ const MyEditScreen: React.FC = () => {
   const route = useRoute<RouteProp<StackParamList, 'MyEdit'>>();
 
   const {userInterest = []} = route.params || {};
-  const isKeyboardVisible = useKeyboardVisibility(); // 커스텀 훅 사용
 
   const [initialUserName, setInitialUserName] = useState<string>('');
   const [initialInterests, setInitialInterests] = useState<string[]>([]);
@@ -40,6 +40,7 @@ const MyEditScreen: React.FC = () => {
 
   const [userName, setUserName] = useState<string>('');
   const [interests, setInterests] = useState<string[]>([]);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
 
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
     useImagePicker();
@@ -66,7 +67,12 @@ const MyEditScreen: React.FC = () => {
     const fetchUserInterests = async () => {
       try {
         const response = await customAxios.get('/user/myPage/interest');
-        setInterests(response.data);
+
+        const rawInterests = response.data;
+        const parsedInterests = JSON.parse(rawInterests);
+
+        setInterests(parsedInterests);
+        console.log('Parsed interests:', parsedInterests);
       } catch (error: any) {
         console.error('관심 분야 가져오기 실패:', error.response?.data);
       }
@@ -81,6 +87,21 @@ const MyEditScreen: React.FC = () => {
       setInterests(userInterest);
     }
   }, [userInterest]);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => setIsKeyboardVisible(true),
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => setIsKeyboardVisible(false),
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
 
   const handleImageChange = () => {
     Alert.alert(
@@ -142,6 +163,10 @@ const MyEditScreen: React.FC = () => {
     }
   };
 
+  const handleInterestSelection = () => {
+    navigation.navigate('InterestSelection', {userInterest: interests});
+  };
+
   return (
     <View style={[GlobalStyle.container]}>
       <Header title="프로필 수정" />
@@ -149,9 +174,7 @@ const MyEditScreen: React.FC = () => {
       <View style={styles.profileContainer}>
         <Image
           source={
-            imageUri && imageUri.startsWith('http')
-              ? {uri: imageUri}
-              : require('../../assets/images/user.png')
+            imageUri ? {uri: imageUri} : require('../../assets/images/user.png') // 이미지 URI가 없으면 기본 이미지 사용
           }
           style={styles.profileImage}
         />
@@ -179,7 +202,7 @@ const MyEditScreen: React.FC = () => {
         ))}
         <TouchableOpacity
           style={styles.interestBox}
-          onPress={() => navigation.navigate('InterestSelection')}>
+          onPress={handleInterestSelection}>
           <Text>+</Text>
         </TouchableOpacity>
       </View>

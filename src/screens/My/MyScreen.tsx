@@ -106,8 +106,12 @@ export default function MyScreen({navigation}: MyScreenProps) {
   const fetchInterests = async () => {
     try {
       const response = await customAxios.get('/user/myPage/interest');
-      setInterests(response.data);
-      console.log(response.data);
+      const rawInterests = response.data;
+
+      const parsedInterests = JSON.parse(rawInterests);
+
+      setInterests(parsedInterests);
+      console.log(parsedInterests);
     } catch (error: any) {
       console.error('Failed to fetch interests:', error.response?.data);
     }
