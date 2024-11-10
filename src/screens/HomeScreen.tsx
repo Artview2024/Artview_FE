@@ -31,21 +31,13 @@ type CarouselItem = {
   date: string;
   gallery: string;
   image: any;
+  exhibitionId: number;
 };
-
-const carouselData: CarouselItem[] = [
-  {
-    key: '1',
-    title: '이경준 사진전',
-    date: '2023.12.18',
-    gallery: '서울 미술관',
-    image: require('../assets/images/artList3.jpg'),
-  },
-];
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const [backgroundIndex, setBackgroundIndex] = useState(0);
+  const [carouselData, setCarouselData] = useState<CarouselItem[]>([]);
   const [ongoingExhibitions, setOngoingExhibitions] = useState([]);
   const ref = useRef(null);
   useScrollToTop(ref);
@@ -55,8 +47,39 @@ export default function HomeScreen() {
   };
 
   useEffect(() => {
+    fetchCarouselData();
     fetchOngoingExhibitions();
   }, []);
+
+  const fetchCarouselData = async () => {
+    try {
+      const response = await customAxios.get('/myReviews/all');
+      console.log('API 응답 데이터:', response.data);
+
+      if (Array.isArray(response.data)) {
+        const firstThreeRecords = response.data
+          .filter((item: any) => item.myReviewsId !== undefined)
+          .slice(0, 3)
+          .map((item: any) => ({
+            key: item.myReviewsId.toString(),
+            title: item.exhibitionName,
+            date: item.visitedDate,
+            gallery: item.location || '',
+            image: {uri: item.imageUrl},
+            exhibitionId: item.exhibitionId,
+            myReviewId: item.myReviewsId,
+          }));
+
+        setCarouselData(firstThreeRecords);
+      } else {
+        console.error('예상치 못한 응답 데이터 구조:', response.data);
+        setCarouselData([]);
+      }
+    } catch (error: any) {
+      console.error('Failed to fetch carousel data:', error);
+      setCarouselData([]);
+    }
+  };
 
   const fetchOngoingExhibitions = async () => {
     try {
@@ -77,6 +100,29 @@ export default function HomeScreen() {
         'Failed to fetch ongoing exhibitions:',
         error.response?.data,
       );
+    }
+  };
+
+  const handleCarouselItemPress = (myReviewId: number) => {
+    // myReviewId를 사용하여 기록을 찾음
+    const record = carouselData.find(
+      item => item.key === myReviewId.toString(), // key를 myReviewId로 비교
+    );
+
+    if (record) {
+      navigation.navigate('RecordDetail', {
+        record: {
+          id: parseInt(record.key, 10), // key를 숫자로 변환
+          name: record.title,
+          date: record.date,
+          mainImage: record.image.uri,
+          gallery: record.gallery,
+          rating: '', // 필요시 값을 추가
+          artList: [], // 필요시 값을 추가
+          exhibitionId: record.exhibitionId,
+        },
+        exhibitionId: record.exhibitionId,
+      });
     }
   };
 
@@ -114,6 +160,7 @@ export default function HomeScreen() {
           <CarouselParallax
             data={carouselData}
             onIndexChange={handleIndexChange}
+            onPress={handleCarouselItemPress}
           />
         ) : (
           <View style={styles.carouselPlaceholder}>
