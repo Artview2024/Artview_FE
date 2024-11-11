@@ -50,7 +50,13 @@ export type StackParamList = {
   OtherUser: {writerId?: number};
   MyScreen: undefined;
   MyFollowScreen: {activeTab: string; userId?: number; isOtherUser?: boolean};
-  MyEdit: {userInterest?: any};
+  MyEdit: {
+    userInfo?: {
+      userName: string;
+      userImageUrl: string;
+    };
+    userInterest: string[];
+  };
   InterestSelection: {userInterest: any};
   ExhibitionDetail: {exhibitionId: number};
   ExhibitionsAll: {title: string};

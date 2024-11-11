@@ -32,7 +32,7 @@ const mockCategories = [
 const InterestSelectionScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const route = useRoute<RouteProp<StackParamList, 'InterestSelection'>>();
-  const {userInterest = []} = route.params || {}; // MyEditScreen에서 전달된 userInterest
+  const {userInterest = []} = route.params || {};
 
   const [selectedCategories, setSelectedCategories] =
     useState<string[]>(userInterest);
@@ -44,7 +44,6 @@ const InterestSelectionScreen: React.FC = () => {
         const rawInterests = response.data;
         const parsedInterests = JSON.parse(rawInterests);
 
-        // 서버에서 가져온 관심 분야를 상태에 추가 (이미 존재하지 않는 경우에만)
         setSelectedCategories(prevCategories => {
           const updatedCategories = [...prevCategories];
           parsedInterests.forEach((interest: string) => {

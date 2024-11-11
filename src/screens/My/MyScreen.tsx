@@ -110,8 +110,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
 
       const parsedInterests = JSON.parse(rawInterests);
 
-      setInterests(parsedInterests);
-      console.log(parsedInterests);
+      setInterests(parsedInterests || []);
     } catch (error: any) {
       console.error('Failed to fetch interests:', error.response?.data);
     }
@@ -125,10 +124,6 @@ export default function MyScreen({navigation}: MyScreenProps) {
     await fetchInterests();
     setLoading(false);
   };
-
-  useEffect(() => {
-    fetchAllData();
-  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -166,6 +161,7 @@ export default function MyScreen({navigation}: MyScreenProps) {
           userName={userInfo.userName}
           userImageUrl={userInfo.userImageUrl}
           navigation={navigation}
+          interests={interests}
         />
 
         <MyInterests interests={interests} />
