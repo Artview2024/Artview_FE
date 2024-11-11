@@ -1,11 +1,21 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
+import SearchIcon from 'react-native-vector-icons/Ionicons';
 import Text from '../Text';
 
-const SearchHeader = () => {
+type SearchHeaderProps = {
+  onSearch: (text: string) => void;
+};
+
+const SearchHeader: React.FC<SearchHeaderProps> = ({onSearch}) => {
   const navigation = useNavigation();
+  const [inputText, setInputText] = useState('');
+
+  const handleSearch = () => {
+    onSearch(inputText);
+  };
 
   return (
     <View style={styles.headerContainer}>
@@ -17,11 +27,15 @@ const SearchHeader = () => {
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
-          placeholder="감상 키워드, 글, 전시회 검색하기"
-          placeholderTextColor={'#000'}
+          placeholder="검색 키워드를 입력해주세요"
+          placeholderTextColor={'#828282'}
+          value={inputText}
+          onChangeText={setInputText}
         />
       </View>
-      <View style={styles.rightSpace} />
+      <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
+        <SearchIcon name="search" size={24} color={'black'} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -49,8 +63,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     color: '#000',
   },
-  rightSpace: {
+  searchButton: {
     width: 40,
+    alignItems: 'center',
   },
 });
 
