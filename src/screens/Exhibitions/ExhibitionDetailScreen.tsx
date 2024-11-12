@@ -35,6 +35,7 @@ export default function ExhibitionDetailScreen() {
           `/exhibition/detail/info/${exhibitionId}`,
         );
         setExhibitionData(infoResponse.data);
+        console.log(infoResponse.data);
 
         const reviewResponse = await customAxios.get(
           `/exhibition/detail/review/${exhibitionId}`,
@@ -55,7 +56,7 @@ export default function ExhibitionDetailScreen() {
   }
 
   if (!exhibitionData) {
-    return <Text>Exhibition data not available</Text>;
+    return <Text>전시회 정보 불러오기에 실패하였습니다.</Text>;
   }
 
   return (

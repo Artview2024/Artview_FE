@@ -10,8 +10,8 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackParamList} from '../../navigator/StackParamList';
 import Text from '../Text';
-import Calendar from 'react-native-vector-icons/AntDesign';
-import LocationPin from 'react-native-vector-icons/EvilIcons';
+import Calendar from 'react-native-vector-icons/Ionicons';
+import LocationPin from 'react-native-vector-icons/Ionicons';
 
 type ExhibitionItem = {
   key: string;
@@ -63,12 +63,12 @@ export default function FlatListExhibitions({
             />
             <Text style={styles.recommendedText}>{item.title}</Text>
             <Text style={styles.recommendedSubText}>
-              <Calendar name="calendar" size={15} />
+              <Calendar name="calendar-outline" size={15} />
               &nbsp;
               {item.date}
             </Text>
             <Text style={styles.recommendedSubText}>
-              <LocationPin name="location" size={16} />
+              <LocationPin name="location-outline" size={16} />
               &nbsp;
               {item.gallery}
             </Text>

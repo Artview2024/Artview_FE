@@ -2,8 +2,8 @@ import React from 'react';
 import {View, Image, StyleSheet} from 'react-native';
 import Text from '../../components/Text';
 import ExhibitionStatusButton from './ExhibitionStatusButton';
-import Calendar from 'react-native-vector-icons/AntDesign';
-import LocationPin from 'react-native-vector-icons/EvilIcons';
+import Calendar from 'react-native-vector-icons/Ionicons';
+import LocationPin from 'react-native-vector-icons/Ionicons';
 import Time from 'react-native-vector-icons/Ionicons';
 
 type ExhibitionSimpleInfoProps = {
@@ -17,7 +17,7 @@ export default function ExhibitionSimpleInfo({
     return <Text>전시 정보가 없습니다.</Text>;
   }
 
-  const {mainImageUrl, title, startDate, finishDate, location, operatingHours} =
+  const {mainImageUrl, title, startDate, finishDate, location} =
     exhibitionData.exhibitionInfo;
 
   return (
@@ -26,26 +26,15 @@ export default function ExhibitionSimpleInfo({
       <View style={styles.infoContainer}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>
-          <ExhibitionStatusButton status="전시중" />
         </View>
         <Text style={styles.subInfo}>
-          <Calendar name="calendar" size={15} />
+          <Calendar name="calendar-outline" size={15} />
           &nbsp; {startDate} ~ {finishDate}
         </Text>
         <Text style={styles.subInfo}>
-          <LocationPin name="location" size={15} />
+          <LocationPin name="location-outline" size={15} />
           &nbsp; {location}
         </Text>
-        {operatingHours && (
-          <View>
-            {operatingHours.map((hour: string, index: number) => (
-              <Text key={index} style={styles.subInfo}>
-                <Time name="time-outline" size={15} />
-                &nbsp; {hour}
-              </Text>
-            ))}
-          </View>
-        )}
       </View>
     </View>
   );
@@ -80,5 +69,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#000',
     marginBottom: 4,
+  },
+  operatingHoursContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 2,
+  },
+  operatingHoursTextContainer: {
+    marginLeft: 8,
   },
 });
