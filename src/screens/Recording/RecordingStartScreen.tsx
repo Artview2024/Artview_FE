@@ -40,7 +40,7 @@ export default function RecordingStartScreen() {
   const formatDate = (date: Date) => {
     return dateSelected
       ? `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-      : '날짜 선택하기';
+      : '날짜 선택';
   };
 
   const fetchExhibitions = async (keyword: string) => {
@@ -97,6 +97,9 @@ export default function RecordingStartScreen() {
     }
   }, [exhibition]);
 
+  // 드롭다운 높이 설정: 3개 항목이면 약 150px, 그보다 적으면 항목 수에 따라 설정
+  const dropdownHeight = Math.min(searchResults.length * 50, 150); // 각 항목의 높이를 약 50px로 가정
+
   return (
     <KeyboardAvoidingView style={GlobalStyle.container} behavior="height">
       <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -109,7 +112,7 @@ export default function RecordingStartScreen() {
       </TouchableOpacity>
       <Text style={GlobalStyle.sectionTitle}>전시회</Text>
       <TextInput
-        style={[GlobalStyle.inputBox, {marginBottom: 20, color: 'black'}]}
+        style={[GlobalStyle.inputBox, {marginBottom: 0, color: 'black'}]}
         placeholder="전시회명"
         placeholderTextColor={'#000'}
         value={exhibition}
@@ -135,10 +138,17 @@ export default function RecordingStartScreen() {
               </View>
             </TouchableWithoutFeedback>
           )}
-          style={{maxHeight: 150, borderWidth: 1}}
+          style={{
+            maxHeight: dropdownHeight,
+            borderWidth: 1,
+            borderTopWidth: 0, // 위쪽 테두리 제거
+            borderColor: '#ddd', // 테두리 색상
+            borderBottomLeftRadius: 10, // 입력 필드와 같은 borderRadius
+            borderBottomRightRadius: 10, // 입력 필드와 같은 borderRadius
+          }}
         />
       )}
-      <Text style={GlobalStyle.sectionTitle}>장소</Text>
+      <Text style={[GlobalStyle.sectionTitle, {marginTop: 20}]}>장소</Text>
       <TextInput
         style={[GlobalStyle.inputBox, {marginBottom: 20, color: 'black'}]}
         placeholder="전시 장소"
