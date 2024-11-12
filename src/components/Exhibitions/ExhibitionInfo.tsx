@@ -45,18 +45,25 @@ const ExhibitionInfo = ({exhibitionData}: {exhibitionData: any}) => {
       <Image source={{uri: mainImageUrl}} style={styles.poster} />
       <View>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subInfo}>
-          <Calendar name="calendar-outline" size={15} />
-          &nbsp; {startDate} ~ {finishDate}
-        </Text>
-        <Text style={styles.subInfo}>
-          <LocationPin name="location-outline" size={15} />
-          &nbsp; {location}
-        </Text>
+        <View style={styles.infoRow}>
+          <Calendar name="calendar-outline" size={15} color={'#000'} />
+          <Text style={styles.subInfo}>
+            {startDate} - {finishDate}
+          </Text>
+        </View>
+        <View style={styles.infoRow}>
+          <LocationPin name="location-outline" size={15} color={'#000'} />
+          <Text style={styles.subInfo}>{location}</Text>
+        </View>
         {operatingHours && operatingHours.length > 0 && (
           <View style={styles.operatingHoursContainer}>
-            <Time name="time-outline" size={15} color={'#000'} />
-            <View style={styles.operatingHoursTextContainer}>
+            <Time
+              name="time-outline"
+              size={15}
+              color={'#000'}
+              style={styles.icon}
+            />
+            <View>
               {operatingHours.map((hour: string, index: number) => (
                 <Text key={index} style={styles.subInfo}>
                   {hour}
@@ -80,6 +87,14 @@ const ExhibitionInfo = ({exhibitionData}: {exhibitionData: any}) => {
 };
 
 const styles = StyleSheet.create({
+  icon: {
+    marginTop: 2,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   poster: {
     width: '100%',
     aspectRatio: 3 / 4,
@@ -95,15 +110,12 @@ const styles = StyleSheet.create({
   subInfo: {
     fontSize: 14,
     color: '#000',
-    marginBottom: 4,
+    marginLeft: 4,
   },
   operatingHoursContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginTop: 2,
-  },
-  operatingHoursTextContainer: {
-    marginLeft: 8,
   },
   buttonText: {
     fontSize: 14,

@@ -24,27 +24,27 @@ export default function ExhibitionSimpleInfo({
     <View style={styles.container}>
       <Image source={{uri: mainImageUrl}} style={styles.image} />
       <View style={styles.infoContainer}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{title}</Text>
+        <View style={styles.infoRow}>
+          <Calendar name="calendar-outline" size={15} color={'#000'} />
+          <Text style={styles.subInfo}>
+            {startDate} - {finishDate}
+          </Text>
         </View>
-        <Text style={styles.subInfo}>
-          <Calendar name="calendar-outline" size={15} />
-          &nbsp; {startDate} ~ {finishDate}
-        </Text>
-        <Text style={styles.subInfo}>
-          <LocationPin name="location-outline" size={15} />
-          &nbsp; {location}
-        </Text>
+        <View style={styles.infoRow}>
+          <LocationPin name="location-outline" size={15} color={'#000'} />
+          <Text style={styles.subInfo}>{location}</Text>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  infoRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 4,
   },
   container: {
     flexDirection: 'row',
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   subInfo: {
     fontSize: 14,
     color: '#000',
-    marginBottom: 4,
+    marginLeft: 4,
   },
   operatingHoursContainer: {
     flexDirection: 'row',

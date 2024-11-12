@@ -7,6 +7,7 @@ import {useInfiniteQuery} from '@tanstack/react-query';
 import customAxios from '../../services/customAxios';
 import {StackParamList} from '../../navigator/StackParamList';
 import SearchResult from '../../components/Search/SearchResult';
+import GlobalStyle from '../../styles/GlobalStyle';
 
 type ExhibitionInfo = {
   exhibitionId: number;
@@ -79,6 +80,7 @@ const SearchScreen: React.FC = () => {
           onExhibitionPress={handleExhibitionPress}
           fetchNextPage={fetchNextPage}
           hasNextPage={!!hasNextPage}
+          searchKeyword={keyword}
         />
       ) : (
         <Text> </Text>
