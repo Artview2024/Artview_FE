@@ -1,8 +1,8 @@
 import React from 'react';
 import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import Text from '../Text';
-import Calendar from 'react-native-vector-icons/AntDesign';
-import LocationPin from 'react-native-vector-icons/EvilIcons';
+import Calendar from 'react-native-vector-icons/Ionicons';
+import LocationPin from 'react-native-vector-icons/Ionicons';
 
 interface Exhibition {
   id: number;
@@ -31,15 +31,14 @@ const ExhibitionList: React.FC<ExhibitionListProps> = ({exhibitions}) => (
           )}
           <View style={styles.exhibitionInfo}>
             <Text style={styles.title}>{exhibition.title}</Text>
-            <Text style={styles.date}>
-              <Calendar name="calendar" size={15} />
-              &nbsp;{exhibition.date}
-            </Text>
-            <Text style={styles.gallery}>
-              <LocationPin name="location" size={16} />
-              &nbsp;
-              {exhibition.gallery}
-            </Text>
+            <View style={styles.infoRow}>
+              <Calendar name="calendar-outline" size={15} color={'#000'} />
+              <Text style={styles.subInfo}>{exhibition.date}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <LocationPin name="location-outline" size={15} color={'#000'} />
+              <Text style={styles.subInfo}>{exhibition.gallery}</Text>
+            </View>
           </View>
         </TouchableOpacity>
       </View>
@@ -63,6 +62,16 @@ const styles = StyleSheet.create({
     aspectRatio: 3 / 4,
     borderRadius: 5,
     marginRight: 15,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  subInfo: {
+    fontSize: 14,
+    color: '#000',
+    marginLeft: 4,
   },
   exhibitionInfo: {
     flex: 1,

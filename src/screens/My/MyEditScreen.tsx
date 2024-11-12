@@ -5,103 +5,44 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  Keyboard,
   Alert,
 } from 'react-native';
 import Header from '../../components/My/Header';
 import GlobalStyle from '../../styles/GlobalStyle';
 import Text from '../../components/Text';
-import customAxios from '../../services/customAxios';
 import {
-  NavigationProp,
   useNavigation,
   useRoute,
   RouteProp,
+  NavigationProp,
 } from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
 import FormData from 'form-data';
 import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
-
-interface RouteParams {
-  userInterest?: string[];
-}
+import customAxios from '../../services/customAxios';
 
 const MyEditScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const route = useRoute<RouteProp<StackParamList, 'MyEdit'>>();
 
-  const {userInterest = []} = route.params || {};
+  const {userInfo, userInterest} = route.params;
 
-  const [initialUserName, setInitialUserName] = useState<string>('');
-  const [initialInterests, setInitialInterests] = useState<string[]>([]);
-  const [initialImageUri, setInitialImageUri] = useState<string>('');
+  const [userName, setUserName] = useState<string>(userInfo?.userName || '');
+  const [imageUri, setImageUri] = useState<string>(
+    userInfo?.userImageUrl || '',
+  );
+  const [interests, setInterests] = useState<string[]>(userInterest || []);
 
-  const [userName, setUserName] = useState<string>('');
-  const [interests, setInterests] = useState<string[]>([]);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
-
-  const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
-    useImagePicker();
+  const isKeyboardVisible = useKeyboardVisibility();
+  const {handleTakePhoto, handleSelectImage} = useImagePicker();
   const {requestCameraPermission} = useCameraPermission(handleTakePhoto);
 
-  // 유저 정보 및 관심 분야 가져오기
+  // 관심 분야가 변경될 때 상태 업데이트
   useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await customAxios.get('/user/myPage/userInfo');
-        const data = response.data;
-        setInitialUserName(data.userName);
-        setInitialInterests(data.usersInterest || []);
-        setInitialImageUri(data.userImageUrl);
-
-        setUserName(data.userName);
-        setInterests(data.usersInterest || []);
-        setImageUri(data.userImageUrl);
-      } catch (error: any) {
-        console.error('유저 정보 가져오기 실패:', error.response?.data);
-      }
-    };
-
-    const fetchUserInterests = async () => {
-      try {
-        const response = await customAxios.get('/user/myPage/interest');
-
-        const rawInterests = response.data;
-        const parsedInterests = JSON.parse(rawInterests);
-
-        setInterests(parsedInterests);
-        console.log('Parsed interests:', parsedInterests);
-      } catch (error: any) {
-        console.error('관심 분야 가져오기 실패:', error.response?.data);
-      }
-    };
-
-    fetchUserInfo();
-    fetchUserInterests();
-  }, []);
-
-  useEffect(() => {
-    if (userInterest.length > 0) {
-      setInterests(userInterest);
-    }
+    setInterests(userInterest);
   }, [userInterest]);
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => setIsKeyboardVisible(true),
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => setIsKeyboardVisible(false),
-    );
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
 
   const handleImageChange = () => {
     Alert.alert(
@@ -118,53 +59,38 @@ const MyEditScreen: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      let updatedData: Record<string, any> = {};
+      const updatedData = new FormData();
+      updatedData.append('userName', userName);
+      updatedData.append('usersInterest', JSON.stringify(interests));
 
-      if (userName !== initialUserName) {
-        updatedData.userName = userName;
-      }
-      if (JSON.stringify(interests) !== JSON.stringify(initialInterests)) {
-        updatedData.usersInterest = interests;
-      }
-      if (imageUri !== initialImageUri) {
-        if (imageUri.startsWith('file://')) {
-          updatedData = new FormData();
-          updatedData.append('userName', userName);
-          updatedData.append('usersInterest', JSON.stringify(interests));
-          updatedData.append('userImageUrl', {
-            uri: imageUri,
-            type: 'image/jpeg',
-            name: 'profile_image.jpeg',
-          } as any);
-        } else {
-          updatedData.userImageUrl = imageUri;
-        }
-      }
-
-      if (Object.keys(updatedData).length === 0) {
-        Alert.alert('변경 사항이 없습니다.');
-        return;
+      if (imageUri.startsWith('file://')) {
+        updatedData.append('userImageUrl', {
+          uri: imageUri,
+          type: 'image/jpeg',
+          name: 'profile_image.jpeg',
+        } as any);
+      } else {
+        updatedData.append('userImageUrl', imageUri);
       }
 
       await customAxios.patch('/user/modify/myPage', updatedData, {
         headers: {
-          'Content-Type': imageUri.startsWith('file://')
-            ? 'multipart/form-data'
-            : 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
 
       Alert.alert('성공', '프로필이 성공적으로 수정되었습니다.');
-      navigation.navigate('MyScreen');
-      console.log(updatedData);
+      navigation.goBack();
     } catch (error: any) {
-      console.error('프로필 수정 실패:', error.response?.data);
+      console.error('프로필 수정 실패:', error.response?.data || error.message);
       Alert.alert('오류', '프로필 수정에 실패했습니다.');
     }
   };
 
   const handleInterestSelection = () => {
-    navigation.navigate('InterestSelection', {userInterest: interests});
+    navigation.navigate('InterestSelection', {
+      userInterest: interests,
+    } as {userInterest: string[]});
   };
 
   return (
@@ -174,7 +100,7 @@ const MyEditScreen: React.FC = () => {
       <View style={styles.profileContainer}>
         <Image
           source={
-            imageUri ? {uri: imageUri} : require('../../assets/images/user.png') // 이미지 URI가 없으면 기본 이미지 사용
+            imageUri ? {uri: imageUri} : require('../../assets/images/user.png')
           }
           style={styles.profileImage}
         />

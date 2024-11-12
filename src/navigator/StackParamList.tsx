@@ -35,7 +35,7 @@ export type StackParamList = {
     }>;
     artIndex?: number;
     isEditMode: boolean;
-    exhibitionId?: string | null;
+    exhibitionId?: string | number | null;
     mainImage?: string | null;
     myReviewsId?: string;
   };
@@ -50,7 +50,13 @@ export type StackParamList = {
   OtherUser: {writerId?: number};
   MyScreen: undefined;
   MyFollowScreen: {activeTab: string; userId?: number; isOtherUser?: boolean};
-  MyEdit: {userInterest?: any};
+  MyEdit: {
+    userInfo?: {
+      userName: string;
+      userImageUrl: string;
+    };
+    userInterest: string[];
+  };
   InterestSelection: {userInterest: any};
   ExhibitionDetail: {exhibitionId: number};
   ExhibitionsAll: {title: string};

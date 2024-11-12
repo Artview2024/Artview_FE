@@ -14,6 +14,7 @@ interface UserInfoProps {
   isFollowing?: boolean;
   updateFollowingCount?: (isFollowing: boolean) => void;
   navigation?: any;
+  interests?: string[];
 }
 
 const UserInfo: React.FC<UserInfoProps> = ({
@@ -27,6 +28,7 @@ const UserInfo: React.FC<UserInfoProps> = ({
   isFollowing,
   updateFollowingCount = () => {},
   navigation,
+  interests = [],
 }) => (
   <View style={styles.userInfo}>
     <Image style={styles.profileImage} source={{uri: userImageUrl}} />
@@ -83,7 +85,12 @@ const UserInfo: React.FC<UserInfoProps> = ({
     ) : (
       <TouchableOpacity
         style={styles.editProfileButton}
-        onPress={() => navigation.navigate('MyEdit')}>
+        onPress={() =>
+          navigation.navigate('MyEdit', {
+            userInfo: {userName, userImageUrl},
+            userInterest: interests,
+          })
+        }>
         <Text style={styles.editProfileButtonText}>프로필 수정</Text>
       </TouchableOpacity>
     )}

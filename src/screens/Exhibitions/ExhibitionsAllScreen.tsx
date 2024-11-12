@@ -24,8 +24,14 @@ const fetchExhibitions = async ({
   pageParam?: number;
   title: string;
 }) => {
-  const endpoint =
-    title === '진행 중인 전시' ? '/exhibition/ongoing' : '/exhibition/upcoming';
+  let endpoint = '';
+  if (title === '진행 중인 전시') {
+    endpoint = '/exhibition/ongoing';
+  } else if (title === '무료 전시') {
+    endpoint = '/exhibition/free';
+  } else if (title === '온라인 전시') {
+    endpoint = '/exhibition/online';
+  }
 
   try {
     const response = await customAxios.get(`${endpoint}/${pageParam}`, {
@@ -48,7 +54,7 @@ export default function ExhibitionsAllScreen() {
   const [selectedExhibition, setSelectedExhibition] = useState<number | null>(
     null,
   );
-  const navigation = useNavigation<NavigationProp<StackParamList>>(); // 추가된 부분
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
   useScrollToTop(ref);
 
   const {data, fetchNextPage, hasNextPage} = useInfiniteQuery({
@@ -56,13 +62,13 @@ export default function ExhibitionsAllScreen() {
     queryFn: ({pageParam}) =>
       fetchExhibitions({pageParam, title: route.params.title}),
     getNextPageParam: lastPage =>
-      lastPage.hasNext ? lastPage.nextCursor : undefined,
+      lastPage?.hasNext ? lastPage.nextCursor : undefined,
     initialPageParam: 0,
   });
 
   const exhibitions =
     data?.pages.flatMap(page =>
-      page.exhibitionInfos.map((item: any) => {
+      page?.exhibitionInfos.map((item: any) => {
         const startDate = item.startDate.split(' ')[0];
         const finishDate = item.finishDate.split(' ')[0];
 
@@ -79,15 +85,17 @@ export default function ExhibitionsAllScreen() {
 
   const handleExhibitionSelect = (id: number) => {
     setSelectedExhibition(id);
-    navigation.navigate('ExhibitionDetail', {exhibitionId: id}); // 수정된 부분
+    navigation.navigate('ExhibitionDetail', {exhibitionId: id});
   };
 
   return (
     <View style={GlobalStyle.container}>
       <Header title={route.params.title || '진행 중인 전시'} />
-      {route.params.title === '진행 중인 전시' ? (
+      {route.params.title === '진행 중인 전시' ||
+      '무료 전시' ||
+      '온라인 전시' ? (
         <Records
-          exhibitions={exhibitions} // 수정된 부분: ongoingExhibition을 exhibitions로 변경
+          exhibitions={exhibitions}
           selectedExhibition={selectedExhibition}
           onExhibitionSelect={handleExhibitionSelect}
           backAction={() => {}}

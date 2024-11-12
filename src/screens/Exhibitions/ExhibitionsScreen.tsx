@@ -16,16 +16,18 @@ export default function ExhibitionsScreen() {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
 
   const [ongoingExhibitions, setOngoingExhibitions] = useState([]);
+  const [freeExhibitions, setFreeExhibitions] = useState([]);
+  const [onlineExhibitions, setOnlineExhibitions] = useState([]);
 
   useEffect(() => {
-    fetchOngoingExhibitions();
+    fetchExhibitions();
   }, []);
 
-  const fetchOngoingExhibitions = async () => {
+  const fetchExhibitions = async () => {
     try {
-      const response = await customAxios.get('/exhibition/ongoing/0');
-      if (response?.data?.exhibitionInfos) {
-        const data = response.data.exhibitionInfos.map((item: any) => ({
+      const ongoingResponse = await customAxios.get('/exhibition/ongoing/0');
+      if (ongoingResponse?.data?.exhibitionInfos) {
+        const data = ongoingResponse.data.exhibitionInfos.map((item: any) => ({
           key: item.exhibitionId.toString(),
           title: item.title,
           date: `${item.startDate.split(' ')[0]} ~ ${
@@ -36,14 +38,39 @@ export default function ExhibitionsScreen() {
           exhibitionId: Number(item.exhibitionId),
         }));
         setOngoingExhibitions(data);
-      } else {
-        console.warn(
-          'Response data is not in the expected format:',
-          response.data,
-        );
+      }
+
+      const freeResponse = await customAxios.get('/exhibition/free/0');
+      if (freeResponse?.data?.exhibitionInfos) {
+        const data = freeResponse.data.exhibitionInfos.map((item: any) => ({
+          key: item.exhibitionId.toString(),
+          title: item.title,
+          date: `${item.startDate.split(' ')[0]} ~ ${
+            item.finishDate.split(' ')[0]
+          }`,
+          gallery: item.location,
+          image: {uri: item.mainImageUrl},
+          exhibitionId: Number(item.exhibitionId),
+        }));
+        setFreeExhibitions(data);
+      }
+
+      const onlineResponse = await customAxios.get('/exhibition/online/0');
+      if (onlineResponse?.data?.exhibitionInfos) {
+        const data = onlineResponse.data.exhibitionInfos.map((item: any) => ({
+          key: item.exhibitionId.toString(),
+          title: item.title,
+          date: `${item.startDate.split(' ')[0]} ~ ${
+            item.finishDate.split(' ')[0]
+          }`,
+          gallery: item.location,
+          image: {uri: item.mainImageUrl},
+          exhibitionId: Number(item.exhibitionId),
+        }));
+        setOnlineExhibitions(data);
       }
     } catch (error: any) {
-      console.error('Failed to fetch ongoing exhibitions:', error);
+      console.error('Failed to fetch exhibitions:', error);
     }
   };
 
@@ -78,7 +105,7 @@ export default function ExhibitionsScreen() {
           }
         />
         <FlatListExhibitions
-          data={ongoingExhibitions}
+          data={freeExhibitions}
           small={true}
           title={'무료 전시'}
           onPress={item =>
@@ -88,7 +115,7 @@ export default function ExhibitionsScreen() {
           }
         />
         <FlatListExhibitions
-          data={ongoingExhibitions}
+          data={onlineExhibitions}
           small={true}
           title={'온라인 전시'}
           onPress={item =>

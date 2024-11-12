@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Header from '../../components/My/Header';
 import ExhibitionInfo from '../../components/Exhibitions/ExhibitionInfo';
-import ExhibitionSimpleInfo from '../../components/Exhibitions/ExhibitionSimpleInfo';
 import ReviewCard from '../../components/Exhibitions/ReviewCard';
 import Text from '../../components/Text';
 import GlobalStyle from '../../styles/GlobalStyle';
@@ -35,6 +34,7 @@ export default function ExhibitionDetailScreen() {
           `/exhibition/detail/info/${exhibitionId}`,
         );
         setExhibitionData(infoResponse.data);
+        console.log(infoResponse.data);
 
         const reviewResponse = await customAxios.get(
           `/exhibition/detail/review/${exhibitionId}`,
@@ -55,7 +55,7 @@ export default function ExhibitionDetailScreen() {
   }
 
   if (!exhibitionData) {
-    return <Text>Exhibition data not available</Text>;
+    return <Text>전시회 정보 불러오기에 실패하였습니다.</Text>;
   }
 
   return (

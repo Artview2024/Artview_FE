@@ -110,12 +110,26 @@ const OtherUserScreen: React.FC = () => {
     }
   };
 
+  const fetchInterests = async () => {
+    try {
+      const response = await customAxios.get(`/user/interest/${writerId}`);
+      const rawInterests = response.data;
+
+      const parsedInterests = JSON.parse(rawInterests);
+
+      setInterests(parsedInterests || []);
+    } catch (error: any) {
+      console.error('Failed to fetch interests:', error.response?.data);
+    }
+  };
+
   const fetchAllData = async () => {
     try {
       setLoading(true);
       await fetchUserInfo();
       await fetchPostings();
       await fetchExhibitions();
+      await fetchInterests();
     } catch (error) {
       console.error('Failed to fetch all data:', error);
     } finally {
@@ -160,6 +174,7 @@ const OtherUserScreen: React.FC = () => {
           isFollowing={isFollowing}
           updateFollowingCount={newFollowing => setIsFollowing(newFollowing)}
           navigation={navigation}
+          interests={interests}
         />
         <MyInterests interests={interests} />
         <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />

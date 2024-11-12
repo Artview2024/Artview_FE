@@ -10,8 +10,8 @@ import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {StackParamList} from '../../navigator/StackParamList';
 import Text from '../Text';
-import Calendar from 'react-native-vector-icons/AntDesign';
-import LocationPin from 'react-native-vector-icons/EvilIcons';
+import Calendar from 'react-native-vector-icons/Ionicons';
+import LocationPin from 'react-native-vector-icons/Ionicons';
 
 type ExhibitionItem = {
   key: string;
@@ -62,16 +62,20 @@ export default function FlatListExhibitions({
               style={small ? styles.smallImage : styles.recommendedImage}
             />
             <Text style={styles.recommendedText}>{item.title}</Text>
-            <Text style={styles.recommendedSubText}>
-              <Calendar name="calendar" size={15} />
-              &nbsp;
-              {item.date}
-            </Text>
-            <Text style={styles.recommendedSubText}>
-              <LocationPin name="location" size={16} />
-              &nbsp;
-              {item.gallery}
-            </Text>
+            <View style={styles.infoRow}>
+              <Calendar name="calendar-outline" size={15} color={'#000'} />
+              <Text style={styles.recommendedSubText}>
+                &nbsp;
+                {item.date}
+              </Text>
+            </View>
+            <View style={styles.infoRow}>
+              <LocationPin name="location-outline" size={15} color={'#000'} />
+              <Text style={styles.recommendedSubText}>
+                &nbsp;
+                {item.gallery}
+              </Text>
+            </View>
           </TouchableOpacity>
         )}
         keyExtractor={item => item.key}
@@ -83,6 +87,11 @@ export default function FlatListExhibitions({
 const styles = StyleSheet.create({
   sectionFlatList: {
     marginBottom: 20,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   titleContainer: {
     flexDirection: 'row',

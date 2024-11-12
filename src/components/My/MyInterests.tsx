@@ -9,13 +9,15 @@ interface MyInterestsProps {
   interests: string[];
 }
 
-const MyInterests: React.FC<MyInterestsProps> = ({interests}) => {
+const MyInterests: React.FC<MyInterestsProps> = ({interests = []}) => {
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.headerContainer}
-        onPress={() => navigation.navigate('InterestSelection')}>
+        onPress={() =>
+          navigation.navigate('InterestSelection', {userInterest: interests})
+        }>
         <Text style={styles.headerText}>관심 분야</Text>
       </TouchableOpacity>
       <View style={styles.buttonsContainer}>
