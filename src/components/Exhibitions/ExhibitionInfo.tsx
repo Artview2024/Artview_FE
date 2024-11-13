@@ -13,14 +13,19 @@ import Calendar from 'react-native-vector-icons/Ionicons';
 import LocationPin from 'react-native-vector-icons/Ionicons';
 import Time from 'react-native-vector-icons/Ionicons';
 
-const ExhibitionInfo = ({exhibitionData}: {exhibitionData: any}) => {
+const ExhibitionInfo = ({
+  exhibitionData,
+  isOnlineExhibition,
+}: {
+  exhibitionData: any;
+  isOnlineExhibition?: boolean;
+}) => {
   if (!exhibitionData || !exhibitionData.exhibitionInfo) {
     return <Text>전시 정보가 없습니다.</Text>;
   }
 
   const {mainImageUrl, title, startDate, finishDate, location} =
     exhibitionData.exhibitionInfo;
-
   const {locationLink, operatingHours} = exhibitionData;
 
   const openLocationLink = () => {
@@ -51,10 +56,12 @@ const ExhibitionInfo = ({exhibitionData}: {exhibitionData: any}) => {
             {startDate} - {finishDate}
           </Text>
         </View>
-        <View style={styles.infoRow}>
-          <LocationPin name="location-outline" size={15} color={'#000'} />
-          <Text style={styles.subInfo}>{location}</Text>
-        </View>
+        {location && (
+          <View style={styles.infoRow}>
+            <LocationPin name="location-outline" size={15} color={'#000'} />
+            <Text style={styles.subInfo}>{location}</Text>
+          </View>
+        )}
         {operatingHours && operatingHours.length > 0 && (
           <View style={styles.operatingHoursContainer}>
             <Time
@@ -80,7 +87,9 @@ const ExhibitionInfo = ({exhibitionData}: {exhibitionData: any}) => {
           {backgroundColor: '#000', marginTop: 20, paddingHorizontal: 0},
         ]}
         onPress={openLocationLink}>
-        <Text style={styles.buttonText}>위치 확인하기</Text>
+        <Text style={styles.buttonText}>
+          {isOnlineExhibition ? '전시회 바로 가기' : '위치 확인하기'}
+        </Text>
       </TouchableOpacity>
     </View>
   );

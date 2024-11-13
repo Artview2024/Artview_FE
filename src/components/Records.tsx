@@ -7,13 +7,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import Text from '../components/Text';
-
+import LocationPin from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../styles/GlobalStyle';
 
 type Exhibition = {
   id: number;
   name: string;
-  date: string;
   gallery?: string;
   image: any;
 };
@@ -22,7 +21,6 @@ type RecordsProps = {
   exhibitions: Exhibition[];
   selectedExhibition: number | null;
   onExhibitionSelect: (id: number) => void;
-  backAction: () => void;
   showGallery?: boolean;
 };
 
@@ -48,9 +46,17 @@ export default function Records({
               />
               <View style={{paddingTop: 7}}>
                 <Text style={GlobalStyle.mainText}>{exhibition.name}</Text>
-                <Text style={GlobalStyle.subText}>{exhibition.date}</Text>
                 {showGallery && exhibition.gallery && (
-                  <Text style={GlobalStyle.subText}>{exhibition.gallery}</Text>
+                  <View style={styles.infoRow}>
+                    <LocationPin
+                      name="location-outline"
+                      size={15}
+                      color="#000"
+                    />
+                    <Text style={GlobalStyle.subText}>
+                      {exhibition.gallery}
+                    </Text>
+                  </View>
                 )}
               </View>
             </TouchableOpacity>
@@ -80,5 +86,10 @@ const styles = StyleSheet.create({
   },
   selectedExhibitionImage: {
     opacity: 0.6,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
   },
 });
