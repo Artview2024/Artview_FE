@@ -22,6 +22,7 @@ export default function ExhibitionDetailScreen() {
   const navigation = useNavigation<ExhibitionDetailScreenNavigationProp>();
   const route = useRoute<ExhibitionDetailRouteProp>();
   const exhibitionId = route.params?.exhibitionId;
+  const isOnlineExhibition = route.params?.isOnlineExhibition;
 
   const [exhibitionData, setExhibitionData] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
@@ -62,7 +63,10 @@ export default function ExhibitionDetailScreen() {
     <View style={GlobalStyle.container}>
       <ScrollView>
         <Header title={''} />
-        <ExhibitionInfo exhibitionData={exhibitionData} />
+        <ExhibitionInfo
+          exhibitionData={exhibitionData}
+          isOnlineExhibition={isOnlineExhibition}
+        />
         <RatingBox rating={3.2} participants={3} />
         <View style={{paddingVertical: 24}}>
           <View style={styles.titleContainer}>

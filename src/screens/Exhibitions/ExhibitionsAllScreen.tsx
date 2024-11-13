@@ -69,14 +69,9 @@ export default function ExhibitionsAllScreen() {
   const exhibitions =
     data?.pages.flatMap(page =>
       page?.exhibitionInfos.map((item: any) => {
-        const startDate = item.startDate.split(' ')[0];
-        const finishDate = item.finishDate.split(' ')[0];
-
         return {
           id: item.exhibitionId,
-          title: item.title,
           name: item.title,
-          date: `${startDate}~${finishDate}`,
           gallery: item.location,
           image: {uri: item.mainImageUrl},
         };
@@ -84,21 +79,24 @@ export default function ExhibitionsAllScreen() {
     ) || [];
 
   const handleExhibitionSelect = (id: number) => {
+    const isOnlineExhibition = route.params.title === '온라인 전시';
     setSelectedExhibition(id);
-    navigation.navigate('ExhibitionDetail', {exhibitionId: id});
+    navigation.navigate('ExhibitionDetail', {
+      exhibitionId: id,
+      isOnlineExhibition,
+    });
   };
 
   return (
     <View style={GlobalStyle.container}>
       <Header title={route.params.title || '진행 중인 전시'} />
       {route.params.title === '진행 중인 전시' ||
-      '무료 전시' ||
-      '온라인 전시' ? (
+      route.params.title === '무료 전시' ||
+      route.params.title === '온라인 전시' ? (
         <Records
           exhibitions={exhibitions}
           selectedExhibition={selectedExhibition}
           onExhibitionSelect={handleExhibitionSelect}
-          backAction={() => {}}
           showGallery={true}
         />
       ) : (

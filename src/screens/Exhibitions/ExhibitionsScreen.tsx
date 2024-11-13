@@ -101,6 +101,7 @@ export default function ExhibitionsScreen() {
           onPress={item =>
             navigation.navigate('ExhibitionDetail', {
               exhibitionId: item.exhibitionId,
+              isOnlineExhibition: false,
             })
           }
         />
@@ -111,6 +112,7 @@ export default function ExhibitionsScreen() {
           onPress={item =>
             navigation.navigate('ExhibitionDetail', {
               exhibitionId: item.exhibitionId,
+              isOnlineExhibition: false,
             })
           }
         />
@@ -121,6 +123,7 @@ export default function ExhibitionsScreen() {
           onPress={item =>
             navigation.navigate('ExhibitionDetail', {
               exhibitionId: item.exhibitionId,
+              isOnlineExhibition: true,
             })
           }
         />
