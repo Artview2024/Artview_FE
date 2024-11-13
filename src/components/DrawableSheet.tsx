@@ -87,23 +87,21 @@ const DrawableSheet = forwardRef(
       // 삭제된 항목들을 제외한 새로운 artList 생성
       const newArtList = artList.filter(item => !selectedItems.has(item.id));
 
-      // 현재 인덱스를 초기화하거나 조정
-      let newIndex = currentArtIndex;
+      // artList가 빈 배열이 되면 currentArtIndex를 0으로 초기화
       if (newArtList.length === 0) {
-        newIndex = 0; // artList가 비었을 경우 인덱스를 0으로 초기화
-      } else if (selectedItems.has(artList[currentArtIndex]?.id)) {
-        newIndex = Math.min(currentArtIndex, newArtList.length - 1);
+        setArtIndex(0);
+      } else {
+        // 현재 인덱스의 항목이 삭제되었는지 확인하고, 유효한 인덱스를 설정
+        let newIndex = currentArtIndex;
+        if (selectedItems.has(artList[currentArtIndex]?.id)) {
+          newIndex = Math.min(currentArtIndex, newArtList.length - 1);
+        }
+        setArtIndex(newIndex);
       }
 
       // artList 업데이트 및 선택된 항목 초기화
       setArtList(newArtList);
       setSelectedItems(new Set());
-
-      // 이미지가 기본 이미지로 초기화되지 않도록 보장
-      if (newArtList.length > 0 && newArtList[newIndex]) {
-        const newImageUri = newArtList[newIndex].image || '';
-        setImageUri(newImageUri);
-      }
     };
 
     const renderItem = ({item, drag, isActive}: RenderItemParams<ArtItem>) => {
