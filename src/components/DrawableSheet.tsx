@@ -22,6 +22,7 @@ type DrawableSheetProps = {
   setArtList: (data: ArtItem[]) => void;
   currentArtIndex: number;
   setArtIndex: (index: number) => void;
+  setImageUri: (uri: string) => void;
 };
 
 type CustomCheckBoxProps = {
@@ -41,7 +42,13 @@ const CustomCheckBox = ({isChecked, onPress}: CustomCheckBoxProps) => {
 
 const DrawableSheet = forwardRef(
   (
-    {artList, setArtList, currentArtIndex, setArtIndex}: DrawableSheetProps,
+    {
+      artList,
+      setArtList,
+      currentArtIndex,
+      setArtIndex,
+      setImageUri,
+    }: DrawableSheetProps,
     ref,
   ) => {
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -77,15 +84,22 @@ const DrawableSheet = forwardRef(
     };
 
     const deleteSelectedItems = () => {
+      // 삭제된 항목들을 제외한 새로운 artList 생성
       const newArtList = artList.filter(item => !selectedItems.has(item.id));
 
-      // 현재 보고 있는 인덱스의 항목이 삭제된 경우 이전 인덱스로 이동
-      let newIndex = currentArtIndex;
-      if (selectedItems.has(artList[currentArtIndex]?.id)) {
-        newIndex = Math.min(currentArtIndex, newArtList.length - 1);
+      // artList가 빈 배열이 되면 currentArtIndex를 0으로 초기화
+      if (newArtList.length === 0) {
+        setArtIndex(0);
+      } else {
+        // 현재 인덱스의 항목이 삭제되었는지 확인하고, 유효한 인덱스를 설정
+        let newIndex = currentArtIndex;
+        if (selectedItems.has(artList[currentArtIndex]?.id)) {
+          newIndex = Math.min(currentArtIndex, newArtList.length - 1);
+        }
+        setArtIndex(newIndex);
       }
-      setArtIndex(newIndex);
 
+      // artList 업데이트 및 선택된 항목 초기화
       setArtList(newArtList);
       setSelectedItems(new Set());
     };

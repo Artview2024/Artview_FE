@@ -309,6 +309,7 @@ export default function RecordingScreen() {
         setArtList={setArtList}
         currentArtIndex={artIndex}
         setArtIndex={setArtIndex}
+        setImageUri={setImageUri}
       />
     </View>
   );
