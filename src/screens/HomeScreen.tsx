@@ -53,8 +53,7 @@ export default function HomeScreen() {
 
   const fetchCarouselData = async () => {
     try {
-      const response = await customAxios.get('/myReviews/all');
-      console.log('API 응답 데이터:', response.data);
+      const response = await customAxios.get('/myReviews/main');
 
       if (Array.isArray(response.data)) {
         const firstThreeRecords = response.data
@@ -112,13 +111,13 @@ export default function HomeScreen() {
     if (record) {
       navigation.navigate('RecordDetail', {
         record: {
-          id: parseInt(record.key, 10), // key를 숫자로 변환
+          id: parseInt(record.key, 10),
           name: record.title,
           date: record.date,
           mainImage: record.image.uri,
           gallery: record.gallery,
-          rating: '', // 필요시 값을 추가
-          artList: [], // 필요시 값을 추가
+          rating: '',
+          artList: [],
           exhibitionId: record.exhibitionId,
         },
         exhibitionId: record.exhibitionId,
@@ -174,6 +173,7 @@ export default function HomeScreen() {
             onPress={item =>
               navigation.navigate('ExhibitionDetail', {
                 exhibitionId: item.exhibitionId,
+                isOnlineExhibition: false,
               })
             }
           />
