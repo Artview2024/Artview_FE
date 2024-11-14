@@ -19,6 +19,8 @@ export default function ReviewsAllScreen() {
   const [exhibitionData, setExhibitionData] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [averageRating, setAverageRating] = useState<number>(0);
+  const [participantsNumber, setParticipantsNumber] = useState<number>(0);
 
   useEffect(() => {
     const fetchExhibitionData = async () => {
@@ -34,6 +36,12 @@ export default function ReviewsAllScreen() {
           `/exhibition/detail/review/${exhibitionId}`,
         );
         setReviews(reviewResponse.data);
+
+        const ratingResponse = await customAxios.get(
+          `/exhibition/average/${exhibitionId}`,
+        );
+        setAverageRating(parseFloat(ratingResponse.data.average));
+        setParticipantsNumber(ratingResponse.data.participantsNumber);
       } catch (error: any) {
         console.error('Error fetching data:', error.response?.data);
       } finally {
@@ -52,7 +60,7 @@ export default function ReviewsAllScreen() {
           <ExhibitionSimpleInfo exhibitionData={exhibitionData} />
         )}
         <View style={{paddingTop: 24}}>
-          <RatingBox rating={3.2} participants={3} />
+          <RatingBox rating={averageRating} participants={participantsNumber} />
         </View>
         <View style={{paddingVertical: 24}}>
           <View style={styles.titleContainer}>
