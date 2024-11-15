@@ -89,6 +89,7 @@ export default function RecordDetailScreen() {
         artIndex: 0,
         myReviewsId: record.id,
         exhibitionId: record.exhibitionId || null,
+        rating: record.rating || 0,
       });
     }
   };

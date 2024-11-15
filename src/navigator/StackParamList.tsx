@@ -38,6 +38,7 @@ export type StackParamList = {
     exhibitionId?: string | number | null;
     mainImage?: string | null;
     myReviewsId?: string;
+    rating?: number;
   };
   RecordingStart: undefined;
   Posting: {

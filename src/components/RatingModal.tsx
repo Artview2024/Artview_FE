@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Modal,
@@ -13,14 +13,20 @@ interface RatingModalProps {
   visible: boolean;
   onClose: () => void;
   onSubmit: (rating: number) => void;
+  initialRating: number;
 }
 
 const RatingModal: React.FC<RatingModalProps> = ({
   visible,
   onClose,
   onSubmit,
+  initialRating,
 }) => {
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(initialRating);
+
+  useEffect(() => {
+    setRating(initialRating);
+  }, [initialRating]);
 
   const handleRating = (rate: number) => {
     setRating(rate);

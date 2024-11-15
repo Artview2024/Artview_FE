@@ -50,6 +50,7 @@ export default function RecordingScreen() {
     isEditMode = false,
     exhibitionId,
     myReviewsId = '',
+    rating = 0,
   } = route.params;
 
   const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
@@ -83,6 +84,7 @@ export default function RecordingScreen() {
   );
   const [mainImageIndex, setMainImageIndex] = useState<number | null>(null);
   const [finalData, setFinalData] = useState<any>(null);
+  const [initialRating, setInitialRating] = useState(rating);
 
   useEffect(() => {
     if (artIndex < artList.length) {
@@ -296,6 +298,7 @@ export default function RecordingScreen() {
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSubmit={handleRatingSubmit}
+        initialRating={initialRating}
       />
       <PhotoWarningModal
         visible={photoWarningVisible}
