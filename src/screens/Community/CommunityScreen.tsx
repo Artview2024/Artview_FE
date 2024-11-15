@@ -57,6 +57,7 @@ const fetchRecommendedUsers = async () => {
 export default function CommunityScreen() {
   const [activeTab, setActiveTab] = useState('전체');
   const [recommendedUsers, setRecommendedUsers] = useState<any[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const ref = useRef<FlatListType<any>>(null);
   useScrollToTop(ref);
@@ -80,7 +81,6 @@ export default function CommunityScreen() {
     const getUsers = async () => {
       try {
         const users = await fetchRecommendedUsers();
-        console.log('Recommended Users:', users);
         setRecommendedUsers(users);
       } catch (error: any) {
         console.error(
@@ -118,7 +118,7 @@ export default function CommunityScreen() {
                   communicationsId: item.communicationsId,
                 })
               }>
-              <CommunityCard Posts={item} />
+              <CommunityCard Posts={item} searchKeyword={searchKeyword} />
             </TouchableOpacity>
           </>
         );
@@ -130,11 +130,11 @@ export default function CommunityScreen() {
               communicationsId: item.communicationsId,
             })
           }>
-          <CommunityCard Posts={item} />
+          <CommunityCard Posts={item} searchKeyword={searchKeyword} />
         </TouchableOpacity>
       );
     },
-    [recommendedUsers, navigation, posts.length],
+    [recommendedUsers, navigation, posts.length, searchKeyword],
   );
 
   return (
@@ -148,7 +148,10 @@ export default function CommunityScreen() {
         <Text style={GlobalStyle.header}>소통</Text>
         <View
           style={{flexDirection: 'row', alignItems: 'center', paddingTop: 10}}>
-          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Search', {searchType: 'community'})
+            }>
             <SearchIcon width={24} height={24} style={{marginRight: 10}} />
           </TouchableOpacity>
           <NotificationIcon width={24} height={25} />

@@ -85,7 +85,10 @@ export default function ExhibitionsScreen() {
         <Text style={GlobalStyle.header}>전시</Text>
         <View
           style={{flexDirection: 'row', alignItems: 'center', paddingTop: 10}}>
-          <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Search', {searchType: 'exhibition'})
+            }>
             <SearchIcon width={24} height={24} style={{marginRight: 10}} />
           </TouchableOpacity>
           <NotificationIcon width={24} height={25} />
