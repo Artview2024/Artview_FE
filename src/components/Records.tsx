@@ -22,6 +22,7 @@ type RecordsProps = {
   selectedExhibition: number | null;
   onExhibitionSelect: (id: number) => void;
   showGallery?: boolean;
+  backAction: () => void;
 };
 
 export default function Records({
@@ -29,6 +30,7 @@ export default function Records({
   selectedExhibition,
   onExhibitionSelect,
   showGallery = false,
+  backAction,
 }: RecordsProps) {
   return (
     <ScrollView>

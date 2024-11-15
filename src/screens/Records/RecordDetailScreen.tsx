@@ -125,7 +125,7 @@ export default function RecordDetailScreen() {
             <StarIcon name="star" size={14} color="#EA1B83" />
           </Text>
           <Text style={[GlobalStyle.CommunityCardRating, {paddingLeft: 3}]}>
-            {record.rating}
+            {Number(record.rating).toFixed(1)}
           </Text>
         </View>
         <Text style={{paddingTop: 7, paddingBottom: 13}}>

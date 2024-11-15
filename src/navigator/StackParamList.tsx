@@ -59,8 +59,8 @@ export type StackParamList = {
     userInterest: string[];
   };
   InterestSelection: {userInterest: any};
-  ExhibitionDetail: {exhibitionId: number; isOnlineExhibition: boolean};
+  ExhibitionDetail: {exhibitionId: number; isOnlineExhibition?: boolean};
   ExhibitionsAll: {title: string};
   ReviewsAll: {exhibitionId: number};
-  Search: undefined;
+  Search: {searchType?: 'exhibition' | 'community'};
 };

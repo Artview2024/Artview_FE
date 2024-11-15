@@ -26,6 +26,7 @@ import {updateArtImage} from '../../hooks/updateArtImages';
 import {useFormState} from '../../hooks/useFormState';
 import RecordingTemplate from '../../components/RecordingTemplate';
 import {handlePatchSubmit, handlePostSubmit} from '../../hooks/submitReview';
+import StarIcon from 'react-native-vector-icons/FontAwesome';
 
 type ArtItem = {
   id: string;
@@ -246,10 +247,37 @@ export default function RecordingScreen() {
             />
           </TouchableOpacity>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <Text style={[GlobalStyle.sectionTitle, {paddingBottom: 0}]}>
-            {exhibitionName}
-          </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={[GlobalStyle.sectionTitle, {paddingBottom: 0}]}>
+              {exhibitionName}
+            </Text>
+            {isEditMode && (
+              <View style={{paddingTop: 16}}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginLeft: 8,
+                  }}>
+                  <StarIcon name="star" size={14} color="#EA1B83" />
+                  <Text
+                    style={{
+                      paddingLeft: 3,
+                      fontSize: 14,
+                      color: '#EA1B83',
+                    }}>
+                    {Number(initialRating).toFixed(1)}
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
           <TouchableOpacity onPress={handleOpenDrawableSheet}>
             <MenuIcon
               name="menu"
