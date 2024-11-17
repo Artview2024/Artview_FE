@@ -28,9 +28,9 @@ export default function RecordingStartScreen() {
   const [dateSelected, setDateSelected] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [searchResults, setSearchResults] = useState<Exhibition[]>([]);
-  const [selectedExhibitionId, setSelectedExhibitionId] = useState<
-    null | number
-  >(null);
+  const [selectedExhibitionId, setSelectedExhibitionId] = useState<'' | number>(
+    '',
+  );
   const [showDropdown, setShowDropdown] = useState(false);
 
   const isFormFilled = exhibition && location && dateSelected;
