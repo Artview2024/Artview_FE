@@ -75,8 +75,8 @@ export default function PostingScreen() {
     '어려운',
     '유쾌한',
     '심오한',
+    '비추천',
     '슬픈',
-    '+',
   ];
 
   const handleKeywordSelect = (keyword: string) => {

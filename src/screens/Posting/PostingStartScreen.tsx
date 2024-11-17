@@ -34,7 +34,6 @@ export default function PostingStartScreen() {
           date: item.visitedDate,
           image: {uri: item.imageUrl},
         }));
-        console.log('Server Response:', response.data);
         setRecords(myRecords);
       } catch (error: any) {
         console.error('오류:', error.response.data);
@@ -46,14 +45,12 @@ export default function PostingStartScreen() {
 
   // 레코드 선택할 때 호출
   const handleRecordSelect = (id: number) => {
-    console.log('Record selected:', id);
     setSelectedRecord(id);
   };
 
   // 포스팅 시작 (레코드 선택 후)
   useEffect(() => {
     if (selectedRecord !== null) {
-      console.log('선택 record recordId:', selectedRecord);
       navigation.navigate('Posting', {recordId: selectedRecord});
     }
   }, [selectedRecord]);
