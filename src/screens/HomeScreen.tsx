@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
   Image,
@@ -11,6 +11,7 @@ import {
   useNavigation,
   NavigationProp,
   useScrollToTop,
+  useFocusEffect,
 } from '@react-navigation/native';
 import Text from '../components/Text';
 import CarouselParallax from '../components/Home/CarouselParallax';
@@ -46,10 +47,12 @@ export default function HomeScreen() {
     setBackgroundIndex(index);
   };
 
-  useEffect(() => {
-    fetchCarouselData();
-    fetchOngoingExhibitions();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchCarouselData();
+      fetchOngoingExhibitions();
+    }, []),
+  );
 
   const fetchCarouselData = async () => {
     try {
@@ -103,9 +106,8 @@ export default function HomeScreen() {
   };
 
   const handleCarouselItemPress = (myReviewId: number) => {
-    // myReviewId를 사용하여 기록을 찾음
     const record = carouselData.find(
-      item => item.key === myReviewId.toString(), // key를 myReviewId로 비교
+      item => item.key === myReviewId.toString(),
     );
 
     if (record) {
