@@ -200,7 +200,7 @@ export default function RecordingScreen() {
       rating: '',
       mainImage: mainImageUri || '',
       artList: updatedArtList,
-      exhibitionId: String(exhibitionId),
+      exhibitionId: exhibitionId || '',
     });
     setModalVisible(true);
   };
