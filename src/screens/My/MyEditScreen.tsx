@@ -33,7 +33,7 @@ const MyEditScreen: React.FC = () => {
   const [imageUri, setImageUri] = useState<string>(
     userInfo?.userImageUrl || '',
   );
-  const [interests, setInterests] = useState<string[]>(userInterest || []);
+  const [interests, setInterests] = useState<string[]>(userInterest || '');
 
   const isKeyboardVisible = useKeyboardVisibility();
   const {handleTakePhoto, handleSelectImage} = useImagePicker();
@@ -61,7 +61,7 @@ const MyEditScreen: React.FC = () => {
     try {
       const updatedData = new FormData();
       updatedData.append('userName', userName);
-      updatedData.append('usersInterest', JSON.stringify(interests));
+      updatedData.append('usersInterest', interests);
 
       if (imageUri.startsWith('file://')) {
         updatedData.append('userImageUrl', {
