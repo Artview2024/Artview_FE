@@ -18,15 +18,42 @@ interface RouteParams {
 }
 
 const mockCategories = [
-  {title: '현대미술', imageUrl: 'https://example.com/image1.jpg'},
-  {title: '공예', imageUrl: 'https://example.com/image1.jpg'},
-  {title: '사진', imageUrl: 'https://example.com/image1.jpg'},
-  {title: '과학 및 기술', imageUrl: 'https://example.com/image1.jpg'},
-  {title: '그래픽 디자인', imageUrl: 'https://example.com/image1.jpg'},
-  {title: '문화', imageUrl: 'https://example.com/image1.jpg'},
-  {title: '자연', imageUrl: 'https://example.com/image1.jpg'},
-  {title: '역사', imageUrl: 'https://example.com/image1.jpg'},
-  {title: '특별 전시', imageUrl: 'https://example.com/image1.jpg'},
+  {
+    title: '현대미술',
+    imageUrl: require('../../assets/images/interests/interest1.png'),
+  },
+  {
+    title: '공예',
+    imageUrl: require('../../assets/images/interests/interest2.png'),
+  },
+  {
+    title: '사진',
+    imageUrl: require('../../assets/images/interests/interest3.png'),
+  },
+  {
+    title: '과학 및 기술',
+    imageUrl: require('../../assets/images/interests/interest4.png'),
+  },
+  {
+    title: '그래픽 디자인',
+    imageUrl: require('../../assets/images/interests/interest5.png'),
+  },
+  {
+    title: '문화',
+    imageUrl: require('../../assets/images/interests/interest6.png'),
+  },
+  {
+    title: '자연',
+    imageUrl: require('../../assets/images/interests/interest7.png'),
+  },
+  {
+    title: '역사',
+    imageUrl: require('../../assets/images/interests/interest8.png'),
+  },
+  {
+    title: '특별 전시',
+    imageUrl: require('../../assets/images/interests/interest9.png'),
+  },
 ];
 
 const InterestSelectionScreen: React.FC = () => {
@@ -42,11 +69,10 @@ const InterestSelectionScreen: React.FC = () => {
       try {
         const response = await customAxios.get('/user/myPage/interest');
         const rawInterests = response.data;
-        const parsedInterests = JSON.parse(rawInterests);
 
         setSelectedCategories(prevCategories => {
           const updatedCategories = [...prevCategories];
-          parsedInterests.forEach((interest: string) => {
+          rawInterests.forEach((interest: string) => {
             if (!updatedCategories.includes(interest)) {
               updatedCategories.push(interest);
             }
@@ -61,7 +87,6 @@ const InterestSelectionScreen: React.FC = () => {
     fetchUserInterests();
   }, []);
 
-  // 카테고리 선택 로직
   const handleCategoryPress = (category: string) => {
     if (selectedCategories.includes(category)) {
       setSelectedCategories(
@@ -72,7 +97,6 @@ const InterestSelectionScreen: React.FC = () => {
     }
   };
 
-  // 선택 완료 시 MyEditScreen으로 선택된 카테고리 데이터 전달
   const handleSubmit = () => {
     navigation.navigate('MyEdit', {userInterest: selectedCategories});
   };

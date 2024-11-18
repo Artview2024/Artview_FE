@@ -4,7 +4,7 @@ import Text from '../Text';
 
 interface InterestCategoryButtonProps {
   title: string;
-  imageUrl: string;
+  imageUrl: any; // require로 가져온 이미지 타입
   isSelected: boolean;
   onPress: () => void;
 }
@@ -18,7 +18,7 @@ const InterestCategoryButton: React.FC<InterestCategoryButtonProps> = ({
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={[styles.imageWrapper, isSelected && styles.selected]}>
-        <Image source={{uri: imageUrl}} style={styles.image} />
+        <Image source={imageUrl} style={styles.image} />
       </View>
       <Text style={styles.title}>{title}</Text>
     </TouchableOpacity>
