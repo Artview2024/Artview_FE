@@ -7,11 +7,11 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import Text from '../components/Text';
+import Text from '../../components/Text';
 import CheckBox from '@react-native-community/checkbox';
-import GlobalStyle from '../styles/GlobalStyle';
+import GlobalStyle from '../../styles/GlobalStyle';
 
-const cameraIcon = require('../assets/icons/camera-icon.png');
+const cameraIcon = require('../../assets/icons/camera-icon.png');
 
 type RecordingTemplateProps = {
   imageUri: string;

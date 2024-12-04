@@ -16,11 +16,21 @@ export const useFormState = (initialArtList: any[]) => {
     })),
   );
 
+  // artList 업데이트 시 id 재생성
+  const updateArtListWithIndex = (newArtList: any[]) => {
+    setArtList(
+      newArtList.map((item, index) => ({
+        ...item,
+        id: index.toString(),
+      })),
+    );
+  };
+
   // 입력값 변경 시 artList 자동 업데이트
   useEffect(() => {
     const newArt = {
       id: artIndex.toString(),
-      image: '', // imageUri 받아오기
+      image: '',
       title: title || '',
       artist: artist || '',
       memo: memo || '',
@@ -29,7 +39,7 @@ export const useFormState = (initialArtList: any[]) => {
     if (newArt.image || newArt.title || newArt.artist || newArt.memo) {
       const updatedArtList = [...artList];
       updatedArtList[artIndex] = newArt;
-      setArtList(updatedArtList);
+      updateArtListWithIndex(updatedArtList); // id 다시 설정
     }
   }, [title, artist, memo, artIndex]);
 
@@ -51,7 +61,7 @@ export const useFormState = (initialArtList: any[]) => {
     artIndex,
     setArtIndex,
     artList,
-    setArtList,
+    setArtList: updateArtListWithIndex,
     resetForm,
   };
 };

@@ -1,13 +1,13 @@
 import React, {forwardRef, useImperativeHandle, useState} from 'react';
 import {Modal, View, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import Text from '../components/Text';
+import Text from '../Text';
 import DraggableFlatList, {
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import MenuIcon from 'react-native-vector-icons/AntDesign';
 
-const reorderIcon = require('../assets/icons/reorder-icon.png');
+const reorderIcon = require('../../assets/icons/reorder-icon.png');
 
 type ArtItem = {
   id: string;
@@ -120,7 +120,7 @@ const DrawableSheet = forwardRef(
             <Image source={{uri: item.image}} style={styles.image} />
           ) : (
             <Image
-              source={require('../assets/images/thumbnail_basic.png')}
+              source={require('../../assets/images/thumbnail_basic.png')}
               style={styles.image}
             />
           )}

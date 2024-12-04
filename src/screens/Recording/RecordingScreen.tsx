@@ -1,11 +1,5 @@
 import React, {useRef, useState, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from 'react-native';
+import {View, ScrollView, TouchableOpacity, StyleSheet} from 'react-native';
 import Text from '../../components/Text';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import MenuIcon from 'react-native-vector-icons/Feather';
@@ -17,24 +11,17 @@ import {
   NavigationProp,
 } from '@react-navigation/native';
 import {StackParamList} from '../../navigator/StackParamList';
-import RatingModal from '../../components/RatingModal';
+import RatingModal from '../../components/Recording/RatingModal';
 import PhotoWarningModal from '../../components/Recording/PhotoWarningModal';
-import DrawableSheet from '../../components/DrawableSheet';
+import DrawableSheet from '../../components/Recording/DrawableSheet';
 import {useImagePicker} from '../../hooks/useImagePicker';
 import {useCameraPermission} from '../../hooks/useCameraPermissions';
 import {updateArtImage} from '../../hooks/updateArtImages';
+//편집시 새로 업데이트한 art 반영
 import {useFormState} from '../../hooks/useFormState';
-import RecordingTemplate from '../../components/RecordingTemplate';
+import RecordingTemplate from '../../components/Recording/RecordingTemplate';
 import {handlePatchSubmit, handlePostSubmit} from '../../hooks/submitReview';
 import StarIcon from 'react-native-vector-icons/FontAwesome';
-
-type ArtItem = {
-  id: string;
-  image: string;
-  title: string;
-  artist: string;
-  memo: string;
-};
 
 type RecordingScreenRouteProp = RouteProp<StackParamList, 'Recording'>;
 
@@ -48,14 +35,12 @@ export default function RecordingScreen() {
     gallery,
     artList: initialArtList,
     mainImage,
-    isEditMode = false,
+    isEditMode,
     exhibitionId,
-    myReviewsId = '',
     rating = 0,
   } = route.params;
 
-  const {imageUri, handleTakePhoto, handleSelectImage, setImageUri} =
-    useImagePicker();
+  const {imageUri, handleTakePhoto, setImageUri} = useImagePicker();
 
   const {
     title,
@@ -95,6 +80,7 @@ export default function RecordingScreen() {
       setMemo(currentArt.memo || '');
       setImageUri(currentArt.image || '');
     } else {
+      //현재 배열 길이 벗어나면 form 초기화(다음 art 추가용)
       resetForm();
       setImageUri('');
     }

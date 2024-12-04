@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import Text from '../components/Text';
+import Text from '../Text';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface RatingModalProps {
