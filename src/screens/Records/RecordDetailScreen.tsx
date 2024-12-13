@@ -29,7 +29,12 @@ export default function RecordDetailScreen() {
     const fetchRecordDetails = async () => {
       try {
         const response = await customAxios.get(`/myReviews/${id}`);
-        setRecord(response.data);
+        const updatedArtList = response.data.artList.map((art: any) => ({
+          ...art,
+          memo: art.contents,
+        }));
+        setRecord({...response.data, artList: updatedArtList});
+        console.log(response.data);
       } catch (error: any) {
         console.error('Error', error.response.data);
       }

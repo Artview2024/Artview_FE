@@ -264,14 +264,6 @@ export default function RecordingScreen() {
               </View>
             )}
           </View>
-          <TouchableOpacity onPress={handleOpenDrawableSheet}>
-            <MenuIcon
-              name="menu"
-              size={24}
-              color="black"
-              style={{paddingRight: 3, paddingTop: 18}}
-            />
-          </TouchableOpacity>
         </View>
         <Text style={{paddingTop: 7, paddingBottom: 13, color: 'black'}}>
           {exhibitionDate} | {gallery}

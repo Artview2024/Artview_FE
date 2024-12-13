@@ -22,7 +22,7 @@ type RecordsProps = {
   selectedExhibition: number | null;
   onExhibitionSelect: (id: number) => void;
   showGallery?: boolean;
-  backAction: () => void;
+  backAction?: () => void;
 };
 
 export default function Records({

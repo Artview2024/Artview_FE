@@ -3,6 +3,8 @@ import {View, Image, TouchableOpacity, StyleSheet} from 'react-native';
 import Text from '../Text';
 import Calendar from 'react-native-vector-icons/Ionicons';
 import LocationPin from 'react-native-vector-icons/Ionicons';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {StackParamList} from '../../navigator/StackParamList';
 
 interface Exhibition {
   id: number;
@@ -16,35 +18,62 @@ interface ExhibitionListProps {
   exhibitions: Exhibition[];
 }
 
-const ExhibitionList: React.FC<ExhibitionListProps> = ({exhibitions}) => (
-  <View>
-    {exhibitions.map(exhibition => (
-      <View key={exhibition.id} style={styles.exhibitionWrapper}>
-        <TouchableOpacity style={styles.exhibitionContainer}>
-          {exhibition.image ? (
-            <Image source={exhibition.image} style={styles.exhibitionImage} />
-          ) : (
-            <Image
-              source={require('../../assets/images/thumbnail_basic.png')}
-              style={styles.exhibitionImage}
-            />
-          )}
-          <View style={styles.exhibitionInfo}>
-            <Text style={styles.title}>{exhibition.title}</Text>
-            <View style={styles.infoRow}>
-              <Calendar name="calendar-outline" size={15} color={'#000'} />
-              <Text style={styles.subInfo}>{exhibition.date}</Text>
+const ExhibitionList: React.FC<ExhibitionListProps> = ({exhibitions}) => {
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
+
+  const handlePress = (id: number) => {
+    const selectedExhibition = exhibitions.find(
+      exhibition => exhibition.id === id,
+    );
+    if (selectedExhibition) {
+      navigation.navigate('RecordDetail', {
+        record: {
+          id: selectedExhibition.id,
+          exhibitionId: null, // 필요한 경우 변경
+          name: selectedExhibition.title,
+          date: selectedExhibition.date,
+          gallery: selectedExhibition.gallery || '',
+          mainImage: selectedExhibition.image.uri,
+          rating: '', // 필요하다면 데이터를 추가
+          artList: [], // 필요하다면 데이터를 추가
+        },
+        exhibitionId: null, // 필요한 경우 변경
+      });
+    }
+  };
+
+  return (
+    <View>
+      {exhibitions.map(exhibition => (
+        <View key={exhibition.id} style={styles.exhibitionWrapper}>
+          <TouchableOpacity
+            onPress={() => handlePress(exhibition.id)}
+            style={styles.exhibitionContainer}>
+            {exhibition.image ? (
+              <Image source={exhibition.image} style={styles.exhibitionImage} />
+            ) : (
+              <Image
+                source={require('../../assets/images/thumbnail_basic.png')}
+                style={styles.exhibitionImage}
+              />
+            )}
+            <View style={styles.exhibitionInfo}>
+              <Text style={styles.title}>{exhibition.title}</Text>
+              <View style={styles.infoRow}>
+                <Calendar name="calendar-outline" size={15} color={'#000'} />
+                <Text style={styles.subInfo}>{exhibition.date}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <LocationPin name="location-outline" size={15} color={'#000'} />
+                <Text style={styles.subInfo}>{exhibition.gallery}</Text>
+              </View>
             </View>
-            <View style={styles.infoRow}>
-              <LocationPin name="location-outline" size={15} color={'#000'} />
-              <Text style={styles.subInfo}>{exhibition.gallery}</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </View>
-    ))}
-  </View>
-);
+          </TouchableOpacity>
+        </View>
+      ))}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   exhibitionWrapper: {
