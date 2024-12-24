@@ -1,6 +1,8 @@
+![app-logo](https://github.com/user-attachments/assets/97be7983-3d0e-479a-b1dd-baab8ea96a0f)
 # Artview
 ### 실시간 전시 관람 기록 및 공유 애플리케이션
-![image](https://github.com/user-attachments/assets/4dd73967-e994-4c09-8dfa-791add3d921e)
+<br/>
+<br/>
 <br/>
 ## 🎨 프로젝트 소개
 쉽고 편한 전시 관람 경험 아카이빙 및 커뮤니티 서비스
