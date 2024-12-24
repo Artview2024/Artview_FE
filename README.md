@@ -1,13 +1,13 @@
 # Artview
 ### 실시간 전시 관람 기록 및 공유 애플리케이션
 ![image](https://github.com/user-attachments/assets/4dd73967-e994-4c09-8dfa-791add3d921e)
-
+<br/>
 ## 🎨 프로젝트 소개
 쉽고 편한 전시 관람 경험 아카이빙 및 커뮤니티 서비스
-
+<br/>
 ## ⏰ 프로젝트 기간
 2024.04 ~ 2024.11
-
+<br/>
 ## 🤔 프로젝트 배경
 전시회를 관람하며 우리는 감명 깊은 작품과 그 마음을 기억하기 위해 수많은 사진을 찍습니다.
 <br/>그런데 반짝이는 순간은 집에만 오면 귀찮다는 이유로 핸드폰 갤러리 속에 쌓여 방치되곤 합니다. 나와 같은 전시회를 본 다른 이들의 감상을 찾아보기 위해서는 불필요한 정보들을 파헤쳐야 합니다.
@@ -20,7 +20,7 @@
 <br/>
 <br/>따라서, Artview는 전시 관람의 경험 중 겪는 이러한 불편함에 주목해 전시 관람 경험을 실시간으로 기록하고 공유할 수 있는 서비스를 제공하고자 합니다.
 
-
+<br/>
 ## ⚙️ 개발 환경
 ![image](https://github.com/user-attachments/assets/2c2cd5c0-0191-41ed-9621-9052d36998d4)
 ![image](https://github.com/user-attachments/assets/7f32fc25-0029-44dc-9406-804b490f4f91)
@@ -32,11 +32,4 @@
 
 ## 🎨⭐ 주요 기능
 
-
-
-
-### 🍀 마이페이지 
-|카카오 로그인|내 정보 보기|저장한 장소 보기| 
-|:---:|:---:|:---:|
-|<img src="https://github.com/SWUCleanWay/CleanWay_BE/assets/150095257/7608c84b-3dea-40d3-b469-9cdd82de952f" width="250">|<img src="https://github.com/SWUCleanWay/CleanWay_BE/assets/150095257/34ba8df0-b58a-41b9-9bdf-5a2a107946d7" width="250">|<img src="https://github.com/SWUCleanWay/CleanWay_BE/assets/150095257/4ae2169c-3e52-4009-abb0-373503d9f9e4" width="250">|
 
