@@ -1,96 +1,42 @@
-Commit Convention
+# Artview
+### 실시간 전시 관람 기록 및 공유 애플리케이션
+![image](https://github.com/user-attachments/assets/4dd73967-e994-4c09-8dfa-791add3d921e)
 
----
+## 🎨 프로젝트 소개
+쉽고 편한 전시 관람 경험 아카이빙 및 커뮤니티 서비스
 
-| 작성 | 설명 |
-| --- | --- |
-| [FEAT]#이슈번호 내용 | 기능 추가 |
-| [FIX]#이슈번호 내용 | 버그 및 오류 수정 |
-| [CHORE]내용 | 자잘한 수정 및 빌드 업데이트 |
-| [DESIGN]내용 | UI 변경 |
-| [REFACTOR]내용 | 리팩토링 |
-| [DOCS]#이슈번호 내용 | 문서 수정 |
+## ⏰ 프로젝트 기간
+2024.04 ~ 2024.11
 
----
+## 🤔 프로젝트 배경
+전시회를 관람하며 우리는 감명 깊은 작품과 그 마음을 기억하기 위해 수많은 사진을 찍습니다.
+<br/>그런데 반짝이는 순간은 집에만 오면 귀찮다는 이유로 핸드폰 갤러리 속에 쌓여 방치되곤 합니다. 나와 같은 전시회를 본 다른 이들의 감상을 찾아보기 위해서는 불필요한 정보들을 파헤쳐야 합니다.
+<br/>그렇게 시간이 지나면 기억은 점점 희미해지고, 정보의 홍수 속에서 피로감을 느끼며 벅찬 마음은 식어만 갑니다.
+![image](https://github.com/user-attachments/assets/14febe63-d4fe-4fb4-95a9-85a2e7f25286)
+![image](https://github.com/user-attachments/assets/c2e54b38-1acd-462a-8b5a-aa4d88d7495a)
+실제로 전시 관람에 관심이 있는 2030 여성을 대상으로 사용자 조사를 진행해본 결과, 사용자들은 손쉬운 기록과 공유를 필요로 하고 있음을 확인해볼 수 있었습니다.
+![image](https://github.com/user-attachments/assets/4103a470-4981-4c16-8a3a-a61305e01605)
+기존의 서비스들은 대부분 전시회 정보 제공 기능에 초점이 맞추어져 있었고, 기록 기능을 제공하는 서비스는 있으나 전시 관람을 마친 뒤 따로 시간을 내어 기록해야 한다는 점에서 기존의 불편함을 해소하기에는 역부족이었습니다..
+<br/>
+<br/>따라서, Artview는 전시 관람의 경험 중 겪는 이러한 불편함에 주목해 전시 관람 경험을 실시간으로 기록하고 공유할 수 있는 서비스를 제공하고자 합니다.
 
-<br></br>
 
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+## ⚙️ 개발 환경
+![image](https://github.com/user-attachments/assets/2c2cd5c0-0191-41ed-9621-9052d36998d4)
+![image](https://github.com/user-attachments/assets/7f32fc25-0029-44dc-9406-804b490f4f91)
 
-# Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
-## Step 1: Start the Metro Server
+<br/>
+<br/>
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## 🎨⭐ 주요 기능
 
-To start Metro, run the following command from the _root_ of your React Native project:
 
-```bash
-# using npm
-npm start
 
-# OR using Yarn
-yarn start
-```
 
-## Step 2: Start your Application
+### 🍀 마이페이지 
+|카카오 로그인|내 정보 보기|저장한 장소 보기| 
+|:---:|:---:|:---:|
+|<img src="https://github.com/SWUCleanWay/CleanWay_BE/assets/150095257/7608c84b-3dea-40d3-b469-9cdd82de952f" width="250">|<img src="https://github.com/SWUCleanWay/CleanWay_BE/assets/150095257/34ba8df0-b58a-41b9-9bdf-5a2a107946d7" width="250">|<img src="https://github.com/SWUCleanWay/CleanWay_BE/assets/150095257/4ae2169c-3e52-4009-abb0-373503d9f9e4" width="250">|
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
-
-### For Android
-
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### For iOS
-
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
