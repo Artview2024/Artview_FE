@@ -36,43 +36,31 @@
 
 ## 🎨⭐ 주요 기능
 ### 📍로그인 및 홈
-|카카오로그인|
-|:---:|
-|<width="250">|
+| 카카오로그인 | 홈 |
+|:---:|:---:|
+| <img src="https://github.com/user-attachments/assets/9906ffd5-d56b-40a2-ba0b-7a009735c4c1" width="250"> |<img src="https://github.com/user-attachments/assets/97f136e7-4b09-447b-bd15-ff46d6707d7c" width="250">  |
+
 
 ### 📝 기록하기
-|전시회 기본 정보 기입|실시간 기록|별점 등록|
+|전시회 기본 정보 기입|실시간 기록 템플릿|실시간 기록|
 |:---:|:---:|:---:|
-||||
+|<img src="https://github.com/user-attachments/assets/9519d774-db8e-4429-92d3-70fa6f04b8fc" width="250">|<img src="https://github.com/user-attachments/assets/e7e3b039-a469-4262-8ae0-dbf9438bdc48" width="250">|<img src="https://github.com/user-attachments/assets/e37399a2-5746-46d6-b268-5610efa30bf6" width="250">|
 
-### 📝 기록 확인 및 수정
-|기록 확인|기록 수정|
-|:---:|:---:|
-|||
 
 ### 💬 전시 관람 커뮤니티
-|커뮤니티 홈|기록 선택|기록 관련 글 작성|
+|커뮤니티 홈|기록 관련 글 작성|댓글|
 |:---:|:---:|:---:|
-||||
+|<img src="https://github.com/user-attachments/assets/a962b487-69c6-43ce-b410-f22512bddda2" width="250">|<img src="https://github.com/user-attachments/assets/1362e8b3-93e0-467f-8fd2-d36763863024" width="250">|<img src="https://github.com/user-attachments/assets/cc26be66-4882-4626-ad67-f6e7738e8163)](https://github.com/user-attachments/assets/cc26be66-4882-4626-ad67-f6e7738e8163" width="250">|
 
-|사용자 추천|댓글 및 좋아요|검색|
-|:---:|:---:|:---:|
-||||
 
 ### 💡 전시 정보 제공
 |전시 정보 홈|전시 정보 디테일|아트뷰 평점 및 관련 글|
 |:---:|:---:|:---:|
-||||
+|<img src="https://github.com/user-attachments/assets/2a8cb14e-49b6-479a-b6e4-761fe9c2427c" width="250">|<img src="https://github.com/user-attachments/assets/2a509265-6c62-456b-9a3e-ae84ffa91eab" width="250">|<img src="https://github.com/user-attachments/assets/8936640e-aeb0-4edc-9af3-2b75808900b4" width="250">|
 
-|온라인 전시 디테일|검색|
-|:---:|:---:|
-|||
 
 ### 👩 마이페이지
-|팔로우 관리|내 기록/내 게시물|
+|마이페이지 홈|관심분야 설정|
 |:---:|:---:|
-|||
+|<img src="https://github.com/user-attachments/assets/ef190d1e-425a-4eb9-a5c0-f688b3f38940" width="250">|<img src="https://github.com/user-attachments/assets/bda837d4-6f53-4ee7-a447-7addd21239e7" width="250">|
 
-|프로필 수정|관심분야 설정|
-|:---:|:---:|
-|||
